@@ -5,7 +5,7 @@ from FITS_tools.hcongrid import hcongrid
 from astropy.wcs import WCS
 
 parser = argparse.ArgumentParser(description='Clean and align images')
-parser.add_argument('Folder', type=str, help='Folder containing all .fist FFI images')
+parser.add_argument('Folder', type=str, help='Folder containing all .fits FFI images')
 args = parser.parse_args()
 
 folder = args.folder
