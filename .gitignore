@@ -3,3 +3,4 @@ imgs/all_ffis_cal_wget.sh
 
 imgs/tess2019131073826-4-4-0016-s_ffic.fits
 *.fits
+*.hdf5
