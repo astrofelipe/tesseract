@@ -1,6 +1,8 @@
+import __future__
 import h5py
 import argparse
 from photutils import DAOStarFinder, CircularAperture, aperture_photometry
+from astropy.wcs import WCS
 from astropy.stats import sigma_clipped_stats
 
 parser = argparse.ArgumentParser(description='Clean and align images')
@@ -12,7 +14,7 @@ File = args.File
 inpt   = h5py.File(File, 'r')
 mframe = inpt['mframe'][:]
 
-mean, median, std = sigma_clipped_stats(mframe, sigma=3, iters=5)
+mean, median, std = sigma_clipped_stats(mframe, sigma=3, maxiters=5)
 daofind = DAOStarFinder(fwhm=1.5, threshold=3*std)
 sources = daofind(mframe - median)
 pos     = (sources['xcentroid'], sources['ycentroid'])
@@ -21,7 +23,7 @@ rads      = range(1,7)
 apertures = [CircularAperture(pos, r=r) for r in rads]
 photable  = aperture_photometry(mframe, apertures, method='exact')
 
-print photable
+print(photable)
 
 import matplotlib.pyplot as plt
 import numpy as np
