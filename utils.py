@@ -2,16 +2,29 @@ import celerite
 import numpy as np
 from celerite import terms
 from scipy.optimize import minimize
-from bls import BLS
 from scipy.signal import medfilt
 
+def mask_planet(t, t0, period, dur=0.25):
+    #mask = []
+    mask = np.zeros(len(t)).astype(bool)
+    #transitmask = []
+    t0 += np.ceil((t[0] - dur - t0) / period) * period
+    for tt in np.arange(t0, t[-1] + dur, period):
+        #mask.extend(np.where(np.abs(t - tt) < dur / 2.0)[0])
+        #mask.extend(np.abs(t - tt) < dur / 2.0)
+        mask += np.abs(t - tt) < dur / 2.0
+    #transitmask = np.array(list(set(np.concatenate([transitmask, mask]))))
+
+    return (~mask).astype(int)
+
+'''
 def BLSer(t, y, yerr, mw=351, maximum_period=30.):
     #Input needs to be normalized
 
     yr = (y / np.nanmedian(y) -1)*1e6
     yt = medfilt(yr, mw)
     y  = yr - yt
-    
+
     durations = np.linspace(0.05, 0.2, 10)
     model     = BLS(t, y)
     results   = model.autopower(durations, maximum_period=maximum_period, frequency_factor=5.0)
@@ -25,6 +38,7 @@ def BLSer(t, y, yerr, mw=351, maximum_period=30.):
     SNR    = results.depth_snr[idx]
 
     return period, t0, dur, depth, SNR
+'''
 
 def detrender(t, y, yerr):
     kernel = terms.Matern32Term(log_sigma=np.log(np.nanvar(y)), log_rho=-np.log(10.0)) + terms.JitterTerm(log_sigma=np.log(np.nanvar(y)))
