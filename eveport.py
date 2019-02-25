@@ -5,9 +5,16 @@ import celerite
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
 
-class rPLDYay(everest.rPLD):
+class rPLDYay(everest.rPLD):#, mode='rpld'):
     def load_tpf(self):
         super(rPLDYay, self).load_tpf()
+
+        #self.transitmask = transitmask
+        #if args.inject[0] is not None: self.get_norm()
+
+    #if mode='npld':
+    #    def setup(self, **kwargs):
+    #        self.X1N = X1N
 
 def PLD(time, flux, ferr, lc, ap, n=None, mask=None, gp_timescale=30):
     if n is None:
@@ -118,6 +125,7 @@ def GetData(hdu, TICID, aperture, season=None):
 
     #Return
     data = everest.utils.DataContainer()
+    data.name     = 'ee'
     data.ID       = TICID
     data.campaign = campaign
     data.cadn     = cadn

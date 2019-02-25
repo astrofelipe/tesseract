@@ -1,21 +1,20 @@
 import celerite
 import numpy as np
+from tqdm import tqdm
 from celerite import terms
 from scipy.optimize import minimize
 from scipy.signal import medfilt
+from astropy.io import fits
+from astropy.wcs import WCS
+from astropy.coordinates import SkyCoord
+from astropy.nddata.utils import Cutout2D
+from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
 
 def mask_planet(t, t0, period, dur=0.25):
-    #mask = []
-    mask = np.zeros(len(t)).astype(bool)
-    #transitmask = []
-    t0 += np.ceil((t[0] - dur - t0) / period) * period
-    for tt in np.arange(t0, t[-1] + dur, period):
-        #mask.extend(np.where(np.abs(t - tt) < dur / 2.0)[0])
-        #mask.extend(np.abs(t - tt) < dur / 2.0)
-        mask += np.abs(t - tt) < dur / 2.0
-    #transitmask = np.array(list(set(np.concatenate([transitmask, mask]))))
+    phase  = (t - t0 + 0.5*period) % period - 0.5*period
+    mask   = np.abs(phase) < dur
 
-    return (~mask).astype(int)
+    return ~mask
 
 '''
 def BLSer(t, y, yerr, mw=351, maximum_period=30.):
@@ -62,3 +61,34 @@ def detrender(t, y, yerr):
     std     = np.sqrt(var)
 
     return mu, std
+
+def FFICut(fnames, ra, dec, size):
+    boxing = KeplerTargetPixelFileFactory(n_cadences=len(fnames), n_rows=size, n_cols=size)
+    quals  = np.ones(len(fnames)) * np.nan
+
+    for i,f in tqdm(enumerate(fnames), total=len(fnames)):
+        hdu = fits.open(f)
+
+        dflux   = hdu[1].data
+        derr    = hdu[2].data
+        hdr     = hdu[1].header
+
+        if i==0:
+            w      = WCS(hdr)
+            x,y = w.all_world2pix(ra, dec, 0)
+        #x  += 1
+        #x = int(x) + 0.5
+        #y = int(y) + 0.5
+
+        cutflux = Cutout2D(dflux, (x-1,y), size, mode='trim', wcs=w)
+        cuterrs = Cutout2D(derr, (x-1,y), size, mode='trim')
+
+        quals[i] = hdr['DQUALITY']
+        boxing.add_cadence(frameno=i, flux=cutflux.data, flux_err=cuterrs.data, header=hdr, wcs=cutflux.wcs)
+
+    TPF = boxing.get_tpf()
+    TPF.hdu[1].data['QUALITY']   = quals
+    TPF.hdu[1].header['BJDREFI'] = hdr['BJDREFI']
+    TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
+
+    return TPF, cutflux.wcs

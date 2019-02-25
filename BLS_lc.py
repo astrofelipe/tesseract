@@ -41,19 +41,19 @@ def run_BLS(testfile):
 
     trend = medfilt(y, 751)
     yflat = y - trend
-    
+
     durations = np.linspace(0.05, 0.2, 50)# * u.day
     model     = BLS(t, yflat)
     result    = model.autopower(durations, frequency_factor=5.0, maximum_period=30.0)
     idx       = np.argmax(result.power)
-    
+
     period = result.period[idx]
     t0     = result.transit_time[idx]
     dur    = result.duration[idx]
     depth  = result.depth[idx]
     snr    = result.depth_snr[idx]
 
-    try:    
+    try:
         stats  = model.compute_stats(period, dur, t0)
         depth_even = stats['depth_even'][0]
         depth_odd  = stats['depth_odd'][0]
@@ -65,7 +65,7 @@ def run_BLS(testfile):
 
     print tic, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
     return tic, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
-    
+
     '''
     x = (t-t0 + 0.5*period) % period - 0.5*period
 
