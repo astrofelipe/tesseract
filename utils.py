@@ -92,3 +92,26 @@ def FFICut(fnames, ra, dec, size):
     TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
 
     return TPF, cutflux.wcs
+
+def pixel_border(mask):
+    ydim, xdim = mask.shape
+
+    x = []
+    y = []
+
+    for i in range(1,ydim-1):
+        for j in range(1,xdim-1):
+            if mask[i,j]:
+                if not mask[i-1,j]:
+                    x.append(np.array([j-0.5,j+0.5]))
+                    y.append(np.array([i-0.5,i-0.5]))
+                if not mask[i+1,j]:
+                    x.append(np.array([j-0.5,j+0.5]))
+                    y.append(np.array([i+0.5,i+0.5]))
+                if not mask[i,j-1]:
+                    x.append(np.array([j-0.5,j-0.5]))
+                    y.append(np.array([i-0.5,i+0.5]))
+                if not mask[i,j+1]:
+                    x.append(np.array([j+0.5,j+0.5]))
+                    y.append(np.array([i-0.5,i+0.5]))
+    return x,y

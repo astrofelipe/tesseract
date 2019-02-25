@@ -1,10 +1,10 @@
 import __future__
 import argparse
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
 import pandas as pd
 import glob
-import everest
 from everest.mathutils import SavGol
 from transitleastsquares import transitleastsquares as TLS
 from eveport import PLD
@@ -12,7 +12,7 @@ from lightkurve.lightcurve import TessLightCurve
 from lightkurve.correctors import PLDCorrector
 from lightkurve.search import search_tesscut
 from lightkurve.targetpixelfile import KeplerTargetPixelFile
-from utils import mask_planet, FFICut
+from utils import mask_planet, FFICut, pixel_border
 from autoap import generate_aperture, select_aperture
 from photutils import MMMBackground, SExtractorBackground, Background2D, CircularAperture, aperture_photometry
 from astropy.coordinates import SkyCoord
@@ -138,13 +138,20 @@ det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
 
 if not args.noplots:
-    aps    = CircularAperture([(x,y)], r=2.5)
+    #aps    = CircularAperture([(x,y)], r=2.5)
+    fig1 = plt.figure(figsize=[20,3])
+    gs   = gridspec.GridSpec(1, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
-    fig1, ax1 = plt.subplots(figsize=[10,3], ncols=2)
-    ax1[0].matshow(np.log10(flux[0]), cmap='YlGnBu_r')
-    ax1[0].matshow(dap[bidx], alpha=.2)
-    ax1[0].plot(x,y, '.r')
-    aps.plot(color='w', ax=ax1[0])
+    ax1 = plt.subplot(gs[0])
+    ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r')
+
+    xm, ym = pixel_border(dap[bidx])
+    for xi,yi in zip(xm, ym):
+        ax1.plot(xi, yi, color='lime', lw=1.25)
+
+    #ax1[0].matshow(dap[bidx], alpha=.2)
+    ax1.plot(x,y, '.r')
+    #aps.plot(color='w', ax=ax1[0])
     #ax1[1].matshow(bkgs[4])
 
     '''
@@ -157,13 +164,14 @@ if not args.noplots:
     ax1[1].plot(result.folded_phase - .5, result.folded_y, 'ok', ms=2)
     '''
 
-    fig, ax = plt.subplots(figsize=[10,4])
+    ax = plt.subplot(gs[1])
     ax.plot(time, lkf[bidx].flux, '-ok', ms=2, lw=1.5)
-    ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
-    ax.plot(time, det_lc.flux, color='tomato', lw=1)
+    #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
+    ax.plot(time, det_lc.flux, color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
 
 
+    fig1.tight_layout()
     plt.show()
 
 inst   = np.repeat('TESS', len(time))

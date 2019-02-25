@@ -9,7 +9,7 @@ import numpy as np
 #img = '/Volumes/Felipe/TESS/FFIs-5/tess2018345062939-s0005-3-3-0125-s_ffic.fits'
 img = '/Volumes/Felipe/TESS/FFIs-5/tess2018345092939-s0005-3-4-0125-s_ffic.fits'
 #sec = img.split('-')[-5]
-sec = 's0002'
+sec = 's0005'
 print(sec)
 hdr = fits.getheader(img, 1)
 dat = fits.getdata(img)
@@ -51,13 +51,13 @@ print(left, right, top, bottom)
 '''
 
 eclim = {'s0002': [[298, 388], [-90, 0]],
-         's0005': [[20, 111], [-80, -60]]}
+         's0005': [[19, 111], [-90, -0]]}
 
 elo, ela = eclim[sec]
 
 #Not pole
-eclos = np.arange(elo[0], elo[1]+1.1, 12) % 360
-eclas = np.arange(ela[0], ela[1]+1.1, 12)
+eclos = np.arange(elo[0], elo[1]+1.1, 10) % 360
+eclas = np.arange(ela[0], ela[1]+1.1, 10)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
