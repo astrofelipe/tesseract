@@ -5,18 +5,18 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import pandas as pd
 import glob
-from everest.mathutils import SavGol
-from transitleastsquares import transitleastsquares as TLS
-from eveport import PLD
+import os
+#from everest.mathutils import SavGol
+#from eveport import PLD
 from lightkurve.lightcurve import TessLightCurve
-from lightkurve.correctors import PLDCorrector
+#from lightkurve.correctors import PLDCorrector
 from lightkurve.search import search_tesscut
 from lightkurve.targetpixelfile import KeplerTargetPixelFile
 from utils import mask_planet, FFICut, pixel_border
 from autoap import generate_aperture, select_aperture
-from photutils import MMMBackground, SExtractorBackground, Background2D, CircularAperture, aperture_photometry
+from photutils import MMMBackground, SExtractorBackground
 from astropy.coordinates import SkyCoord
-from astropy.stats import SigmaClip, BoxLeastSquares, BoxLeastSquares
+from astropy.stats import SigmaClip
 from astropy.wcs import WCS
 from astropy.io import fits
 
@@ -33,18 +33,24 @@ args = parser.parse_args()
 iP, it0, idur = args.mask_transit
 
 if len(args.TIC) < 2:
+    from astroquery.mast import Catalogs
     args.TIC = int(args.TIC[0])
-    cata   = '../TIC_5.csv'# % args.Sector
-    cata   = pd.read_csv(cata, comment='#')
-    cid    = cata['TICID'] == args.TIC
-    target = cata[cid]
-    print(target,'\n')
+    if os.path.isfile('TIC%d.dat' % args.TIC):
+        import sys
+        sys.exit()
+    #cata   = '../TIC_5.csv'# % args.Sector
+    #cata   = pd.read_csv(cata, comment='#')
+    #cid    = cata['TICID'] == args.TIC
+    #target = cata[cid]
+    target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
+    #print(target,'\n')
 
 
-    ra  = float(target['RA'])
-    dec = float(target['Dec'])
+    ra  = float(target[0]['ra'])
+    dec = float(target[0]['dec'])
     #cam = int(target['Camera'])
     #ccd = int(target['CCD'])
+    print(args.TIC, ra, dec)
 
 else:
     ra, dec = args.TIC
@@ -132,10 +138,11 @@ else:
     mask = mask_planet(time, it0, iP, dur=idur)
 
 
+'''
 det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask)
 det_lc = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
 det_lc = det_lc.flatten(polyorder=2, window_length=51)
-
+'''
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)
@@ -179,5 +186,6 @@ output = np.transpose([time, lkf[bidx].flux, lkf[bidx].flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
 np.savetxt('TIC%s.dat' % (args.TIC), output, fmt='%s')
 
+print('Done!\n')
 #output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d_det.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')

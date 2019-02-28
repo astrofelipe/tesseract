@@ -1,6 +1,6 @@
-from everest.mathutils import Interpolate, SavGol
+#from everest.mathutils import Interpolate, SavGol
 import numpy as np
-import everest
+#import everest
 import celerite
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
@@ -77,7 +77,7 @@ def PLD(time, flux, ferr, lc, ap, n=None, mask=None, gp_timescale=30):
 
     return det_flux, flux_err
 
-
+'''
 def GetData(hdu, TICID, aperture, season=None):
     campaign = hdu[0].header['SECTOR']
     TICID    = hdu[1].header['TICID']
@@ -148,3 +148,4 @@ def GetData(hdu, TICID, aperture, season=None):
 
 
     return campaign, TICID
+'''

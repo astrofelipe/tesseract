@@ -1,7 +1,7 @@
-import celerite
+#import celerite
 import numpy as np
 from tqdm import tqdm
-from celerite import terms
+#from celerite import terms
 from scipy.optimize import minimize
 from scipy.signal import medfilt
 from astropy.io import fits
@@ -37,7 +37,6 @@ def BLSer(t, y, yerr, mw=351, maximum_period=30.):
     SNR    = results.depth_snr[idx]
 
     return period, t0, dur, depth, SNR
-'''
 
 def detrender(t, y, yerr):
     kernel = terms.Matern32Term(log_sigma=np.log(np.nanvar(y)), log_rho=-np.log(10.0)) + terms.JitterTerm(log_sigma=np.log(np.nanvar(y)))
@@ -61,6 +60,7 @@ def detrender(t, y, yerr):
     std     = np.sqrt(var)
 
     return mu, std
+'''
 
 def FFICut(fnames, ra, dec, size):
     boxing = KeplerTargetPixelFileFactory(n_cadences=len(fnames), n_rows=size, n_cols=size)

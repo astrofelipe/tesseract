@@ -15,8 +15,8 @@ folder = args.Folder
 if folder[-1] != '/':
     folder += '/'
 
-def run_BLS(f):
-    t, f = np.genfromtxt(f, usecols=(0,1), unpack=True)
+def run_BLS(fl):
+    t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
 
     durations = np.linspace(0.05, 0.2, 50)# * u.day
     model     = BLS(t,f)
@@ -39,18 +39,18 @@ def run_BLS(f):
         depth_odd  = 0
         depth_half = 0
 
-    return period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
+    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
 
 if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
 
     result = run_BLS(targetfile)
-    period = result[0]
-    t0     = result[1]
-    dur    = result[2]
-    depth  = result[3]
-    snr    = result[4]
+    period = result[1]
+    t0     = result[2]
+    dur    = result[3]
+    depth  = result[4]
+    snr    = result[5]
 
     ph = (t-t0 + 0.5*period) % period - 0.5*period
 
@@ -71,4 +71,12 @@ if args.target is not None:
 
 
 else:
+    from joblib import Parallel, delayed
+
     allfiles = glob.glob(folder + 'TIC*.dat')
+    results  = np.array(Parallel(n_jobs=12, verbose=10)(delayed(run_BLS)(f) for f in allfiles))
+    order    = np.argsort(results[:,5])[::-1]
+    results  = results[order]
+    print(results)
+
+    np.savetxt('BLS_result.dat', results, fmt='%s')
