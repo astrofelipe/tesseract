@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_odd', 'depth_half']
 BLSdata = pd.read_csv(args.File, delimiter=' ', names=names)
-mask    = (BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period) & ((np.abs(BLSdata['P']) - 13.4) > 0.55) 
+mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55) 
 BLSdata = BLSdata[mask]
 
 for i in range(args.start, len(BLSdata)):

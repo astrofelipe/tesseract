@@ -8,10 +8,16 @@ import glob
 import os
 #from everest.mathutils import SavGol
 #from eveport import PLD
-from lightkurve.lightcurve import TessLightCurve
-#from lightkurve.correctors import PLDCorrector
-from lightkurve.search import search_tesscut
-from lightkurve.targetpixelfile import KeplerTargetPixelFile
+try:
+    from lightkurve.lightcurve import TessLightCurve
+    from lightkurve.search import search_tesscut
+    from lightkurve.targetpixelfile import KeplerTargetPixelFile
+except:
+    os.system('rm ~/.astropy/config/*.cfg')
+    from lightkurve.lightcurve import TessLightCurve
+    from lightkurve.search import search_tesscut
+    from lightkurve.targetpixelfile import KeplerTargetPixelFile
+
 from utils import mask_planet, FFICut, pixel_border
 from autoap import generate_aperture, select_aperture
 from photutils import MMMBackground, SExtractorBackground
@@ -19,6 +25,7 @@ from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip
 from astropy.wcs import WCS
 from astropy.io import fits
+from scipy.ndimage import median_filter
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
 parser.add_argument('TIC', type=float, nargs='+', help='TIC ID or RA DEC')
@@ -28,6 +35,7 @@ parser.add_argument('--size', type=int, help='TPF size')
 parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, None), help='Mask Transits, input: period, t0')
 parser.add_argument('--everest', action='store_true')
 parser.add_argument('--noplots', action='store_true')
+parser.add_argument('--norm', action='store_true')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -74,7 +82,7 @@ if args.folder is not None:
 
 else:
     #Online mode
-    allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=21)
+    allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=21, download_dir='.')
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
@@ -117,7 +125,10 @@ lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 
 #Lightkurves
 lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
-lkf = [lk.flatten(polyorder=2, window_length=51) for lk in lks]
+mfs = [median_filter(lk.flux, size=55) for lk in lks]
+print(np.sqrt(len(mfs[0])))
+#lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks]
+lkf = [TessLightCurve(time=time, flux=lcfl[i]/mfs[i], flux_err=lcer[i]/mfs[i]) for i in range(len(lcfl))] if args.norm else lks
 
 #Select best
 cdpp = [lk.estimate_cdpp() for lk in lkf]
@@ -173,6 +184,7 @@ if not args.noplots:
 
     ax = plt.subplot(gs[1])
     ax.plot(time, lkf[bidx].flux, '-ok', ms=2, lw=1.5)
+    ax.plot(time, mfs[bidx], '-r')
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     #ax.plot(time, det_lc.flux, color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
@@ -185,6 +197,7 @@ inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf[bidx].flux, lkf[bidx].flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
 np.savetxt('TIC%s.dat' % (args.TIC), output, fmt='%s')
+os.system('rm tesscut/*%s*' % ra)
 
 print('Done!\n')
 #output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
