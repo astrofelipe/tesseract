@@ -126,9 +126,8 @@ lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 #Lightkurves
 lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
 mfs = [median_filter(lk.flux, size=55) for lk in lks]
-print(np.sqrt(len(mfs[0])))
-#lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks]
-lkf = [TessLightCurve(time=time, flux=lcfl[i]/mfs[i], flux_err=lcer[i]/mfs[i]) for i in range(len(lcfl))] if args.norm else lks
+lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
+#lkf = [TessLightCurve(time=time, flux=lcfl[i]/mfs[i], flux_err=lcer[i]/mfs[i]) for i in range(len(lcfl))] if args.norm else lks
 
 #Select best
 cdpp = [lk.estimate_cdpp() for lk in lkf]
