@@ -125,7 +125,7 @@ lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 
 #Lightkurves
 lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
-mfs = [median_filter(lk.flux, size=55) for lk in lks]
+#mfs = [median_filter(lk.flux, size=55) for lk in lks]
 lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
 #lkf = [TessLightCurve(time=time, flux=lcfl[i]/mfs[i], flux_err=lcer[i]/mfs[i]) for i in range(len(lcfl))] if args.norm else lks
 
@@ -183,7 +183,7 @@ if not args.noplots:
 
     ax = plt.subplot(gs[1])
     ax.plot(time, lkf[bidx].flux, '-ok', ms=2, lw=1.5)
-    ax.plot(time, mfs[bidx], '-r')
+    #ax.plot(time, mfs[bidx], '-r')
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     #ax.plot(time, det_lc.flux, color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
