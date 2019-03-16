@@ -66,6 +66,7 @@ if args.target is not None:
     ax.set_title(r''+ targetfile + r'   $P=%.5f$' % period + r'   SNR=%f' % snr)
     ax.set_xlabel('Hours from mid-transit')
     ax.set_ylabel('Normalized flux')
+    print(result)
 
     plt.show()
 
