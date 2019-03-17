@@ -49,7 +49,7 @@ for i in range(args.start, len(BLSdata)):
 
         if not args.nogaia:
             print(fn)
-            obj   = fn.split('/')[-1])[3:-4]
+            obj   = (fn.split('/')[-1])[3:-4]
             print(obj)
             cdata = Catalogs.query_object('TIC' + obj, radius=1*u.minute, catalog='Gaia')
             print(cdata)
