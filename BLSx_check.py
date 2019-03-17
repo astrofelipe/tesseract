@@ -48,7 +48,9 @@ for i in range(args.start, len(BLSdata)):
         p2   = (t - t0 + period) % period - 0.5*period
 
         if not args.nogaia:
-            cdata = Catalogs.query_object(fn.split('/')[-1].split['.'][0], radius=1*u.minute, catalog='Gaia')
+            obj   = fn.split('/')[-1].split['.'][0]
+            print(obj)
+            cdata = Catalogs.query_object(obj, radius=1*u.minute, catalog='Gaia')
             print(cdata)
             print(cdata.columns)
 
