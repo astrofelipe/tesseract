@@ -11,6 +11,7 @@ parser.add_argument('--max-depth', type=float, default=0.04, help='Maximum depth
 parser.add_argument('--min-period', type=float, default=0, help='Minimum period')
 parser.add_argument('--max-period', type=float, default=999, help='Maximum period')
 parser.add_argument('--start', type=int, default=0, help='Iteration to start from')
+parser.add_argument('--nogaia', action='store_true')
 
 args = parser.parse_args()
 
@@ -18,6 +19,12 @@ names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_
 BLSdata = pd.read_csv(args.File, delimiter=' ', names=names)
 mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
 BLSdata = BLSdata[mask]
+
+if not args.nogaia:
+    import astropy.units as u
+    from astropy.coordinates import SkyCoord
+    from astroquery.mast import Catalogs
+    from astroquery.gaia import Gaia
 
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
@@ -39,6 +46,11 @@ for i in range(args.start, len(BLSdata)):
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
         p    = (t - t0 + 0.5*period) % period - 0.5*period
         p2   = (t - t0 + period) % period - 0.5*period
+
+        if not args.nogaia:
+            cdata = Catalogs.query_object(fn.split('/')[-1].split['.'][0], radius=1*u.minute, catalog='Gaia')
+            print(cdata)
+            print(cdata.columns)
 
         lcs[j].plot(t, y, '.', ms=1)
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
