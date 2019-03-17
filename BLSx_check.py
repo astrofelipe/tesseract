@@ -51,7 +51,7 @@ for i in range(args.start, len(BLSdata)):
             print(fn)
             obj   = (fn.split('/')[-1])[3:-4]
             print(obj)
-            cdata = Catalogs.query_object('TIC' + obj, radius=1*u.minute, catalog='Gaia')
+            cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
             print(cdata)
             print(cdata.columns)
 
