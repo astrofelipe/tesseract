@@ -52,7 +52,7 @@ for i in range(args.start, len(BLSdata)):
             chunk.iloc[j,0] = obj
 
             cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
-            rval  = cdata.iloc[0, 'radius_val']
+            rval  = cdata[0]['radius_val']
             chunk[j]['rval'] = rval
 
         else:
