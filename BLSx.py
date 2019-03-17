@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(description='BLS for a folder with many LC file
 parser.add_argument('Folder', help='Folder containing FITS files')
 parser.add_argument('--target', type=int, default=None, help='Run on single target')
 parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
+parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
 parser.add_argument('--output', default=None)
 
 args = parser.parse_args()
@@ -75,7 +76,7 @@ else:
     from joblib import Parallel, delayed
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    results  = np.array(Parallel(n_jobs=12, verbose=10)(delayed(run_BLS)(f) for f in allfiles))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=10)(delayed(run_BLS)(f) for f in allfiles))
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
