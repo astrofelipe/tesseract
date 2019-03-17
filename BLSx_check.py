@@ -48,12 +48,15 @@ for i in range(args.start, len(BLSdata)):
         p2   = (t - t0 + period) % period - 0.5*period
 
         if not args.nogaia:
-            print(fn)
             obj   = (fn.split('/')[-1])[3:-4]
-            print(obj)
+            chunk[j,0] = obj
+
             cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
-            print(cdata)
-            print(cdata.columns)
+            rval  = cdata[0, 'radius_val']
+            chunk[0, 'rval'] = rval
+
+        else:
+            rval = np.nan
 
         lcs[j].plot(t, y, '.', ms=1)
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
@@ -68,7 +71,7 @@ for i in range(args.start, len(BLSdata)):
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
         #inf[j].set_axis_off()
 
-        lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$' % (fn, period, depth))
+        lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$' % (fn, period, depth, rval))
 
     print(chunk)
     plt.show()
