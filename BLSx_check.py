@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_odd', 'depth_half']
 BLSdata = pd.read_csv(args.File, delimiter=' ', names=names)
-mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55) 
+mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
 BLSdata = BLSdata[mask]
 
 for i in range(args.start, len(BLSdata)):
@@ -26,7 +26,7 @@ for i in range(args.start, len(BLSdata)):
     gs  = GridSpec(6, 7, figure=fig)
     lcs = [fig.add_subplot(gs[k,:5]) for k in range(6)]
     lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
-    inf = [fig.add_subplot(gs[k,6]) for k in range(6)]
+    lcs = [fig.add_subplot(gs[k,6]) for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
 
@@ -38,6 +38,7 @@ for i in range(args.start, len(BLSdata)):
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
         p    = (t - t0 + 0.5*period) % period - 0.5*period
+        p2   = (t - t0 + period) % period - 0.5*period
 
         lcs[j].plot(t, y, '.', ms=1)
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
@@ -46,8 +47,11 @@ for i in range(args.start, len(BLSdata)):
         lcf[j].plot(p, y, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
 
-        inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
-        inf[j].set_axis_off()
+        lcs[j].plot(p2, y, '.', ms=1)
+        lcs[j].set_xlim(-0.2, 0.2)
+
+        #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
+        #inf[j].set_axis_off()
 
         lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$' % (fn, period, depth))
 
