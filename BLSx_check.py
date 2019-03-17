@@ -26,7 +26,7 @@ for i in range(args.start, len(BLSdata)):
     gs  = GridSpec(6, 7, figure=fig)
     lcs = [fig.add_subplot(gs[k,:5]) for k in range(6)]
     lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
-    lcs = [fig.add_subplot(gs[k,6]) for k in range(6)]
+    lc2 = [fig.add_subplot(gs[k,6]) for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
 
@@ -47,8 +47,8 @@ for i in range(args.start, len(BLSdata)):
         lcf[j].plot(p, y, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
 
-        lcs[j].plot(p2, y, '.', ms=1)
-        lcs[j].set_xlim(-0.2, 0.2)
+        lc2[j].plot(p2, y, '.', ms=1)
+        lc2[j].set_xlim(-0.2, 0.2)
 
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
         #inf[j].set_axis_off()
