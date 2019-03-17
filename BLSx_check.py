@@ -71,7 +71,7 @@ for i in range(args.start, len(BLSdata)):
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
         #inf[j].set_axis_off()
 
-        lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$' % (fn, period, depth, rval))
+        lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (fn, period, depth, rval, rval*np.sqrt(depth)))
 
     print(chunk)
     plt.show()
