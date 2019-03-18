@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description='Plot a LC')
 parser.add_argument('TIC', type=int, help='TIC ID')
 args = parser.parse_args()
 
-files = glob.glob('/horus/TESS/LC/*/TIC%d.dat' % args.TIC)
+files = np.sort(glob.glob('/horus/TESS/LC/*/TIC%d.dat' % args.TIC))
 
 t = []
 f = []
