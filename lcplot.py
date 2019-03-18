@@ -1,13 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+import glob
 
 parser = argparse.ArgumentParser(description='Plot a LC')
-parser.add_argument('File', type=str, help='Light curve filename')
-
+parser.add_argument('TIC', type=int, help='TIC ID')
 args = parser.parse_args()
 
-t, f = np.genfromtxt(args.File, usecols=(0,1), unpack=True)
+files = glob.glob('/horus/TESS/LC/*/TIC%d.dat' % args.TIC)
+
+t = []
+f = []
+
+for fn in files:
+    ti, fi = np.genfromtxt(fn, usecols=(0,1), unpack=True)
+    t.append(ti)
+    f.append(fi)
+
+t = np.concatenate(t)
+f = np.concatenate(f)
 
 fig, ax = plt.subplots(figsize=[15,3])
 ax.plot(t, f, '-k', lw=1, zorder=-2)
