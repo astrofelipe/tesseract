@@ -11,6 +11,6 @@ t, f = np.genfromtxt(args.File, usecols=(0,1), unpack=True)
 
 fig, ax = plt.subplots(figsize=[10,3])
 ax.plot(t, f, '-k')
-ax.scatter(t, f, c='gold', edgecolor='black', lw=3)
+ax.scatter(t, f, c='gold', edgecolor='black', lw=1)
 
 plt.show()
