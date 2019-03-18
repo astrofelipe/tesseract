@@ -216,7 +216,7 @@ if args.psf:
 
     #Lightkurves
     lks = TessLightCurve(time=time, flux=psf_flux)#, flux_err=flux_psf_err)
-    lkf = lks.flatten(polyorder=2, window_length=85) if args.norm else lks
+    lkf = lks.flatten(polyorder=2, window_length=91) if args.norm else lks
 
 else:
     #DBSCAN Aperture
