@@ -15,7 +15,7 @@ f = []
 for fn in files:
     ti, fi = np.genfromtxt(fn, usecols=(0,1), unpack=True)
     t.append(ti)
-    f.append(fi)
+    f.append(fi / np.nanmedian(fi))
 
 t = np.concatenate(t)
 f = np.concatenate(f)
