@@ -52,7 +52,7 @@ if len(args.TIC) < 2:
     #cid    = cata['TICID'] == args.TIC
     #target = cata[cid]
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
-    #print(target,'\n')
+    print(target,'\n')
 
 
     ra  = float(target[0]['ra'])
