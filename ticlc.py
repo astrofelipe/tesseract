@@ -26,6 +26,7 @@ from astropy.stats import SigmaClip
 from astropy.wcs import WCS
 from astropy.io import fits
 from scipy.ndimage import median_filter
+from tess_stars2px import tess_stars2px_function_entry as ts2p
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
 parser.add_argument('TIC', type=float, nargs='+', help='TIC ID or RA DEC')
@@ -57,13 +58,15 @@ if len(args.TIC) < 2:
 
     ra  = float(target[0]['ra'])
     dec = float(target[0]['dec'])
-    cam = int(target[0]['Camera'])
-    ccd = int(target[0]['CCD'])
-    print(args.TIC, ra, dec, cam, ccd)
+    #cam = int(target[0]['Camera'])
+    #ccd = int(target[0]['CCD'])
 
 else:
     ra, dec = args.TIC
-    print(ra, dec)
+
+print(ts2p(0, ra, dec))
+#print(args.TIC, ra, dec, cam, ccd)
+
 
 coord = SkyCoord(ra, dec, unit='deg')
 
