@@ -52,13 +52,13 @@ if len(args.TIC) < 2:
     #cid    = cata['TICID'] == args.TIC
     #target = cata[cid]
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
-    print(target,'\n')
+    print(target.columns,'\n')
 
 
     ra  = float(target[0]['ra'])
     dec = float(target[0]['dec'])
-    cam = int(target['Camera'])
-    ccd = int(target['CCD'])
+    cam = int(target[0]['Camera'])
+    ccd = int(target[0]['CCD'])
     print(args.TIC, ra, dec, cam, ccd)
 
 else:
