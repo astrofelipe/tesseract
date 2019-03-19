@@ -57,9 +57,9 @@ if len(args.TIC) < 2:
 
     ra  = float(target[0]['ra'])
     dec = float(target[0]['dec'])
-    #cam = int(target['Camera'])
-    #ccd = int(target['CCD'])
-    print(args.TIC, ra, dec)
+    cam = int(target['Camera'])
+    ccd = int(target['CCD'])
+    print(args.TIC, ra, dec, cam, ccd)
 
 else:
     ra, dec = args.TIC
