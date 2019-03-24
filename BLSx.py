@@ -1,6 +1,7 @@
 import glob
 import argparse
 import numpy as np
+from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
 
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
@@ -18,9 +19,10 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
+    lc   = TessLightCurve(time=t, flux=f).flatten()
 
     durations = np.linspace(0.05, 0.2, 50)# * u.day
-    model     = BLS(t,f)
+    model     = BLS(lc.time,lc.flux)
     result    = model.autopower(durations, frequency_factor=5.0, maximum_period=30.0)
     idx       = np.argmax(result.power)
 
