@@ -47,6 +47,8 @@ def run_BLS(fl):
 if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
+    lc         = TessLightCurve(time=t, flux=f).flatten()
+
 
     result = run_BLS(targetfile)
     period = result[1]
@@ -60,7 +62,7 @@ if args.target is not None:
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=[10,4])
 
-    ax.plot(ph*24, f, '.k', ms=5)
+    ax.plot(ph*24, lc.flux, '.k', ms=5)
     print(ph.max(), ph.min())
 
     ax.set_xlim(-48*dur, 48*dur)
