@@ -9,7 +9,7 @@ parser.add_argument('Folder', help='Folder containing FITS files')
 parser.add_argument('--target', type=int, default=None, help='Run on single target')
 parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
 parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
-parser.add_argument('--output', default=None)
+parser.add_argument('--output', default='BLS_result.dat')
 
 args = parser.parse_args()
 
@@ -90,4 +90,4 @@ else:
     results  = results[order]
     print(results)
 
-    np.savetxt('BLS_result.dat', results, fmt='%s')
+    np.savetxt(args.output, results, fmt='%s')
