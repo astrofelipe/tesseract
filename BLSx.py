@@ -60,6 +60,10 @@ if args.target is not None:
     ph = (t-t0 + 0.5*period) % period - 0.5*period
 
     import matplotlib.pyplot as plt
+    fig2, ax2 = plt.subplots(figsize=[20,3])
+    ax2.plot(lc.time, lc.flux, lw=.8)
+    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black')
+
     fig, ax = plt.subplots(figsize=[10,4])
 
     ax.plot(ph*24, lc.flux, '.k', ms=5)
