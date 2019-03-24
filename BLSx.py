@@ -61,8 +61,8 @@ if args.target is not None:
 
     import matplotlib.pyplot as plt
     fig2, ax2 = plt.subplots(figsize=[20,3])
-    ax2.plot(lc.time, lc.flux, lw=.8)
-    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black')
+    ax2.plot(lc.time, lc.flux, 'k', lw=.8)
+    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5)
 
     fig, ax = plt.subplots(figsize=[10,4])
 
