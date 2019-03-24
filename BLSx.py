@@ -19,7 +19,8 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
-    lc   = TessLightCurve(time=t, flux=f).flatten()
+    mask = (t > 2458492) & ((t < 2458504.5) | (t > 2458505))
+    lc   = TessLightCurve(time=t[mask], flux=f[mask]).flatten()
 
     durations = np.linspace(0.05, 0.2, 50)# * u.day
     model     = BLS(lc.time,lc.flux)
@@ -61,8 +62,8 @@ if args.target is not None:
 
     import matplotlib.pyplot as plt
     fig2, ax2 = plt.subplots(figsize=[20,3])
-    ax2.plot(lc.time, lc.flux, 'k', lw=.8)
-    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5)
+    ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
+    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
 
     fig, ax = plt.subplots(figsize=[10,4])
 

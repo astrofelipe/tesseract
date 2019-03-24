@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import argparse
+from lightkurve.lightcurve import TessLightCurve
 from matplotlib.gridspec import GridSpec
 
 
@@ -44,6 +45,8 @@ for i in range(args.start, len(BLSdata)):
         depth  = chunk.iloc[j,4]
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
+        lc   = TessLightCurve(time=t, flux=y).flatten()
+
         p    = (t - t0 + 0.5*period) % period - 0.5*period
         p2   = (t - t0 + period) % period - 0.5*period
 
@@ -58,14 +61,14 @@ for i in range(args.start, len(BLSdata)):
         else:
             rval = np.nan
 
-        lcs[j].plot(t, y, '.', ms=1)
+        lcs[j].plot(lc.time, lc.flux, '.', ms=1)
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)')
 
-        lcf[j].plot(p, y, '.', ms=1)
+        lcf[j].plot(p, lc.flux, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
 
-        lc2[j].plot(p2, y, '.', ms=1)
+        lc2[j].plot(p2, lc.flux, '.', ms=1)
         lc2[j].set_xlim(-0.2, 0.2)
 
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
