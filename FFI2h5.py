@@ -16,11 +16,14 @@ args = parser.parse_args()
 files  = np.sort(glob.glob(args.Folder + '*%d-%d*.fits' % (args.Camera, args.Chip)))
 nfiles = len(files)
 
-output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5', 'w')
-dset   = output.create_dataset('FFIs', (nfiles,), dtype='f')
-
 for i,f in enumerate(files[:10]):
     dat = fits.getdata(f)
+
+    if i==0:
+        nx, ny = dat.shape
+        output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5', 'w')
+        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f')
+
     dset[i] = dat
 
     del dat
