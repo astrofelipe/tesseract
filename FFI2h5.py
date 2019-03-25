@@ -21,11 +21,13 @@ for i,f in enumerate(files[:10]):
 
     if i==0:
         nx, ny = dat.shape
-        output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5', 'w')
-        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f')
+        output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
+        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f', compression='gzip')
 
     dset[i] = dat
 
     del dat
 
 print(dset)
+dset.flush()
+dset.close()
