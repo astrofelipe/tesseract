@@ -265,10 +265,13 @@ det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)
-    fig1 = plt.figure(figsize=[20,3])
-    gs   = gridspec.GridSpec(1, 2, width_ratios=[1,5])#, height_ratios=[1,1])
+    fig1 = plt.figure(figsize=[20,5])
+    gs   = gridspec.GridSpec(2, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
-    ax1 = plt.subplot(gs[0])
+    ax0 = plt.subplot(gs[1,1])
+    ax0.plot(time, bkgs, '-k', lw=1)
+
+    ax1 = plt.subplot(gs[:,0])
     ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r')
 
     if not args.psf:
@@ -291,7 +294,7 @@ if not args.noplots:
     ax1[1].plot(result.folded_phase - .5, result.folded_y, 'ok', ms=2)
     '''
 
-    ax = plt.subplot(gs[1])
+    ax = plt.subplot(gs[0,1])
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     #ax.plot(time, det_lc.flux, color='tomato', lw=.66)
