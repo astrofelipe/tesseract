@@ -3,6 +3,7 @@ import h5py
 import glob
 import argparse
 import numpy as np
+from astropy.io import fits
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='FFIs to single h5 file')
