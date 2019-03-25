@@ -30,7 +30,7 @@ for i,f in enumerate(tqdm(files)):
     dset[i] = dat
     del dat
 '''
-nx, ny = fits.getdata(f[0]).shape
+nx, ny = fits.getdata(files[0]).shape
 
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
 dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f', compression='gzip')
