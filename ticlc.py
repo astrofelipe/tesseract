@@ -37,6 +37,7 @@ parser.add_argument('--size', type=int, help='TPF size')
 parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, None), help='Mask Transits, input: period, t0')
 parser.add_argument('--everest', action='store_true')
 parser.add_argument('--noplots', action='store_true')
+parser.add_argument('--pld', action='store_true')
 parser.add_argument('--psf', action='store_true')
 parser.add_argument('--norm', action='store_true')
 
@@ -253,11 +254,6 @@ else:
     print(dap[bidx].sum(),'pixels in aperture')
     lkf  = lkf[bidx]
 
-corr = PLDCorrector(allhdus)
-print(np.isfinite(allhdus.hdu[1].data['FLUX']).sum(), allhdus.hdu[1].data['FLUX'].size)
-lcc  = corr.correct(aperture_mask=dap[bidx])
-lcc.plot()
-
 
 #tmask = mask_planet(time, 2458327.6782456427, 4.086673341286014)
 
@@ -272,11 +268,11 @@ else:
     mask = mask_planet(time, it0, iP, dur=idur)
 
 
-'''
-det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask)
-det_lc = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
-det_lc = det_lc.flatten(polyorder=2, window_length=51)
-'''
+if args.pld:
+    det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask)
+    det_lc = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
+    #det_lc = det_lc.flatten(polyorder=2, window_length=51)
+
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)
@@ -312,7 +308,8 @@ if not args.noplots:
     ax = plt.subplot(gs[0,1])
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
-    #ax.plot(time, det_lc.flux, color='tomato', lw=.66)
+    if args.pld:
+        ax.plot(time, det_lc.flux, color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
 
 
