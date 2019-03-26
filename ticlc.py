@@ -101,10 +101,6 @@ else:
 
 hdus  = allhdus.hdu
 
-corr = PLDCorrector(allhdus)
-lcc  = corr.correct()
-lcc.plot()
-
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
 
@@ -256,6 +252,11 @@ else:
     print('Best lk:', bidx)
     print(dap[bidx].sum(),'pixels in aperture')
     lkf  = lkf[bidx]
+
+corr = PLDCorrector(allhdus)
+print(dap)
+lcc  = corr.correct(aperture_mask=dap)
+lcc.plot()
 
 
 #tmask = mask_planet(time, 2458327.6782456427, 4.086673341286014)
