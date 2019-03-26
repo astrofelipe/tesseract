@@ -254,7 +254,7 @@ else:
     lkf  = lkf[bidx]
 
 corr = PLDCorrector(allhdus)
-print(dap[bidx])
+print(allhdus.hdu[1].data['FLUX'])
 lcc  = corr.correct(aperture_mask=dap[bidx])
 lcc.plot()
 
