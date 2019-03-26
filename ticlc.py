@@ -12,6 +12,7 @@ try:
     from lightkurve.lightcurve import TessLightCurve
     from lightkurve.search import search_tesscut
     from lightkurve.targetpixelfile import KeplerTargetPixelFile
+    from lightkurve import PLDCorrector
 except:
     os.system('rm ~/.astropy/config/*.cfg')
     from lightkurve.lightcurve import TessLightCurve
@@ -100,7 +101,7 @@ else:
 
 hdus  = allhdus.hdu
 
-corr = lightkurve.PLDCorrector(allhdus)
+corr = PLDCorrector(allhdus)
 lcc  = corr.correct
 lcc.plot()
 
