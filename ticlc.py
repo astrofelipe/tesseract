@@ -102,7 +102,7 @@ else:
 hdus  = allhdus.hdu
 
 corr = PLDCorrector(allhdus)
-lcc  = corr.correct
+lcc  = corr.correct()
 lcc.plot()
 
 #Data type
