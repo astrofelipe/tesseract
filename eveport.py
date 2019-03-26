@@ -1,6 +1,6 @@
 #from everest.mathutils import Interpolate, SavGol
 import numpy as np
-#import everest
+import everest
 import celerite
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
