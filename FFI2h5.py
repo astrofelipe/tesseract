@@ -19,15 +19,27 @@ files  = np.sort(glob.glob(args.Folder + '*%d-%d*.fits' % (args.Camera, args.Chi
 nfiles = len(files)
 
 for i,f in enumerate(tqdm(files)):
-    dat = fits.getdata(f)
+    hdu = fits.open(f)
+
+    flu = hdu[1].data
+    err = hdu[2].data
+    hdr = hdu[1].data
 
     if i==0:
         nx, ny = dat.shape
         output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
         dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f', compression='gzip')
+        derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='f', compression='gzip')
+        table  = output.create_dataset('data', (3, nfiles), dtype='f', compression='gzip')
 
-    dset[i] = dat
-    del dat
+    dset[i] = flu
+    derr[i] = err
+
+    table[0,i] = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
+    table[1,i] = hdr['BARYCORR']
+    table[2,i] = hdr['DQUALITY']
+
+    del flu, err, hdr, hdu
 
 '''
 nx, ny = fits.getdata(files[0]).shape

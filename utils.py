@@ -62,36 +62,23 @@ def detrender(t, y, yerr):
     return mu, std
 '''
 
-def FFICut(fnames, ra, dec, size):
-    boxing = KeplerTargetPixelFileFactory(n_cadences=len(fnames), n_rows=size, n_cols=size)
-    quals  = np.ones(len(fnames)) * np.nan
+def FFICut(ffis, x, y, size):
+    ncads  = len(ffis['FFIs'])
+    aflux  = ffis['FFIs'][:, x-size:x+size+1, y-size:y+size+1]
+    aerrs  = ffis['errs'][:, x-size:x+size+1, y-size:y+size+1]
 
-    for i,f in tqdm(enumerate(fnames), total=len(fnames)):
-        hdu = fits.open(f)
+    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
-        dflux   = hdu[1].data
-        derr    = hdu[2].data
-        hdr     = hdu[1].header
-
-        if i==0:
-            w      = WCS(hdr)
-            x,y = w.all_world2pix(ra, dec, 0)
-        #x  += 1
-        #x = int(x) + 0.5
-        #y = int(y) + 0.5
-
-        cutflux = Cutout2D(dflux, (x-1,y), size, mode='trim', wcs=w)
-        cuterrs = Cutout2D(derr, (x-1,y), size, mode='trim')
-
-        quals[i] = hdr['DQUALITY']
-        boxing.add_cadence(frameno=i, flux=cutflux.data, flux_err=cuterrs.data, header=hdr, wcs=cutflux.wcs)
+    for i,f in enumerate(tqdm(aflux)):
+        boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i])
 
     TPF = boxing.get_tpf()
-    TPF.hdu[1].data['QUALITY']   = quals
-    TPF.hdu[1].header['BJDREFI'] = hdr['BJDREFI']
-    TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
+    TPF.hdu[1].data['QUALITY']   = ffis['data'][2]
+    TPF.hdu[1].data['TIME']      = ffis['data'][0]
+    #TPF.hdu[1].header['BJDREFI'] = hdr['BJDREFI']
+    #TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
 
-    return TPF, cutflux.wcs
+    return TPF
 
 def pixel_border(mask):
     ydim, xdim = mask.shape

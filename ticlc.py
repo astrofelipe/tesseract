@@ -83,7 +83,13 @@ if args.everest:
 if args.folder is not None:
     #Offline mode
     fnames  = np.sort(glob.glob(args.folder + '*s%04d-%d-%d-*ffic.fits' % (args.Sector, cam, ccd)))
-    allhdus, w = FFICut(fnames, ra, dec, 21)
+    fhdr    = np.getheader(fnames[0], 1)
+    ffis    = args.Folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
+
+    w   = WCS(fhdr)
+    x,y = w.all_world2pix(ra, dec, 0)
+
+    allhdus, w = FFICut(ffis, ra, dec, 21)
 
 else:
     #Online mode
