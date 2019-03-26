@@ -23,7 +23,7 @@ for i,f in enumerate(tqdm(files)):
 
     flu = hdu[1].data
     err = hdu[2].data
-    hdr = hdu[1].data
+    hdr = hdu[1].header
 
     if i==0:
         nx, ny = flu.shape
@@ -34,8 +34,6 @@ for i,f in enumerate(tqdm(files)):
 
     dset[i] = flu
     derr[i] = err
-
-    print(hdr['TSTART'])
 
     table[0][i] = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
     table[1][i] = hdr['BARYCORR']
