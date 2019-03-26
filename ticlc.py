@@ -99,7 +99,7 @@ else:
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
-print(type(hdus))
+print(type(hdus), type(allhdus))
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
