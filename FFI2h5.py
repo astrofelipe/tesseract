@@ -35,6 +35,8 @@ for i,f in enumerate(tqdm(files)):
     dset[i] = flu
     derr[i] = err
 
+    print(table.shape)
+
     table[0,i] = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
     table[1,i] = hdr['BARYCORR']
     table[2,i] = hdr['DQUALITY']
