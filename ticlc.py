@@ -254,8 +254,8 @@ else:
     lkf  = lkf[bidx]
 
 corr = PLDCorrector(allhdus)
-print(dap)
-lcc  = corr.correct(aperture_mask=dap)
+print(dap[bidx])
+lcc  = corr.correct(aperture_mask=dap[bidx])
 lcc.plot()
 
 
