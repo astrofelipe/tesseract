@@ -71,15 +71,15 @@ ccd = ccd[0]
 
 coord = SkyCoord(ra, dec, unit='deg')
 
+'''
 #if args.everest:
-    '''
     from sklearn.neighbors import KDTree
     X    = np.transpose([cata['RA'], cata['Dec']])
     tree = KDTree(X)
     nd, ni = tree.query(X, k=11)
     ni = ni[:,1:]
     print(cata.iloc[ni[0]])
-    '''
+'''
 
 
 if args.folder is not None:
