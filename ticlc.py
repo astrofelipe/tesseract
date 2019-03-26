@@ -99,7 +99,10 @@ else:
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
-print(type(hdus), type(allhdus))
+
+corr = lightkurve.PLDCorrector(allhdus)
+lcc  = corr.correct
+lcc.plot()
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
