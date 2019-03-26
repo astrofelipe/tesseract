@@ -269,7 +269,7 @@ else:
 
 
 if args.pld:
-    det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask)
+    det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=8)
     det_lc = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
     #det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
@@ -309,7 +309,6 @@ if not args.noplots:
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     if args.pld:
-        print(det_lc.flux)
         ax.plot(time, det_lc.flux, color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
 
