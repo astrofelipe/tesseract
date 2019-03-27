@@ -118,6 +118,11 @@ time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
+
+fig, ax = plt.subplots()
+ax.matshow(flux[0])
+plt.show()
+
 #print(hdus[1].data.columns)
 #print(hdus[1].data['TIME'][:10])
 
