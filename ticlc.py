@@ -119,8 +119,6 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 
-print(x,y)
-
 fig, ax = plt.subplots()
 ax.matshow(flux[0])
 plt.show()
