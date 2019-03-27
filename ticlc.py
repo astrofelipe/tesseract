@@ -95,6 +95,7 @@ if args.folder is not None:
     x,y = w.all_world2pix(ra, dec, 0)
 
     allhdus = FFICut(ffis, ra, dec, 21)
+    print(allhdus)
 
 else:
     #Online mode
@@ -102,6 +103,7 @@ else:
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
+print(hdus)
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
