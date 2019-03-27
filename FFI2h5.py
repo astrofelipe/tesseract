@@ -28,9 +28,9 @@ for i,f in enumerate(tqdm(files)):
     if i==0:
         nx, ny = flu.shape
         output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
-        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f', compression='gzip')
-        derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='f', compression='gzip')
-        table  = output.create_dataset('data', (3, nfiles), dtype='f', compression='gzip')
+        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='gzip')
+        derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
+        table  = output.create_dataset('data', (3, nfiles), dtype='float64', compression='gzip')
 
     dset[i] = flu
     derr[i] = err
