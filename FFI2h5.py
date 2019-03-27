@@ -36,10 +36,8 @@ for i,f in enumerate(tqdm(files)):
     derr[i] = err
 
     output['data'][0,i] = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
-    print(0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI'])
-    print(table[0][i])
-    table[1][i] = hdr['BARYCORR']
-    table[2][i] = hdr['DQUALITY']
+    output['data'][1,i] = hdr['BARYCORR']
+    output['data'][2,i] = hdr['DQUALITY']
 
     del flu, err, hdr, hdu
 
