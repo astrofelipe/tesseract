@@ -118,6 +118,7 @@ time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
+print(flux[0])
 #print(hdus[1].data.columns)
 #print(hdus[1].data['TIME'][:10])
 
