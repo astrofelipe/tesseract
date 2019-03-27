@@ -69,6 +69,7 @@ def FFICut(ffis, x, y, size):
     ncads  = len(ffis['FFIs'])
     x      = int(x)
     y      = int(y)
+    print(x, size//2, x-size//2)
 
     aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
     aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
