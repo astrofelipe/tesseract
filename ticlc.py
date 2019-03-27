@@ -101,10 +101,10 @@ else:
     #Online mode
     allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=21, download_dir='.')
     w       = WCS(allhdus.hdu[2].header)
-    print(allhdus,1)
 
 hdus  = allhdus.hdu
-print(hdus,2)
+
+print(hdus[1].data['FLUX'])
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
