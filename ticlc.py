@@ -89,6 +89,7 @@ if args.folder is not None:
     fnames  = np.sort(glob.glob(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd)))
     print(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd))
     fhdr    = fits.getheader(fnames[0], 1)
+    print(fits.getdata(fnames[0], 1))
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
@@ -235,9 +236,7 @@ if args.psf:
 
 else:
     #DBSCAN Aperture
-    print(flux)
-    print(bkgs)
-    print(bkgs[:,None,None])
+    print(flux.shape)
     daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
     dap  = np.array([select_aperture(d, x, y) for d in daps])
 
