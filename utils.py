@@ -67,6 +67,7 @@ def FFICut(ffis, x, y, size):
     ffis   = h5py.File(ffis, 'r')
 
     ncads  = len(ffis['FFIs'])
+    print(x,y)
     x      = int(x)
     y      = int(y)
     print(x, size//2, x-size//2)
