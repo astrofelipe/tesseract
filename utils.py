@@ -1,5 +1,6 @@
 #import celerite
 import numpy as np
+import h5py
 from tqdm import tqdm
 #from celerite import terms
 from scipy.optimize import minimize
@@ -63,6 +64,7 @@ def detrender(t, y, yerr):
 '''
 
 def FFICut(ffis, x, y, size):
+    ffis   = h5py.File(ffis, 'r')
     ncads  = len(ffis['FFIs'])
     aflux  = ffis['FFIs'][:, x-size:x+size+1, y-size:y+size+1]
     aerrs  = ffis['errs'][:, x-size:x+size+1, y-size:y+size+1]
