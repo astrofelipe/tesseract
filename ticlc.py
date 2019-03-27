@@ -33,7 +33,7 @@ parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
 parser.add_argument('TIC', type=float, nargs='+', help='TIC ID or RA DEC')
 parser.add_argument('Sector', type=int, help='Sector')
 parser.add_argument('--folder', type=str, default=None)
-parser.add_argument('--size', type=int, help='TPF size')
+parser.add_argument('--size', type=int, default=21, help='TPF size')
 parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, None), help='Mask Transits, input: period, t0')
 parser.add_argument('--everest', action='store_true')
 parser.add_argument('--noplots', action='store_true')
@@ -95,11 +95,11 @@ if args.folder is not None:
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
-    allhdus = FFICut(ffis, y, x, 21)
+    allhdus = FFICut(ffis, y, x, args.size)
 
 else:
     #Online mode
-    allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=21, download_dir='.')
+    allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
