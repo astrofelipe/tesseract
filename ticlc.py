@@ -89,7 +89,7 @@ if args.folder is not None:
     fnames  = np.sort(glob.glob(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd)))
     print(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd))
     fhdr    = fits.getheader(fnames[0], 1)
-    ffis    = args.Folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
+    ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
