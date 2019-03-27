@@ -95,7 +95,7 @@ if args.folder is not None:
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
-    allhdus = FFICut(ffis, x, y, 21)
+    allhdus = FFICut(ffis, y, x, 21)
 
 else:
     #Online mode
