@@ -67,10 +67,8 @@ def FFICut(ffis, x, y, size):
     ffis   = h5py.File(ffis, 'r')
 
     ncads  = len(ffis['FFIs'])
-    print(x,y)
     x      = int(x)
     y      = int(y)
-    print(x, size//2, x-size//2)
 
     aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
     aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
@@ -86,6 +84,8 @@ def FFICut(ffis, x, y, size):
     #TPF.hdu[1].header['BJDREFI'] = hdr['BJDREFI']
     #TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
 
+    print(ffis['data'][0])
+    print(TPF.hdu[1].data['TIME'])
     return TPF
 
 def pixel_border(mask):
