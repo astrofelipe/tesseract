@@ -238,8 +238,8 @@ if args.psf:
 
 else:
     #DBSCAN Aperture
-    x = x - int(x) + size//2
-    y = y - int(y) + size//2
+    x = x - int(x) + args.size//2
+    y = y - int(y) + args.size//2
 
     daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
     dap  = np.array([select_aperture(d, x, y) for d in daps])
