@@ -95,7 +95,6 @@ if args.folder is not None:
     x,y = w.all_world2pix(ra, dec, 0)
 
     allhdus = FFICut(ffis, ra, dec, 21)
-    print(allhdus)
 
 else:
     #Online mode
@@ -103,9 +102,6 @@ else:
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
-
-print(hdus[1].data['FLUX'])
-print(hdus[1].data['FLUX_ERR'])
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
@@ -121,6 +117,7 @@ time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
+print(time)
 #print(hdus[1].data.columns)
 #print(hdus[1].data['TIME'][:10])
 
