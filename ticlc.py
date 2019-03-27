@@ -105,6 +105,7 @@ else:
 hdus  = allhdus.hdu
 
 print(hdus[1].data['FLUX'])
+print(hdus[1].data['FLUX_ERR'])
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
