@@ -119,9 +119,6 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 
-fig, ax = plt.subplots()
-ax.matshow(flux[0])
-plt.show()
 
 #print(hdus[1].data.columns)
 #print(hdus[1].data['TIME'][:10])
@@ -241,6 +238,9 @@ if args.psf:
 
 else:
     #DBSCAN Aperture
+    x = x - int(x) + size//2
+    y = y - int(y) + size//2
+
     daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
     dap  = np.array([select_aperture(d, x, y) for d in daps])
 
