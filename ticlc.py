@@ -93,7 +93,7 @@ if args.folder is not None:
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
-    x,y = w.all_world2pix(ra, dec, 0)
+    x,y = w.wcs_world2pix(ra, dec, 0)
 
     allhdus = FFICut(ffis, y, x, args.size)
 
