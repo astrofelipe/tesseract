@@ -87,9 +87,8 @@ coord = SkyCoord(ra, dec, unit='deg')
 if args.folder is not None:
     #Offline mode
     fnames  = np.sort(glob.glob(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd)))
-    print(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd))
     fhdr    = fits.getheader(fnames[5], 1)
-    print(fits.getdata(fnames[0], 1))
+    print(fnames[5])
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
