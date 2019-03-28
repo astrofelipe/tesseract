@@ -94,6 +94,7 @@ if args.folder is not None:
 
     w   = WCS(fhdr)
     x,y = w.wcs_world2pix(ra, dec, 0)
+    print(x,y)
 
     allhdus = FFICut(ffis, x, y, args.size)
 
@@ -103,7 +104,6 @@ else:
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
-print(x,y)
 
 #Data type
 qual = hdus[1].data['QUALITY'] == 0
