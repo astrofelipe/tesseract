@@ -96,7 +96,7 @@ if args.folder is not None:
     print(x,y)
 
     fig, ax = plt.subplots()
-    ax.matshow(fits.getdata(fnames[1]))
+    ax.matshow(np.log10(fits.getdata(fnames[1])))
     ax.plot(x,y,'.r')
     plt.show()
 
