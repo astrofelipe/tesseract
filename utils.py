@@ -86,6 +86,7 @@ def FFICut(ffis, x, y, size):
 
     print(ffis['data'][0])
     print(TPF.hdu[1].data['TIME'])
+    print(TPF.hdu[1].data['QUALITY'])
     return TPF
 
 def pixel_border(mask):
