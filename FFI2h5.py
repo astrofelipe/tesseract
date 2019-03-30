@@ -18,8 +18,9 @@ args = parser.parse_args()
 files  = np.sort(glob.glob(args.Folder + '*%d-%d*.fits' % (args.Camera, args.Chip)))
 nfiles = len(files)
 
+'''
 for i,f in enumerate(tqdm(files)):
-    hdu = fits.open(f)
+    hdu = fits.open(f, memmap=False)
 
     flu = hdu[1].data
     err = hdu[2].data
@@ -47,8 +48,7 @@ nx, ny = fits.getdata(files[0]).shape
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
 dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='f', compression='gzip')
 
-dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f) for f in tqdm(files))
-'''
+dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=False) for f in tqdm(files))
 
 
 print(dset)
