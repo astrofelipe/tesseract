@@ -67,7 +67,7 @@ else:
 
 print(ra, dec)
 
-_, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec)
+_, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
 ccd = ccd[0]
 #print(args.TIC, ra, dec, cam, ccd)
