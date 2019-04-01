@@ -1,6 +1,7 @@
 import glob
 import argparse
 import numpy as np
+from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
 
@@ -85,7 +86,7 @@ else:
     from joblib import Parallel, delayed
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=10)(delayed(run_BLS)(f) for f in allfiles))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles)))
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)

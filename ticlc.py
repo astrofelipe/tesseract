@@ -65,6 +65,8 @@ if len(args.TIC) < 2:
 else:
     ra, dec = args.TIC
 
+print(ra, dec)
+
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec)
 cam = cam[0]
 ccd = ccd[0]
