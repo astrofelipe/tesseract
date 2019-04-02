@@ -9,7 +9,7 @@ parser.add_argument('Folder', type=str)
 
 args = parser.parse_args()
 
-names = ['ee', 'ii' 'ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAIA', 'APASS', 'KIC',
+names = ['ee', 'ii', 'ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAIA', 'APASS', 'KIC',
          'objType', 'typeSrc', 'ra', 'dec', 'POSflag', 'pmRA', 'e_pmRA', 'pmDEC', 'e_pmDEC', 'PMflag',
          'plx', 'e_plx', 'PARflag', 'gallong', 'gallat', 'eclong', 'eclat', 'Bmag', 'e_Bmag',
          'Vmag', 'e_Vmag', 'umag', 'e_umag', 'rmag', 'e_rmag', 'imag', 'e_imag', 'zmag', 'e_zmag',
@@ -21,7 +21,7 @@ names = ['ee', 'ii' 'ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALL
 
 files = glob.glob(args.Folder + 'tic_*.csv')
 
-df = pd.read_csv(files[0], index_col=False)
+df = pd.read_csv(files[0], names=names)
 print(len(names), len(df.columns))
 print(df.columns)
 print(df['eclong'], df['eclat'])
