@@ -22,8 +22,8 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
 files = glob.glob(args.Folder + 'tic_*.csv')
 
 df = pd.read_csv(files[0], names=names)
-print(len(names), len(df.colums()))
-print(df.columns())
+print(len(names), len(df.columns))
+print(df.columns)
 print(df['eclong'], df['eclat'])
 
 print(df.head())
