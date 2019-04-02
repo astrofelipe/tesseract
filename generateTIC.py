@@ -21,7 +21,7 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
 
 files = glob.glob(args.Folder + 'tic_*.csv')
 
-df = pd.read_csv(files[0], names=names, index_col=False)
+df = pd.read_csv(files[0], names=names)
 print(df['eclong'])
 
 print(df.head())
