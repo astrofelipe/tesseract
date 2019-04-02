@@ -9,7 +9,7 @@ parser.add_argument('Folder', type=str)
 
 args = parser.parse_args()
 
-names = ['ee', 'ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAIA', 'APASS', 'KIC',
+names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAIA', 'APASS', 'KIC',
          'objType', 'typeSrc', 'ra', 'dec', 'POSflag', 'pmRA', 'e_pmRA', 'pmDEC', 'e_pmDEC', 'PMflag',
          'plx', 'e_plx', 'PARflag', 'gallong', 'gallat', 'eclong', 'eclat', 'Bmag', 'e_Bmag',
          'Vmag', 'e_Vmag', 'umag', 'e_umag', 'rmag', 'e_rmag', 'imag', 'e_imag', 'zmag', 'e_zmag',
