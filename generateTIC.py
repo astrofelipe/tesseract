@@ -21,5 +21,6 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
 files = glob.glob(args.Folder + 'tic_*.csv')
 
 df = dd.read_csv(files[0], names=names)
+print(df['eclong', 'eclat'])
 
 print(df.head())
