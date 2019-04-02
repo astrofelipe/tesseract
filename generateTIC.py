@@ -12,4 +12,4 @@ files = glob.glob(args.Folder + 'tic_*.csv')
 
 df = dd.read_csv(files[0])
 
-print(df)
+print(df.head())
