@@ -2,6 +2,7 @@ import dask.dataframe as dd
 import pandas as pd
 import glob
 import argparse
+import sqlite3
 
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
@@ -23,3 +24,7 @@ files = glob.glob(args.Folder + 'tic_*.csv')
 
 df = pd.read_csv(files[0], header=None)
 print(df.head())
+
+con = sqlite3.connect('eee.db')
+
+df.to_sql('TIC', con=, if_exists='replace', index_label='id')
