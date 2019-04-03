@@ -26,5 +26,10 @@ df = pd.read_csv(files[0], header=None)
 print(df.head())
 
 con = sqlite3.connect('eee.db')
+c   = conn.cursor()
 
 df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
+
+t = ('10',)
+c.execute('SELECT * FROM TIC WHERE Tmag<?', t)
+print(c.fetchone())
