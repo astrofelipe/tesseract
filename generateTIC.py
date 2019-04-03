@@ -21,5 +21,5 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
 
 files = glob.glob(args.Folder + 'tic_*.csv')
 
-df = pd.read_csv(files[0])
+df = pd.read_csv(files[0], header=None)
 print(df.head())
