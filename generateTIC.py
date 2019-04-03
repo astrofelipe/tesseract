@@ -27,4 +27,4 @@ print(df.head())
 
 con = sqlite3.connect('eee.db')
 
-df.to_sql('TIC', con=, if_exists='replace', index_label='id')
+df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
