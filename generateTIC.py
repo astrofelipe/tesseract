@@ -30,6 +30,5 @@ c   = con.cursor()
 
 df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
 
-t = ('10',)
-c.execute('SELECT * FROM TIC WHERE Tmag<?', t)
+c.execute('SELECT * FROM TIC')
 print(c.fetchone())
