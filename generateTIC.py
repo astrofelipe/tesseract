@@ -31,4 +31,4 @@ c   = con.cursor()
 df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
 
 c.execute('SELECT * FROM TIC')
-print(c.fetchone())
+print(c.fetchall())
