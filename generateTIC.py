@@ -3,6 +3,7 @@ import pandas as pd
 import glob
 import argparse
 import sqlite3
+from tqdm import tqdm
 
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
@@ -21,17 +22,17 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
          'ebv', 'e_ebv', 'numcont', 'contratio', 'disposition', 'duplicate_i', 'priority', 'objID']
 
 files = glob.glob(args.Folder + 'tic_*.csv')
+con   = sqlite3.connect('eee.db')
+c     = con.cursor()
+#26 27
 
-print(files[0])
-df = pd.read_csv(files[0], header=None)
-print(df.head())
+for i,f in enumerate(tqdm(files)):
+    df = pd.read_csv(f], header=None)
 
-con = sqlite3.connect('eee.db')
-c   = con.cursor()
+    exst = 'replace' if i==0 else 'append'
+    df.to_sql('TIC', con=con, if_exists=exst, index_label='id')
 
-df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
 
-c.execute('SELECT * FROM TIC WHERE 1=0') #26 27
-print([d[0] for d in c.description])
-c.execute('SELECT * FROM TIC WHERE "11"="STAR"')
-print(c.fetchone())
+print('Closing...')
+conn.commit()
+conn.close()
