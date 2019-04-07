@@ -30,5 +30,6 @@ c   = con.cursor()
 
 df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
 
-c.execute('SELECT * FROM TIC')
-print(c.fetchall())
+c.execute('SELECT * FROM TIC WHERE 1=0')
+print([d[0] for d in c.description])
+#print(c.fetchall())
