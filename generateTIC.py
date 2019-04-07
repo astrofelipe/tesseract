@@ -27,7 +27,7 @@ c     = con.cursor()
 #26 27
 
 for i,f in enumerate(tqdm(files)):
-    df = pd.read_csv(f], header=None)
+    df = pd.read_csv(f, header=None)
 
     exst = 'replace' if i==0 else 'append'
     df.to_sql('TIC', con=con, if_exists=exst, index_label='id')
