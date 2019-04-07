@@ -22,6 +22,7 @@ names = ['ID', 'version', 'HIP', 'TYC', 'UCAC', '2MASS', 'SDSS', 'ALLWISE', 'GAI
 
 files = glob.glob(args.Folder + 'tic_*.csv')
 
+print(files[0])
 df = pd.read_csv(files[0], header=None)
 print(df.head())
 
@@ -30,7 +31,7 @@ c   = con.cursor()
 
 df.to_sql('TIC', con=con, if_exists='replace', index_label='id')
 
-c.execute('SELECT * FROM TIC WHERE 1=0')
+c.execute('SELECT * FROM TIC WHERE 1=0') #26 27
 print([d[0] for d in c.description])
 c.execute('SELECT * FROM TIC WHERE "11"="STAR"')
 print(c.fetchone())
