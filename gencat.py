@@ -20,30 +20,31 @@ args = parser.parse_args()
 
 sec = 's%04d' % args.Sector
 print(sec)
-'''
+
+img = '/horus/TESS/FFI/s0007/tess2019008025936-s0007-1-1-0131-s_ffic.fits'
+
 hdr = fits.getheader(img, 1)
 dat = fits.getdata(img)
 w   = WCS(hdr)
 
-
+'''
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots()
 ax.matshow(np.log10(dat), cmap='YlGnBu_r')
 ax.plot([44], [0], '.r')
 plt.show()
-
+'''
 
 ra1, dec1 = w.all_pix2world(44, 0, 0)       #TOP LEFT
 ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
 ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
 ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
-'''
+
 
 #Ecliptic limits:
 #eclat ~-72 a -inf (-90)
 #eclon ver en cada sector (ancho ~90)
 
-'''
 c1 = SkyCoord(ra1, dec1, unit='deg').transform_to('geocentrictrueecliptic')
 c2 = SkyCoord(ra2, dec2, unit='deg').transform_to('geocentrictrueecliptic')
 c3 = SkyCoord(ra3, dec3, unit='deg').transform_to('geocentrictrueecliptic')
@@ -60,11 +61,11 @@ top    = np.max([dec1, dec4])
 bottom = np.min([dec2, dec3])
 
 print(left, right, top, bottom)
-'''
 
 eclim = {'s0002': [[298, 388], [-90, 0]],
          's0005': [[19, 111], [-90, 0]],
-         's0006': [[46, 140], [-90, 0]]}
+         's0006': [[46, 140], [-90, 0]],
+         's0007': [[], [-90, 0]]}
 
 elo, ela = eclim[sec]
 
