@@ -32,6 +32,8 @@ for i,f in enumerate(tqdm(files)):
     exst = 'replace' if i==0 else 'append'
     df.to_sql('TIC', con=con, if_exists=exst, index_label='id')
 
+    del(df)
+
 
 print('Closing...')
 conn.commit()
