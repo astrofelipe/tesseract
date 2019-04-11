@@ -97,10 +97,12 @@ if args.folder is not None:
     x,y = w.all_world2pix(ra, dec, 0)
     print(x,y)
 
+    '''
     fig, ax = plt.subplots()
     ax.matshow(np.log10(fits.getdata(fnames[1])))
     ax.plot(x,y,'.r')
     plt.show()
+    '''
 
     allhdus = FFICut(ffis, y, x, args.size)
 
