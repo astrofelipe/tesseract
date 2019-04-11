@@ -159,4 +159,4 @@ catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
 magord      = np.argsort(catalogfilt['Tmag'])
 catalogfilt = catalogfilt[magord]
 print(catalogfilt)
-catalogfilt.write('%s.csv' % sec, format='csv', overwrite=True)
+catalogfilt.write('%s_%f-%f.csv' % (sec, args.min_mag, args.max_mag), format='csv', overwrite=True)
