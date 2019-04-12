@@ -20,8 +20,8 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
-    mask = (t > 2458492) & ((t < 2458504.5) | (t > 2458505))
-    lc   = TessLightCurve(time=t[mask], flux=f[mask]).flatten()
+    #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
+    lc   = TessLightCurve(time=t, flux=f).flatten()
 
     durations = np.linspace(0.05, 0.2, 50)# * u.day
     model     = BLS(lc.time,lc.flux)
