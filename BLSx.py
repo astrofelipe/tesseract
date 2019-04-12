@@ -8,7 +8,8 @@ from astropy.stats import BoxLeastSquares as BLS
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
 parser.add_argument('Folder', help='Folder containing FITS files')
 parser.add_argument('--target', type=int, default=None, help='Run on single target')
-parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
+#parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
+parser.add_argument('--max-period', type=float, default=30.)
 parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
 parser.add_argument('--output', default='BLS_result.dat')
 
@@ -25,7 +26,7 @@ def run_BLS(fl):
 
     durations = np.linspace(0.05, 0.2, 50)# * u.day
     model     = BLS(lc.time,lc.flux)
-    result    = model.autopower(durations, frequency_factor=5.0, maximum_period=30.0)
+    result    = model.autopower(durations, frequency_factor=5.0, maximum_period=args.max_period)
     idx       = np.argmax(result.power)
 
     period = result.period[idx]
