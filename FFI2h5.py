@@ -61,8 +61,14 @@ dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compre
 derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
 table  = output.create_dataset('data', (3, nfiles), dtype='float64', compression='gzip')
 
-dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=False) for f in tqdm(files))
-derr[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, 2, memmap=False) for f in tqdm(files))
+a = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=False) for f in tqdm(files))
+dset[:] = a
+del(a)
+
+a = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, 2, memmap=False) for f in tqdm(files))
+derr[:] = a
+del(a)
+
 table[:] = np.transpose(Parallel(n_jobs=args.ncpu)(delayed(make_table)(f) for f in tqdm(files)))
 
 
