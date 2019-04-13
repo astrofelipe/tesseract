@@ -13,6 +13,7 @@ parser.add_argument('Sector', type=int)
 parser.add_argument('Camera', type=int)
 parser.add_argument('Chip', type=int)
 parser.add_argument('--ncpu', type=int, default=10)
+parser.add_argument('--nomemmap', action='store_false')
 args = parser.parse_args()
 
 files  = np.sort(glob.glob(args.Folder + '*%d-%d*.fits' % (args.Camera, args.Chip)))
@@ -67,8 +68,8 @@ dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compre
 derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
 table  = output.create_dataset('data', (8, nfiles), dtype='float64', compression='gzip')
 
-dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=False) for f in tqdm(files))
-derr[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, 2, memmap=False) for f in tqdm(files))
+dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=args.nomemmap) for f in tqdm(files))
+derr[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, 2, memmap=args.nomemmap) for f in tqdm(files))
 
 table[:] = np.transpose(Parallel(n_jobs=args.ncpu)(delayed(make_table)(f) for f in tqdm(files)))
 
