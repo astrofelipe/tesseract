@@ -5,6 +5,7 @@ from astropy.coordinates import SkyCoord
 from astropy.table import vstack, unique
 from tqdm import tqdm
 from tess_stars2px import tess_stars2px_function_entry as ts2p
+from joblib import Parallel, delayed
 import numpy as np
 import argparse
 
@@ -79,7 +80,7 @@ if wrapcheck:
     eclos = np.insert(eclos, idx+1, [360, 0])
 
 print('Scanning... (1/2)')
-for i in tqdm(range(len(eclos) - 1)):
+def gocat(i):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
@@ -112,12 +113,11 @@ for i in tqdm(range(len(eclos) - 1)):
 
         catalogdata = catalogdata[mask]
 
-        if i==0 and j==0:
-            supercata = catalogdata
-        else:
-            supercata = vstack([supercata, catalogdata])
+    return catalogdata
 
-        supercata = unique(supercata, keys=['ID'])
+supercata = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i) for i in tqdm(range(len(eclos) - 1))))
+supercata = unique(supercata, keys=['ID'])
+
 
 print('\nScanning... (2/2)')
 #Pole
