@@ -51,13 +51,13 @@ def make_table(f):
     #t = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
     ti = hdr['TSTART'] + hdr['BJDREFI']
     tf = hdr['TSTOP'] + hdr['BJDREFI']
-    c  = hdr['FFIINDEX']
+    #c  = hdr['FFIINDEX']
     b  = hdr['BARYCORR']
     q  = hdr['DQUALITY']
     #p1 = hdr['POS_CORR1']
     #p2 = hdr['POS_CORR2']
 
-    return ti,tf,c,b,q
+    return ti,tf,b,q
 
 
 nx, ny = fits.getdata(files[0]).shape
@@ -65,7 +65,7 @@ nx, ny = fits.getdata(files[0]).shape
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='lzf')
 derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='lzf')
-table  = output.create_dataset('data', (5, nfiles), dtype='float64', compression='lzf')
+table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='lzf')
 
 dset[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, memmap=args.nomemmap) for f in tqdm(files))
 derr[:] = Parallel(n_jobs=args.ncpu)(delayed(fits.getdata)(f, 2, memmap=args.nomemmap) for f in tqdm(files))
