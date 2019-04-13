@@ -85,7 +85,7 @@ def gocat(i):
     eloi2 = int(eclos[i+1])
 
     if eloi1==360 and eloi2==0:
-        continue
+        return
 
     for j in tqdm(range(len(eclas) - 1)):
         elai1 = int(eclas[j])
