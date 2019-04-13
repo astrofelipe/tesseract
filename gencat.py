@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description='Catalog generator')
 parser.add_argument('Sector', type=int)
 parser.add_argument('--min-mag', type=float, default=-999, help='Minimum magnitude')
 parser.add_argument('--max-mag', type=float, default=14, help='Maximum magnitude')
+parser.add_argument('--ncpu', type=int, default=5, help='Number of CPUs to use')
 
 args = parser.parse_args()
 
