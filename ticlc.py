@@ -129,13 +129,8 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 
-
-#print(hdus[1].data.columns)
-#print(hdus[1].data['TIME'][:10])
-
 #Star position
 x,y = w.all_world2pix(ra, dec, 0)
-#print(x,y)
 
 #Background
 for i,f in enumerate(flux):
@@ -145,44 +140,6 @@ for i,f in enumerate(flux):
 
 if args.psf:
     flux_psf = np.zeros(len(flux))
-
-    from photutils.psf import IntegratedGaussianPRF, BasicPSFPhotometry, DAOGroup, IterativelySubtractedPSFPhotometry
-    from photutils.background import MMMBackground, MADStdBackgroundRMS
-    from photutils.detection import IRAFStarFinder
-    from astropy.modeling.fitting import LevMarLSQFitter
-    from astropy.stats import gaussian_sigma_to_fwhm
-    from astropy.table import Table, vstack
-    from tqdm import tqdm
-
-    '''
-    for i,f in enumerate(flux):
-        bkgrms = MADStdBackgroundRMS()
-        std    = bkgrms(f)
-    '''
-
-    '''
-    positions = Table(names=['x_0', 'y_0'], data=np.array([x, y]))
-    sigma_psf = 1.0
-    daogroup  = DAOGroup(2.0*sigma_psf*gaussian_sigma_to_fwhm)
-    psf_model = IntegratedGaussianPRF(sigma=sigma_psf)
-
-    iraffind = IRAFStarFinder(threshold=2.5*np.median(bkgs),
-                          fwhm=sigma_psf*gaussian_sigma_to_fwhm,
-                          minsep_fwhm=0.01, roundhi=5.0, roundlo=-5.0,
-                          sharplo=0.0, sharphi=2.0)
-
-    psf_photometry = BasicPSFPhotometry(group_maker=daogroup,
-                                 bkg_estimator=MMMBackground(),
-                                 psf_model=psf_model,
-                                 fitter=LevMarLSQFitter(),
-                                 fitshape=(11,11))
-
-
-    psf_results  = vstack([psf_photometry(image=f, init_guesses=positions) for f in tqdm(flux)])
-    flux_psf     = np.array(psf_results['flux_fit'])
-    flux_psf_err = np.array(psf_results['flux_fit'])
-    '''
-
 
     import tensorflow as tf
     from vaneska.models import Gaussian

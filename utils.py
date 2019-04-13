@@ -76,7 +76,19 @@ def FFICut(ffis, x, y, size):
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
     for i,f in enumerate(tqdm(aflux)):
-        boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i])
+        ti = ffis['data'][0,i]
+        tf = ffis['data'][1,i]
+        tc = ffis['data'][2,i]
+        c  = ffis['data'][3,i]
+        b  = ffis['data'][4,i]
+        q  = ffis['data'][5,i]
+        p1 = ffis['data'][6,i]
+        p2 = ffis['data'][7,i]
+
+        header = {'TSTART': ti, 'TSTOP': tf, 'TIMECORR': tc,
+                  'CADENCEN': c, 'QUALITY': q, 'POS_CORR1': p1, 'POS_CORR2': p2}
+
+        boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i], header=header)
 
     TPF = boxing.get_tpf()
     TPF.hdu[1].data['QUALITY']   = ffis['data'][2]
