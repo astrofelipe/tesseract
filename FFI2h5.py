@@ -62,7 +62,7 @@ def make_table(f):
 
 nx, ny = fits.getdata(files[0]).shape
 
-output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
+output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='gzip')
 derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
 table  = output.create_dataset('data', (5, nfiles), dtype='float64', compression='gzip')
