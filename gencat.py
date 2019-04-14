@@ -81,42 +81,37 @@ if wrapcheck:
     eclos = np.insert(eclos, idx+1, [360, 0])
 
 print('Scanning... (1/2)')
-def gocat(i):
+def gocat(i, j):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
     if eloi1==360 and eloi2==0:
         return
 
-    for j in range(len(eclas) - 1):
-        elai1 = int(eclas[j])
-        elai2 = int(eclas[j+1])
+    elai1 = int(eclas[j])
+    elai2 = int(eclas[j+1])
 
-        catalogdata = Catalogs.query_criteria(catalog='Tic',
-                                              eclong=[eloi1, eloi2],
-                                              eclat=[elai1, elai2],
-                                              Tmag=[args.min_mag, args.max_mag],
-                                              objType='STAR')
+    catalogdata = Catalogs.query_criteria(catalog='Tic',
+                                          eclong=[eloi1, eloi2],
+                                          eclat=[elai1, elai2],
+                                          Tmag=[args.min_mag, args.max_mag],
+                                          objType='STAR')
 
-        tics = np.array(catalogdata['ID'])
-        ras  = np.array(catalogdata['ra'])
-        dec  = np.array(catalogdata['dec'])
+    tics = np.array(catalogdata['ID'])
+    ras  = np.array(catalogdata['ra'])
+    dec  = np.array(catalogdata['dec'])
 
-        if j==0:
-            res = ts2p(tics, ras, dec)
-        else:
-            res = ts2p(tics, ras, dec, scInfo=res[-1])
+    res = ts2p(tics, ras, dec)
 
-        sma = np.array(res[3]) == args.Sector
-        sid = res[0][sma]
+    sma = res[3] == args.Sector
+    sid = res[0][sma]
 
-        _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
+    _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
 
-        catalogdata = catalogdata[mask]
-
+    catalogdata = catalogdata[mask]
     return catalogdata
 
-supercata1 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i) for i in tqdm(range(len(eclos) - 1))))
+supercata1 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
 
 print(supercata1)
 print('\nScanning... (2/2)')
@@ -124,7 +119,7 @@ print('\nScanning... (2/2)')
 eclos = np.arange(0, 360+1.1, 5)
 eclas = np.arange(-92, -72-1.1, 5)
 
-supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i) for i in tqdm(range(len(eclos) - 1))))
+supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
 print(supercata2)
 '''
 for i in tqdm(range(len(eclos) - 1)):
