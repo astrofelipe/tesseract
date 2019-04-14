@@ -294,7 +294,9 @@ inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
 np.savetxt('TIC%s.dat' % (args.TIC), output, fmt='%s')
-os.system('rm tesscut/*%s*' % ra)
+
+if args.folder is None:
+    os.system('rm tesscut/*%s*' % ra)
 
 print('Done!\n')
 #output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
