@@ -88,7 +88,7 @@ def gocat(i):
     if eloi1==360 and eloi2==0:
         return
 
-    for j in tqdm(range(len(eclas) - 1)):
+    for j in range(len(eclas) - 1):
         elai1 = int(eclas[j])
         elai2 = int(eclas[j+1])
 
@@ -107,7 +107,7 @@ def gocat(i):
         else:
             res = ts2p(tics, ras, dec, scInfo=res[-1])
 
-        sma = res[3] == sec
+        sma = np.array(res[3]) == sec
         sid = res[0][sma]
 
         _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
@@ -118,13 +118,14 @@ def gocat(i):
 
 supercata1 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i) for i in tqdm(range(len(eclos) - 1))))
 
+print(supercata1)
 print('\nScanning... (2/2)')
 #Pole
 eclos = np.arange(0, 360+1.1, 5)
 eclas = np.arange(-92, -72-1.1, 5)
 
 supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i) for i in tqdm(range(len(eclos) - 1))))
-
+print(supercata2)
 '''
 for i in tqdm(range(len(eclos) - 1)):
     eloi1 = int(eclos[i])
@@ -158,6 +159,7 @@ for i in tqdm(range(len(eclos) - 1)):
 '''
 
 supercata = vstack([supercata1, supercata2])
+print(supercata)
 supercata = unique(supercata, keys=['ID'])
 
 catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
