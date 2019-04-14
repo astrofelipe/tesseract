@@ -107,7 +107,7 @@ def gocat(i):
         else:
             res = ts2p(tics, ras, dec, scInfo=res[-1])
 
-        sma = np.array(res[3]) == sec
+        sma = np.array(res[3]) == args.Sector
         sid = res[0][sma]
 
         _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
