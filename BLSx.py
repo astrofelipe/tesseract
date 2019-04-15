@@ -87,7 +87,7 @@ else:
     from joblib import Parallel, delayed
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles)))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles[9000:])))
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
