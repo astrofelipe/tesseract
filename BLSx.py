@@ -86,6 +86,8 @@ if args.target is not None:
 else:
     from joblib import Parallel, delayed, Memory
 
+    results = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
+
     memory  = Memory('./cachedir', verbose=0)
     costoso = memory.cache(run_BLS)
 
