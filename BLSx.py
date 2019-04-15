@@ -84,10 +84,13 @@ if args.target is not None:
 
 
 else:
-    from joblib import Parallel, delayed
+    from joblib import Parallel, delayed, Memory
+
+    memory  = Memory('./cachedir', verbose=0)
+    costoso = memory.cache(run_BLS)
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles[9000:])))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(costoso)(f) for f in tqdm(allfiles)))
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
