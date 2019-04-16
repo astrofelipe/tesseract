@@ -21,10 +21,10 @@ if args.Targets[-3:] == 'pkl':
     d = pickle.load(f)
     tics = d.keys()
 
-    sval = np.array([list(item.values()) for item in d.values()]).astype(bool)
+    svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
+    smask = svals[:,args.Sector-1]
+    print(tics[smask], len(smask), smask.sum())
 
-    print(tics)
-    print(sval)
 
 else:
     tics = np.genfromtxt(args.Target, usecols=(0,), delim=',')
