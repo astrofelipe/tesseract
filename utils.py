@@ -92,9 +92,6 @@ def FFICut(ffis, x, y, size):
     #TPF.hdu[1].header['BJDREFI'] = hdr['BJDREFI']
     #TPF.hdu[1].data.columns['TIME'].unit = 'BJD - %d' % hdr['BJDREFI']
 
-    print(ffis['data'][0])
-    print(TPF.hdu[1].data['TIME'])
-    print(TPF.hdu[1].data['QUALITY'])
     return TPF
 
 def pixel_border(mask):
