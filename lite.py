@@ -13,7 +13,7 @@ args = parser.parse_args()
 
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
 print(fs)
-h5s = h5py.File(f for f in fs)
+h5s = [h5py.File(f, 'r') for f in fs]
 
 if args.Targets[-3:] == 'pkl':
     import pickle
