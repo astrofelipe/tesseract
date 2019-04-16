@@ -23,7 +23,7 @@ if args.Targets[-3:] == 'pkl':
 
     svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
     smask = svals[:,args.Sector-1]
-    print(smask, len(tics), smask.sum())
+    print(smask, len(smask), smask.sum())
     print(tics[smask], len(smask), smask.sum())
 
 
