@@ -11,7 +11,7 @@ parser.add_argument('Targets', type=str)
 
 args = parser.parse_args()
 
-fs  = np.sort(glob.glob(args.Folder + '*.h5py'))
+fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.h5py' % args.Sector))
 h5s = h5py.File(f for f in fs)
 
 if args.Targets[-3:] == 'pkl':
