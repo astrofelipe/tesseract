@@ -11,4 +11,5 @@ parser.add_argument('Sector', help='TESS Sector')
 args = parser.parse_args()
 
 fs  = np.sort(glob.glob(args.Folder + '*.h5py'))
+print(fs)
 h5s = h5py.File(f for f in fs)
