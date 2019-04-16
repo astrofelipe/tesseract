@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 parser = argparse.ArgumentParser(description='Generate lightcurves!')
 parser.add_argument('Sector', type=int, help='TESS Sector')
 parser.add_argument('Targets', type=str)
-parser.add_argument('--output', action=store_true)
+parser.add_argument('--output', action='store_true')
 
 args = parser.parse_args()
 
