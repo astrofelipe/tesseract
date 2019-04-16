@@ -11,7 +11,7 @@ parser.add_argument('Targets', type=str)
 
 args = parser.parse_args()
 
-fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.h5py' % args.Sector))
+fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
 print(fs)
 h5s = h5py.File(f for f in fs)
 
