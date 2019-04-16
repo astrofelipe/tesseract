@@ -25,7 +25,7 @@ if args.Targets[-3:] == 'pkl':
     svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
     smask = svals[:,args.Sector-1]
 
-    if args.output
+    if args.output:
         np.savetxt('targets_s%04d.txt' % args.Sector, tics[smask])
 
 
