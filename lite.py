@@ -20,7 +20,7 @@ if args.Targets[-3:] == 'pkl':
     f = open(args.Targets, 'rb')
     d = pickle.load(f)
     tics = np.array(d.keys())
-
+    print(tics)
     svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
     smask = svals[:,args.Sector-1]
     print(smask, len(smask), smask.sum())
