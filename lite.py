@@ -19,7 +19,7 @@ if args.Targets[-3:] == 'pkl':
     import pickle
     f = open(args.Targets, 'rb')
     d = pickle.load(f)
-    tics = d.keys()
+    tics = np.array(d.keys())
 
     svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
     smask = svals[:,args.Sector-1]
