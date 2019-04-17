@@ -86,6 +86,7 @@ def FFICut(ffis, x, y, size):
 
         boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i], header=header)
 
+    ffis.close()
     TPF = boxing.get_tpf()
     #TPF.hdu[1].data['QUALITY']   = ffis['data'][2]
     #TPF.hdu[1].data['TIME']      = ffis['data'][0]
