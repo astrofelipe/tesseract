@@ -21,6 +21,9 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
+    mask = t > 2458492.3
+    t = t[mask]
+    f = f[mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
     lc   = TessLightCurve(time=t, flux=f).flatten()
 
