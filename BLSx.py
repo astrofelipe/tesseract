@@ -28,7 +28,7 @@ def run_BLS(fl):
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
     lc   = TessLightCurve(time=t, flux=f).flatten()
 
-    durations = np.linspace(0.05, 0.2, 50)# * u.day
+    durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux)
     try:
         result    = model.autopower(durations, frequency_factor=5.0, maximum_period=args.max_period)
