@@ -64,29 +64,28 @@ def detrender(t, y, yerr):
 '''
 
 def FFICut(ffis, x, y, size):
-    ffis   = h5py.File(ffis, 'r')
+    with h5py.File(ffis, 'r') as ffis:
 
-    ncads  = len(ffis['FFIs'])
-    x      = int(x)
-    y      = int(y)
+        ncads  = len(ffis['FFIs'])
+        x      = int(x)
+        y      = int(y)
 
-    aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
-    aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+        aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+        aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
-    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
+        boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
-    for i,f in enumerate(tqdm(aflux)):
-        ti = ffis['data'][0,i]
-        tf = ffis['data'][1,i]
-        b  = ffis['data'][2,i]
-        q  = ffis['data'][3,i]
+        for i,f in enumerate(tqdm(aflux)):
+            ti = ffis['data'][0,i]
+            tf = ffis['data'][1,i]
+            b  = ffis['data'][2,i]
+            q  = ffis['data'][3,i]
 
-        header = {'TSTART': ti, 'TSTOP': tf,
-                  'QUALITY': q}
+            header = {'TSTART': ti, 'TSTOP': tf,
+                      'QUALITY': q}
 
-        boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i], header=header)
+            boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i], header=header)
 
-    ffis.close()
     TPF = boxing.get_tpf()
     #TPF.hdu[1].data['QUALITY']   = ffis['data'][2]
     #TPF.hdu[1].data['TIME']      = ffis['data'][0]
