@@ -10,6 +10,7 @@ parser.add_argument('Folder', help='Folder containing FITS files')
 parser.add_argument('--target', type=int, default=None, help='Run on single target')
 #parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
 parser.add_argument('--max-period', type=float, default=30.)
+parser.add_argument('--min-period', type=float, default=0.)
 parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
 parser.add_argument('--output', default='BLS_result.dat')
 
@@ -31,7 +32,7 @@ def run_BLS(fl):
     durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux)
     try:
-        result    = model.autopower(durations, frequency_factor=5.0, maximum_period=args.max_period)
+        result    = model.autopower(durations, frequency_factor=5.0, minimum_period=args.min_period, maximum_period=args.max_period)
     except:
         print(fl)
     idx       = np.argmax(result.power)
