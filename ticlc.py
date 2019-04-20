@@ -50,11 +50,13 @@ if len(args.TIC) < 2:
     args.TIC = int(args.TIC[0])
     if os.path.isfile('TIC%d.dat' % args.TIC):
         import sys
+        color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
     #cata   = '../TIC_5.csv'# % args.Sector
     #cata   = pd.read_csv(cata, comment='#')
     #cid    = cata['TICID'] == args.TIC
     #target = cata[cid]
+    color_print('TIC: ', 'lightcyan', '%d' % args.TIC, 'default')
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
 
 
@@ -110,6 +112,7 @@ if args.folder is not None:
 
 else:
     #Online mode
+    color_print('Querying MAST...', 'lightcyan')
     allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
     w       = WCS(allhdus.hdu[2].header)
 
@@ -230,13 +233,6 @@ else:
     lkf  = lkf[bidx]
 
 
-#tmask = mask_planet(time, 2458327.6782456427, 4.086673341286014)
-
-#flsa = SavGol(lkf[bidx].flux)
-#med  = np.nanmedian(lkf[bidx].flux)
-#MAD  = 1.4826 * np.nanmedian(np.abs(lkf[bidx].flux - med))
-#tmask = np.abs(lkf[bidx].flux - med) < 10.*MAD
-
 if iP is None:
     mask = np.ones(time.size).astype(bool)
 else:
@@ -269,16 +265,6 @@ if not args.noplots:
     ax1.plot(x,y, '.r')
     #aps.plot(color='w', ax=ax1[0])
     #ax1[1].matshow(bkgs[4])
-
-    '''
-    #Phased
-    model  = TLS(time, det_lc.flux)
-    result = model.power(oversampling_factor=5)#, duration_grid_step=1.02)
-
-    print(result.period, result.T0, result.duration)
-
-    ax1[1].plot(result.folded_phase - .5, result.folded_y, 'ok', ms=2)
-    '''
 
     ax = plt.subplot(gs[0,1])
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
