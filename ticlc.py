@@ -22,6 +22,7 @@ except:
 from utils import mask_planet, FFICut, pixel_border
 from autoap import generate_aperture, select_aperture
 from photutils import MMMBackground, SExtractorBackground
+from astropy.utils.console import color_print
 from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip
 from astropy.wcs import WCS
@@ -65,7 +66,7 @@ if len(args.TIC) < 2:
 else:
     ra, dec = args.TIC
 
-print(ra, dec)
+color_print('RA Dec: ', 'lightcyan', '%f %f' % (ra, dec), 'default')
 
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
