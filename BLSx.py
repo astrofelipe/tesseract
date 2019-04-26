@@ -31,10 +31,10 @@ def run_BLS(fl):
 
     durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux)
-    try:
-        result    = model.autopower(durations, frequency_factor=5.0, minimum_period=args.min_period, maximum_period=args.max_period)
-    except:
-        print(fl)
+    #try:
+    result    = model.autopower(durations, frequency_factor=5.0, minimum_period=args.min_period, maximum_period=args.max_period)
+    #except:
+    #    print(fl)
     idx       = np.argmax(result.power)
 
     period = result.period[idx]
