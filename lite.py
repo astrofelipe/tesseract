@@ -34,6 +34,7 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
+    print(args.Target)
     tics = np.genfromtxt(args.Target, usecols=(0,), delim=',')
 
 def make_lc(tic):
