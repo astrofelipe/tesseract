@@ -46,7 +46,7 @@ def make_lc(tic):
     ccd = ccd[0]-1
     idx = cam*4 + ccd
     print(idx)
-    print(h5)
+    print(h5s)
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
