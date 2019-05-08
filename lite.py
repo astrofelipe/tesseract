@@ -93,3 +93,5 @@ def make_lc(tic):
     inst   = np.repeat('TESS', len(time))
     output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
     np.savetxt('TIC%s.dat' % (args.TIC), output, fmt='%s')
+
+make_lc(tics[0])
