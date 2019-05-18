@@ -23,7 +23,7 @@ args = parser.parse_args()
 sec = 's%04d' % args.Sector
 print(sec)
 
-img = '/horus/TESS/FFI/s0009/tess2019059172935-s0009-2-2-0139-s_ffic.fits'
+img = '/horus/TESS/FFI/s0009/tess2019059192935-s0009-1-4-0139-s_ffic.fits'
 
 hdr = fits.getheader(img, 1)
 dat = fits.getdata(img)
