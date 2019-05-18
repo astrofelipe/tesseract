@@ -268,6 +268,8 @@ if not args.noplots:
 
     ax = plt.subplot(gs[0,1])
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
+    ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
+    ax.set_xlabel(r'BJD', fontweight='bold')
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     if args.pld:
         ax.plot(time, det_lc.flux*np.nanmedian(lkf.flux)/np.nanmedian(det_lc.flux), color='tomato', lw=.66)
