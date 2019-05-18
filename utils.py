@@ -11,6 +11,15 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata.utils import Cutout2D
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
 
+'''
+def mask_time(time, flux, sector):
+    cad = 27./60./24.
+
+    if sector==8:
+        mask =
+'''
+
+
 def mask_planet(t, t0, period, dur=0.25):
     phase  = (t - t0 + 0.5*period) % period - 0.5*period
     mask   = np.abs(phase) < dur
