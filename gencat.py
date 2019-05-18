@@ -42,6 +42,9 @@ ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
 ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
 ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
 
+print(ra1,ra2,ra3,ra4)
+print(dec1,dec2,dec3,dec4)
+
 
 #Ecliptic limits:
 #eclat ~-72 a -inf (-90)
