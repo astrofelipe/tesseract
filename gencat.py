@@ -25,7 +25,7 @@ print(sec)
 
 img = '/horus/TESS/FFI/s0009/tess2019059192935-s0009-1-4-0139-s_ffic.fits'
 
-hdr = fits.getheader(img, 1)
+hdr = fits.getheader(img, 0)
 dat = fits.getdata(img)
 w   = WCS(hdr)
 
