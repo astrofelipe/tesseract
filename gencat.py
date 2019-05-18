@@ -23,7 +23,7 @@ args = parser.parse_args()
 sec = 's%04d' % args.Sector
 print(sec)
 
-img = '/horus/TESS/FFI/s0009/tess2019059192935-s0009-1-4-0139-s_ffic.fits'
+img = '/horus/TESS/FFI/s0007/tess2019008025936-s0007-1-4-0131-s_ffic.fits'
 
 hdr = fits.getheader(img, 1)
 dat = fits.getdata(img)
@@ -37,7 +37,7 @@ ax.plot([44], [0], '.r')
 plt.show()
 '''
 
-ra1, dec1 = w.wcs_pix2world(44, 0, 0)       #TOP LEFT
+ra1, dec1 = w.all_pix2world(44, 0, 0)       #TOP LEFT
 ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
 ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
 ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
