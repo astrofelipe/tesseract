@@ -75,6 +75,7 @@ eclim = {'s0002': [[298, 388], [-90, 0]],
          's0009': [[125, 218], [-90, 0]]}
 
 elo, ela = eclim[sec]
+print(elo,ela)
 
 #Not pole
 eclos = np.arange(elo[0], elo[1]+1.1, 4) % 360
