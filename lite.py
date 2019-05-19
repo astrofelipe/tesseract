@@ -34,7 +34,7 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
-    tics = np.genfromtxt(args.Targets, usecols=(0,), delimiter=',', skip_header=1)
+    tics = np.genfromtxt(args.Targets, usecols=(0,), delimiter=',', skip_header=1).astype(int)
 
 def make_lc(tic):
     target = Catalogs.query_object('TIC %d' % tic, radius=0.05, catalog='TIC')
