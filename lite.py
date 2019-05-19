@@ -144,4 +144,4 @@ def make_lc(tic, ra, dec):
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
 #make_lc(tics[0], ra[0], dec[0])
-Parallel(n_jobs=args.ncpu)(delayed(fits.makelc)(tics[i], ra[i], dec[i]) for i in tqdm(len(tics)))
+Parallel(n_jobs=args.ncpu)(delayed(fits.makelc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
