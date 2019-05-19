@@ -143,5 +143,8 @@ def make_lc(tic, ra, dec):
     #print('\tSaving TIC%s.dat...' % tic)
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
+    return 1
+
+
 #make_lc(tics[0], ra[0], dec[0])
 Parallel(n_jobs=args.ncpu, prefer='threads')(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
