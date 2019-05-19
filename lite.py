@@ -50,7 +50,7 @@ else:
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
     print(ra, dec)
-    _, _, _, _, cam, ccd, _, _, _ = ts2p(tics, ra, dec, trySector=np.ones(len(ra))*args.Sector)
+    _, _, _, _, cam, ccd, _, _, _ = ts2p(tics, ra, dec)#, trySector=np.ones(len(ra))*args.Sector)
     print(cam, ccd)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
