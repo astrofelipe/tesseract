@@ -57,7 +57,7 @@ def make_lc(tic):
     w   = WCS(hdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
-    allhdus = FFICut(ffis, y, x, args.size)
+    allhdus = FFICut(h5, y, x, args.size)
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
