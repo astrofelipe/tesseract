@@ -46,9 +46,9 @@ if args.Targets[-3:] == 'pkl':
 else:
     #tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
     catalog = pd.read_csv(args.Targets)
-    tics    = catalog['ID']
-    ra      = catalog['ra']
-    dec     = catalog['dec']
+    tics    = np.array(catalog['ID'])
+    ra      = np.array(catalog['ra'])
+    dec     = np.array(catalog['dec'])
     print(ra, dec)
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
     print(cam, ccd)
