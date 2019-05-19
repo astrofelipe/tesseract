@@ -3,6 +3,7 @@ import h5py
 import argparse
 import glob
 import numpy as np
+from astropy.utils.console import color_print
 from astropy.io import fits
 from astropy.wcs import WCS
 from astroquery.mast import Catalogs
@@ -25,7 +26,6 @@ parser.add_argument('--size', type=int, default=21)
 args = parser.parse_args()
 
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
-print(fs)
 h5s = [h5py.File(f, 'r') for f in fs]
 
 if args.Targets[-3:] == 'pkl':
@@ -43,6 +43,8 @@ if args.Targets[-3:] == 'pkl':
 
 else:
     tics = np.genfromtxt(args.Targets, usecols=(0,), delimiter=',', skip_header=1).astype(int)
+
+color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
 def FFICut(ffis, x, y, size):
     ncads  = len(ffis['FFIs'])
@@ -75,14 +77,13 @@ def make_lc(tic):
     dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
+    print('Target found in camera %d - CCD %d' % (cam, ccd))
     idx = (cam[0]-1)*4 + (ccd[0]-1)
-    print(idx)
-    print(h5s)
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
     ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
-    print(ffi)
+    print('\tSolving coordinates...')
     hdr = fits.getheader(ffi, 1)
 
     w   = WCS(hdr)
@@ -120,13 +121,14 @@ def make_lc(tic):
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
     bidx = np.argmin(cdpp)
-    print('Best lk:', bidx)
-    print(dap[bidx].sum(),'pixels in aperture')
+    print('\tCalculating best lightcurve')
+    print('\t\tBest lk:', bidx)
+    print('\t\t',dap[bidx].sum(),'pixels in aperture')
     lkf  = lkf[bidx]
 
     inst   = np.repeat('TESS', len(time))
     output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
+    print('\tSaving TIC%s.dat...' % tic)
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
-print(tics[0])
 make_lc(tics[0])
