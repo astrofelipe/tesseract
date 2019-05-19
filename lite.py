@@ -43,9 +43,7 @@ def make_lc(tic):
     dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
-    cam = cam[0]-1
-    ccd = ccd[0]-1
-    idx = cam*4 + ccd
+    idx = (cam[0]-1)*4 + (ccd[0]-1)
     print(idx)
     print(h5s)
 
