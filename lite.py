@@ -3,6 +3,7 @@ import h5py
 import argparse
 import glob
 import numpy as np
+import pandas as pd
 from astropy.utils.console import color_print
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -42,7 +43,9 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
-    tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
+    #tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
+    catalog = pd.read_csv(args.Targets)
+    print(catalog)
     print(ra,dec)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
