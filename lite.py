@@ -6,7 +6,7 @@ import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
 from astroquery.mast import Catalogs
-from utils import mask_planet, FFICut
+from utils import mask_planet#, FFICut
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 from joblib import Parallel, delayed
 
@@ -37,6 +37,31 @@ if args.Targets[-3:] == 'pkl':
 
 else:
     tics = np.genfromtxt(args.Targets, usecols=(0,), delimiter=',', skip_header=1).astype(int)
+
+def FFICut(ffis, x, y, size):
+    ncads  = len(ffis['FFIs'])
+    x      = int(x)
+    y      = int(y)
+
+    aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+
+    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
+
+    for i,f in enumerate(tqdm(aflux)):
+        ti = ffis['data'][0,i]
+        tf = ffis['data'][1,i]
+        b  = ffis['data'][2,i]
+        q  = ffis['data'][3,i]
+
+        header = {'TSTART': ti, 'TSTOP': tf,
+                  'QUALITY': q}
+
+        boxing.add_cadence(frameno=i, flux=f, flux_err=aerrs[i], header=header)
+
+    TPF = boxing.get_tpf()
+
+    return TPF
 
 def make_lc(tic):
     target = Catalogs.query_object('TIC %d' % tic, radius=0.05, catalog='TIC')
