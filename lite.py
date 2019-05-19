@@ -22,6 +22,7 @@ from joblib import Parallel, delayed
 parser = argparse.ArgumentParser(description='Generate lightcurves!')
 parser.add_argument('Sector', type=int, help='TESS Sector')
 parser.add_argument('Targets', type=str)
+parser.add_argument('--ncpu', type=int, default=20)
 parser.add_argument('--output', action='store_true')
 parser.add_argument('--size', type=int, default=21)
 
@@ -49,9 +50,9 @@ else:
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
-    print(ra, dec)
-    _, _, _, _, cam, ccd, _, _, _ = ts2p(tics, ra, dec)#, trySector=np.ones(len(ra))*args.Sector)
-    print(cam, ccd)
+    #print(ra, dec)
+    #_, _, _, _, cam, ccd, _, _, _ = ts2p(tics, ra, dec)#, trySector=np.ones(len(ra))*args.Sector)
+    #print(cam, ccd)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
@@ -142,4 +143,5 @@ def make_lc(tic, ra, dec):
     #print('\tSaving TIC%s.dat...' % tic)
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
-make_lc(tics[0], ra[0], dec[0])
+#make_lc(tics[0], ra[0], dec[0])
+Parallel(n_jobs=args.ncpu)(delayed(fits.makelc)(tics[i], ra[i], dec[i]) for i in tqdm(len(tics)))
