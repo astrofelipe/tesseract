@@ -57,7 +57,8 @@ def FFICut(ffis, x, y, size):
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
-    for i,f in enumerate(tqdm(aflux)):
+    #for i,f in enumerate(tqdm(aflux)):
+    for i,f in enumerate(aflux):
         ti = ffis['data'][0,i]
         tf = ffis['data'][1,i]
         b  = ffis['data'][2,i]
