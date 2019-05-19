@@ -45,8 +45,9 @@ if args.Targets[-3:] == 'pkl':
 else:
     #tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
     catalog = pd.read_csv(args.Targets)
-    print(catalog)
-    print(ra,dec)
+    tics    = catalog['ID']
+    ra      = catalog['ra']
+    dec     = catalog['dec']
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
@@ -76,10 +77,10 @@ def FFICut(ffis, x, y, size):
 
     return TPF
 
-def make_lc(tic):
-    target = Catalogs.query_object('TIC %d' % tic, radius=0.05, catalog='TIC')
-    ra     = float(target[0]['ra'])
-    dec    = float(target[0]['dec'])
+def make_lc(tic, ra, dec):
+    #target = Catalogs.query_object('TIC %d' % tic, radius=0.05, catalog='TIC')
+    #ra     = float(target[0]['ra'])
+    #dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
     #print('TIC: ', 'lightred', str(tic), 'default')
@@ -137,4 +138,4 @@ def make_lc(tic):
     #print('\tSaving TIC%s.dat...' % tic)
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
-make_lc(tics[0])
+make_lc(tics[0], ra[0], dec[0])
