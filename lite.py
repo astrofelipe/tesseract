@@ -42,7 +42,8 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
-    tics = np.genfromtxt(args.Targets, usecols=(0,), delimiter=',', skip_header=1).astype(int)
+    tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
+    print(ra,dec)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
@@ -77,14 +78,14 @@ def make_lc(tic):
     dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
-    print('TIC: ', 'lightred', str(tic), 'default')
-    print('Camera: ', 'lightred', str(cam[0]), 'default', ' / CCD: ', 'lightred', str(ccd[0]))
+    #print('TIC: ', 'lightred', str(tic), 'default')
+    #print('Camera: ', 'lightred', str(cam[0]), 'default', ' / CCD: ', 'lightred', str(ccd[0]))
     idx = (cam[0]-1)*4 + (ccd[0]-1)
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
     ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
-    print('\tSolving coordinates...')
+    #print('\tSolving coordinates...')
     hdr = fits.getheader(ffi, 1)
 
     w   = WCS(hdr)
@@ -122,14 +123,14 @@ def make_lc(tic):
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
     bidx = np.argmin(cdpp)
-    print('\tCalculating best lightcurve')
-    print('\t\tBest lk:', bidx)
-    print('\t\t%d pixels in aperture' % dap[bidx].sum())
+    #print('\tCalculating best lightcurve')
+    #print('\t\tBest lk:', bidx)
+    #print('\t\t%d pixels in aperture' % dap[bidx].sum())
     lkf  = lkf[bidx]
 
     inst   = np.repeat('TESS', len(time))
     output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
-    print('\tSaving TIC%s.dat...' % tic)
+    #print('\tSaving TIC%s.dat...' % tic)
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
 make_lc(tics[0])
