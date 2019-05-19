@@ -77,8 +77,8 @@ def make_lc(tic):
     dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
-    print('TIC: ', 'lightred', str(tic))
-    print('Camera: ', 'lightred', str(cam), 'default', ' / CCD: ', 'lightred', str(ccd))
+    print('TIC: ', 'lightred', str(tic), 'default')
+    print('Camera: ', 'lightred', str(cam[0]), 'default', ' / CCD: ', 'lightred', str(ccd[0]))
     idx = (cam[0]-1)*4 + (ccd[0]-1)
 
     h5  = h5s[idx]
