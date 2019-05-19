@@ -147,4 +147,4 @@ def make_lc(tic, ra, dec):
 
 
 #make_lc(tics[0], ra[0], dec[0])
-Parallel(n_jobs=args.ncpu, require='sharedmem')(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
+Parallel(n_jobs=args.ncpu)(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
