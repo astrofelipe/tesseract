@@ -114,8 +114,8 @@ def make_lc(tic):
     lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 
     #Lightkurves
-    lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
-    lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
+    lkf = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
+    #lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
 
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
