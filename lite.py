@@ -50,6 +50,7 @@ def make_lc(tic):
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
+    print(q)
     ffi = glob.glob('/horus/TESS/FFI/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd))[q][0]
     hdr = fits.getheader(ffi, 1)
 
