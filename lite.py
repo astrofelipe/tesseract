@@ -11,6 +11,7 @@ from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
 from tqdm import tqdm
 from astropy.stats import SigmaClip
 from photutils import MMMBackground
+from autoap import generate_aperture, select_aperture
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 from joblib import Parallel, delayed
 
