@@ -49,7 +49,7 @@ else:
     tics    = catalog['ID']
     ra      = catalog['ra']
     dec     = catalog['dec']
-    print(catalog)
+    print(ra, dec)
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
     print(cam, ccd)
 
