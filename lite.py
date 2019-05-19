@@ -88,9 +88,9 @@ def make_lc(tic):
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
-    time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
-    flux = hdus[1].data['FLUX'][ma]
-    errs = hdus[1].data['FLUX_ERR'][ma]
+    time = hdus[1].data['TIME'][q] + hdus[1].header['BJDREFI']
+    flux = hdus[1].data['FLUX'][q]
+    errs = hdus[1].data['FLUX_ERR'][q]
     bkgs = np.zeros(len(flux))
 
     for i,f in enumerate(flux):
