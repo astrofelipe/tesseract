@@ -4,6 +4,7 @@ import argparse
 import glob
 import numpy as np
 from astropy.io import fits
+from astropy.wcs import WCS
 from astroquery.mast import Catalogs
 from utils import mask_planet, FFICut
 from tess_stars2px import tess_stars2px_function_entry as ts2p
