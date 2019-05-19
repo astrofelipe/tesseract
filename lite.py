@@ -4,6 +4,7 @@ import argparse
 import glob
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
 from astropy.utils.console import color_print
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -48,6 +49,8 @@ else:
     tics    = catalog['ID']
     ra      = catalog['ra']
     dec     = catalog['dec']
+    _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
+    print(cam, ccd)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
