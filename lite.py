@@ -3,6 +3,7 @@ import h5py
 import argparse
 import glob
 import numpy as np
+from astropy.io import fits
 from astroquery.mast import Catalogs
 from utils import mask_planet, FFICut
 from tess_stars2px import tess_stars2px_function_entry as ts2p
@@ -50,7 +51,7 @@ def make_lc(tic):
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
-    ffi = glob.glob('/horus/TESS/FFI/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd))#[q][0]
+    ffi = glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd))#[q][0]
     print(ffi)
     hdr = fits.getheader(ffi, 1)
 
