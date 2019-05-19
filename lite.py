@@ -77,7 +77,8 @@ def make_lc(tic):
     dec    = float(target[0]['dec'])
 
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
-    print('Target found in camera %d - CCD %d' % (cam, ccd))
+    print('TIC: ', 'lightred', str(tic))
+    print('Camera: ', 'lightred', str(cam), 'default', ' / CCD: ', 'lightred', str(ccd))
     idx = (cam[0]-1)*4 + (ccd[0]-1)
 
     h5  = h5s[idx]
@@ -123,7 +124,7 @@ def make_lc(tic):
     bidx = np.argmin(cdpp)
     print('\tCalculating best lightcurve')
     print('\t\tBest lk:', bidx)
-    print('\t\t',dap[bidx].sum(),'pixels in aperture')
+    print('\t\t%d pixels in aperture' % dap[bidx].sum())
     lkf  = lkf[bidx]
 
     inst   = np.repeat('TESS', len(time))
