@@ -8,6 +8,7 @@ from astropy.wcs import WCS
 from astroquery.mast import Catalogs
 from utils import mask_planet#, FFICut
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
+from tqdm import tqdm
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 from joblib import Parallel, delayed
 
