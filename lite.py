@@ -4,6 +4,7 @@ import argparse
 import glob
 import numpy as np
 import pandas as pd
+from mpi4py import MPI
 from joblib import Parallel, delayed
 from astropy.utils.console import color_print
 from astropy.io import fits
@@ -28,8 +29,9 @@ parser.add_argument('--size', type=int, default=21)
 
 args = parser.parse_args()
 
+rank = MPI.COMM_WORLD.rank
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
-h5s = [h5py.File(f, 'r') for f in fs]
+h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
 
 if args.Targets[-3:] == 'pkl':
     import pickle
@@ -146,5 +148,5 @@ def make_lc(tic, ra, dec):
     return 1
 
 
-#make_lc(tics[0], ra[0], dec[0])
-Parallel(n_jobs=args.ncpu)(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
+make_lc(tics[rank], ra[rank], dec[rank])
+#Parallel(n_jobs=args.ncpu)(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
