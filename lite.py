@@ -30,6 +30,9 @@ parser.add_argument('--size', type=int, default=21)
 args = parser.parse_args()
 
 rank = MPI.COMM_WORLD.rank
+size = MPI.COMM_WORLD.size
+print(rank,size)
+
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
 #h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
 h5s = [h5py.File(f, 'r') for f in fs]
