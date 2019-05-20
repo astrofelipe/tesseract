@@ -31,8 +31,8 @@ args = parser.parse_args()
 
 rank = MPI.COMM_WORLD.rank
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
-h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
-#h5s = [h5py.File(f, 'r') for f in fs]
+#h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
+h5s = [h5py.File(f, 'r') for f in fs]
 
 if args.Targets[-3:] == 'pkl':
     import pickle
@@ -150,4 +150,7 @@ def make_lc(tic, ra, dec):
 
 
 make_lc(tics[rank], ra[rank], dec[rank])
+for h in h5s:
+    h.close()
+
 #Parallel(n_jobs=args.ncpu)(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
