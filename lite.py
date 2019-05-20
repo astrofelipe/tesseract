@@ -2,6 +2,7 @@ import __future__
 import h5py
 import argparse
 import glob
+import os
 import numpy as np
 import pandas as pd
 from mpi4py import MPI
@@ -152,7 +153,12 @@ def make_lc(tic, ra, dec):
 
 
 for i in range(len(tics)):
-    if i%size!=rank: continue
+    if os.path.isfile('TIC%d.dat' % tics[i]):
+        continue
+
+    if i%size!=rank:
+        continue
+
     make_lc(tics[i], ra[i], dec[i])
 
 for h in h5s:
