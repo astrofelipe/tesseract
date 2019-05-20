@@ -154,10 +154,10 @@ def make_lc(tic, ra, dec):
 
 for i in range(len(tics)):
     if os.path.isfile('TIC%d.dat' % tics[i]):
-        print('skip')
         continue
 
     if i%size!=rank:
+        print(tics[i])
         continue
 
     make_lc(tics[i], ra[i], dec[i])
