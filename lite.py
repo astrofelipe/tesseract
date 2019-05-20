@@ -159,8 +159,11 @@ for i in range(len(tics)):
     if i%size!=rank:
         continue
 
-    print(tics[i])
-    make_lc(tics[i], ra[i], dec[i])
+    try:
+        make_lc(tics[i], ra[i], dec[i])
+        print(tics[i])
+    except:
+        continue
 
 for h in h5s:
     h.close()
