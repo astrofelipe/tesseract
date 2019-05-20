@@ -31,7 +31,6 @@ args = parser.parse_args()
 
 rank = MPI.COMM_WORLD.rank
 size = MPI.COMM_WORLD.size
-print(rank,size)
 
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
 #h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
@@ -152,7 +151,10 @@ def make_lc(tic, ra, dec):
     return 1
 
 
-make_lc(tics[rank], ra[rank], dec[rank])
+for i in range(len(tics)):
+    if i%size!=rank: continue
+    make_lc(tics[i], ra[i], dec[i])
+
 for h in h5s:
     h.close()
 
