@@ -247,14 +247,14 @@ if args.pld:
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)
-    fig1 = plt.figure(figsize=[20,5])
+    fig1 = plt.figure(figsize=[16,3], dpi=120)
     gs   = gridspec.GridSpec(2, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
     ax0 = plt.subplot(gs[1,1])
-    ax0.plot(time, bkgs, '-k', lw=1)
+    ax0.plot(time, bkgs, '.k', ms=2)
 
     ax1 = plt.subplot(gs[:,0])
-    ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r')
+    ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r', aspect='equal')
 
     if not args.psf:
         xm, ym = pixel_border(dap[bidx])
