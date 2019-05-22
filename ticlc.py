@@ -241,7 +241,7 @@ else:
 
 if args.pld:
     det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=8)
-    det_lc = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
+    lkf = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
     #det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
 
@@ -271,8 +271,8 @@ if not args.noplots:
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.set_xlabel(r'BJD', fontweight='bold')
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
-    if args.pld:
-        ax.plot(time, det_lc.flux*np.nanmedian(lkf.flux)/np.nanmedian(det_lc.flux), color='tomato', lw=.66)
+    #if args.pld:
+    #    ax.plot(time, det_lc.flux*np.nanmedian(lkf.flux)/np.nanmedian(det_lc.flux), color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
 
 
