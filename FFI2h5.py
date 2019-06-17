@@ -63,8 +63,8 @@ def make_table(f):
     return ti,tf,b,q
 
 def get_data(f, ext=1):
-    hdu = fits.open(f, ext, memmap=args.nomemmap)
-    return hdu[1].data
+    hdu = fits.open(f, memmap=args.nomemmap)
+    return hdu[ext].data
 
 
 nx, ny = fits.getdata(files[0]).shape
