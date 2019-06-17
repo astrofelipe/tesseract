@@ -64,7 +64,9 @@ def make_table(f):
 
 def get_data(f, ext=1):
     hdu = fits.open(f, memmap=args.nomemmap)
-    return np.array(hdu[ext].data)
+    dat = hdu[ext].data
+    del hdu
+    return np.array(dat)
 
 
 nx, ny = fits.getdata(files[0]).shape
