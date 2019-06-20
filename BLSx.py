@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
+from transitleastsquares import transitleastsquares
 
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
 parser.add_argument('Folder', help='Folder containing FITS files')
@@ -12,6 +13,7 @@ parser.add_argument('--target', type=int, default=None, help='Run on single targ
 parser.add_argument('--max-period', type=float, default=30.)
 parser.add_argument('--min-period', type=float, default=0.01)
 parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
+parser.add_argument('--TLS', action='store_true')
 parser.add_argument('--output', default='BLS_result.dat')
 
 args = parser.parse_args()
@@ -30,7 +32,7 @@ def run_BLS(fl):
     lc   = TessLightCurve(time=t, flux=f).flatten()
 
     durations = np.linspace(0.05, 0.2, 60)# * u.day
-    model     = BLS(lc.time,lc.flux)
+    model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
     #try:
     result    = model.autopower(durations, frequency_factor=5.0, maximum_period=args.max_period)
     #except:
