@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
-from transitleastsquares import transitleastsquares
+#from transitleastsquares import transitleastsquares
 
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
 parser.add_argument('Folder', help='Folder containing FITS files')
