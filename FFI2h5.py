@@ -79,8 +79,19 @@ table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression
 
 #dset[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f) for f in tqdm(files))
 #derr[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f, 2) for f in tqdm(files))
-dset[args.nstart:args.nstop] = [get_data(f) for f in tqdm(files)]
-derr[args.nstart:args.nstop] = [get_data(f, 2) for f in tqdm(files)]
+#dset[args.nstart:args.nstop] = [get_data(f) for f in tqdm(files)]
+#derr[args.nstart:args.nstop] = [get_data(f, 2) for f in tqdm(files)]
+
+for i,f in enumerate(tqdm(files)):
+    hdu  = fits.open(f, memmap=True)
+    dat1 = hdu[1].data
+    dat2 = hdu[2].data
+
+    dset[i] = dat1
+    derr[i] = dat2
+
+    hdu.close()
+    del hdu, dat1, dat2
 
 
 table[args.nstart:args.nstop] = np.transpose(Parallel(n_jobs=args.ncpu)(delayed(make_table)(f) for f in tqdm(files)))
