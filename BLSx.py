@@ -1,9 +1,11 @@
 import glob
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
+from scipy.ndimage import median_filter
 #from transitleastsquares import transitleastsquares
 
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
@@ -29,7 +31,7 @@ def run_BLS(fl):
     #t = t[mask]
     #f = f[mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
-    lc   = TessLightCurve(time=t, flux=f).flatten()
+    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
     durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
@@ -55,12 +57,20 @@ def run_BLS(fl):
         depth_odd  = 0
         depth_half = 0
 
+    if args.target is not None:
+        pfig, pax = plt.subplots()
+        pax.plot(result.period, result.power, '-k')
+        pax.set_xlabel(r'Period  (days)', fontweight='bold')
+        pax.set_ylabel(r'Power', fontweight='bold')
+
+        pfig.tight_layout()
+
     return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
 
 if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
-    lc         = TessLightCurve(time=t, flux=f).flatten()
+    lc         = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
 
     result = run_BLS(targetfile)
@@ -72,7 +82,6 @@ if args.target is not None:
 
     ph = (t-t0 + 0.5*period) % period - 0.5*period
 
-    import matplotlib.pyplot as plt
     fig2, ax2 = plt.subplots(figsize=[20,3])
     ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
     ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
