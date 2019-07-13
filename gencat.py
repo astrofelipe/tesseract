@@ -23,7 +23,7 @@ args = parser.parse_args()
 sec = 's%04d' % args.Sector
 print(sec)
 
-img = '/horus/TESS/FFI/s0009/tess2019060072935-s0009-3-3-0139-s_ffic.fits'
+img = '/horus/TESS/FFI/s0010/tess2019086002934-s0010-3-3-0140-s_ffic.fits'
 
 hdr = fits.getheader(img, 1)
 dat = fits.getdata(img)
@@ -72,7 +72,8 @@ eclim = {'s0002': [[298, 388], [-90, 0]],
          's0006': [[46, 140], [-90, 0]],
          's0007': [[74, 166], [-90, 0]],
          's0008': [[101, 193], [-90, 0]],
-         's0009': [[125, 218], [-90, 0]]}
+         's0009': [[125, 218], [-90, 0]],
+         's0010': [[125, 218], [-90, 0]]}
 
 elo, ela = eclim[sec]
 print(elo,ela)

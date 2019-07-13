@@ -36,7 +36,7 @@ def run_BLS(fl):
     durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
     #try:
-    result    = model.autopower(durations, frequency_factor=5.0, maximum_period=args.max_period)
+    result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
     #except:
     #    print(fl)
     idx       = np.argmax(result.power)
