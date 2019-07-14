@@ -76,8 +76,8 @@ for i in range(args.start, len(BLSdata)):
 
         lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (fn, period, depth, rval, rval*np.sqrt(depth)*9.95))
 
-    chunk[3] *= 24
-    chunk[4] *= 1e6
+    chunk['duration'] *= 24
+    chunk['depth'] *= 1e6
     print(chunk)
     plt.show()
     plt.close(fig)
