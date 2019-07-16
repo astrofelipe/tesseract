@@ -18,7 +18,7 @@ parser.add_argument('--nstart', type=int, default=0)
 parser.add_argument('--nstop', type=int, default=None)
 args = parser.parse_args()
 
-allfiles  = np.sort(glob.glob(args.Folder + '*%d-%d*.fits' % (args.Camera, args.Chip)))[args.nstart:args.nstop]
+allfiles  = np.sort(glob.glob(args.Folder + '-*%d-%d*-.fits' % (args.Camera, args.Chip)))[args.nstart:args.nstop]
 files     = allfiles[args.nstart:args.nstop]
 nfiles    = len(allfiles)
 
