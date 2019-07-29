@@ -27,7 +27,7 @@ if folder[-1] != '/':
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
     #s10: 4913400--4913404 4913414.2--4913429
-    mask  = ((t > 4913400) + (t < 4913404)) & ((t > 4913414.2) + (t < 4913429)) #s10
+    mask  = ((t > 4913400) & (t < 4913404)) | ((t > 4913414.2) & (t < 4913429)) #s10
     #mask = (f/np.median(f) > 0.985)
     t = t[~mask]
     f = f[~mask]
