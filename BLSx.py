@@ -72,7 +72,7 @@ if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
     mask       = ((t > 4913400) & (t < 4913404)) | ((t > 4913414.2) & (t < 4913429)) #s10
-    print(mask)
+    print(len(mask), mask.sum())
     #t          = t[~mask]
     #f          = f[~mask]
     lc         = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
