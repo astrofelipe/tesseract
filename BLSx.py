@@ -27,10 +27,10 @@ if folder[-1] != '/':
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
     #s10: 4913400--4913404 4913414.2--4913429
-    mask = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
+    #mask = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
     #mask = (f/np.median(f) > 0.985)
-    t = t[~mask]
-    f = f[~mask]
+    #t = t[~mask]
+    #f = f[~mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
     lc   = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
