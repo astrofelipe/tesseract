@@ -27,10 +27,10 @@ if folder[-1] != '/':
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
     #s10: 4913400--4913404 4913414.2--4913429
-    #mask = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
+    mask = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
     #mask = (f/np.median(f) > 0.985)
-    #t = t[~mask]
-    #f = f[~mask]
+    t = t[~mask]
+    f = f[~mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
     lc   = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
@@ -112,7 +112,7 @@ else:
     costoso = memory.cache(run_BLS)
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    #results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
+    results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
 
     results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(costoso)(f) for f in tqdm(allfiles)))
     order    = np.argsort(results[:,5])[::-1]
