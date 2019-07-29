@@ -112,7 +112,7 @@ else:
     costoso = memory.cache(run_BLS)
 
     allfiles = glob.glob(folder + 'TIC*.dat')
-    results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
+    #results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
 
     results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(costoso)(f) for f in tqdm(allfiles)))
     order    = np.argsort(results[:,5])[::-1]
