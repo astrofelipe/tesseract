@@ -71,8 +71,10 @@ def run_BLS(fl):
 if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
+    t          = t[~mask]
+    f          = f[~mask]
     mask       = ((t > 4913400) & (t < 4913404)) | ((t > 4913414.2) & (t < 4913429)) #s10
-    lc         = TessLightCurve(time=t[~mask], flux=f[~mask]).flatten(window_length=21, polyorder=2, niters=3)
+    lc         = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
 
     result = run_BLS(targetfile)
