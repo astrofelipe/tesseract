@@ -27,7 +27,7 @@ if folder[-1] != '/':
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
     #s10: 4913400--4913404 4913414.2--4913429
-    mask  = ((t > 4913400) & (t < 4913404)) | ((t > 4913414.2) & (t < 4913429)) #s10
+    mask = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
     #mask = (f/np.median(f) > 0.985)
     t = t[~mask]
     f = f[~mask]
@@ -72,9 +72,6 @@ if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
     mask       = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
-    print(len(mask), mask.sum())
-    #t          = t[~mask]
-    #f          = f[~mask]
     lc         = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
 
 
