@@ -90,6 +90,7 @@ if args.target is not None:
     fig2, ax2 = plt.subplots(figsize=[20,3])
     ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
     ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
+    ax2.scatter(lc.time[~mask], lc.flux[~mask], s=10, color='gold', edgecolor='black', lw=.5, zorder=-3)
 
     fig, ax = plt.subplots(figsize=[10,4])
 
