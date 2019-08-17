@@ -50,10 +50,10 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     c2 = SkyCoord(ra2, dec2, unit='deg').transform_to('geocentrictrueecliptic')
     c3 = SkyCoord(ra3, dec3, unit='deg').transform_to('geocentrictrueecliptic')
     c4 = SkyCoord(ra4, dec4, unit='deg').transform_to('geocentrictrueecliptic')
-    cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
+    #cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
 
     #print(cx)
-    #print(c1, c2, c3, c4)
+    print(c1, c2, c3, c4)
 
 
     left   = np.min([ra1, ra2])
@@ -61,7 +61,7 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     top    = np.max([dec1, dec4])
     bottom = np.min([dec2, dec3])
 
-    print(left, right, top, bottom, '\n')
+    #print(left, right, top, bottom, '\n')
 
 eclim = {'s0002': [[298, 388], [-90, 0]],
          's0005': [[19, 111], [-90, 0]],
