@@ -6,6 +6,7 @@ from astropy.table import vstack, unique
 from tqdm import tqdm
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 from joblib import Parallel, delayed
+import glob
 import numpy as np
 import argparse
 
@@ -23,49 +24,43 @@ args = parser.parse_args()
 sec = 's%04d' % args.Sector
 print(sec)
 
-img = '/horus/TESS/FFI/s0011/tess2019113095933-s0011-3-4-0143-s_ffic.fits'
+TOP_LEFT     = glob.glob('/horus/TESS/FFI/%s/*%d-3-3*' % (sec, args.Sector))[0]
+BOTTOM_RIGHT = glob.glob('/horus/TESS/FFI/%s/*%d-3-4*' % (sec, args.Sector))[0]
 
-hdr = fits.getheader(img, 1)
-dat = fits.getdata(img)
-w   = WCS(hdr)
+for img in [TOP_LEFT, BOTTOM_RIGHT]:
+    hdr = fits.getheader(img, 1)
+    dat = fits.getdata(img)
+    w   = WCS(hdr)
 
-'''
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
-ax.matshow(np.log10(dat), cmap='YlGnBu_r')
-ax.plot([44], [0], '.r')
-plt.show()
-'''
+    ra1, dec1 = w.all_pix2world(44, 0, 0)       #TOP LEFT
+    ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
+    ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
+    ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
 
-ra1, dec1 = w.all_pix2world(44, 0, 0)       #TOP LEFT
-ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
-ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
-ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
-
-print(ra1,ra2,ra3,ra4)
-print(dec1,dec2,dec3,dec4)
+    print(ra1,ra2,ra3,ra4)
+    print(dec1,dec2,dec3,dec4)
 
 
-#Ecliptic limits:
-#eclat ~-72 a -inf (-90)
-#eclon ver en cada sector (ancho ~90)
+    #Ecliptic limits:
+    #eclat ~-72 a -inf (-90)
+    #eclon ver en cada sector (ancho ~90)
 
-c1 = SkyCoord(ra1, dec1, unit='deg').transform_to('geocentrictrueecliptic')
-c2 = SkyCoord(ra2, dec2, unit='deg').transform_to('geocentrictrueecliptic')
-c3 = SkyCoord(ra3, dec3, unit='deg').transform_to('geocentrictrueecliptic')
-c4 = SkyCoord(ra4, dec4, unit='deg').transform_to('geocentrictrueecliptic')
-cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
+    c1 = SkyCoord(ra1, dec1, unit='deg').transform_to('geocentrictrueecliptic')
+    c2 = SkyCoord(ra2, dec2, unit='deg').transform_to('geocentrictrueecliptic')
+    c3 = SkyCoord(ra3, dec3, unit='deg').transform_to('geocentrictrueecliptic')
+    c4 = SkyCoord(ra4, dec4, unit='deg').transform_to('geocentrictrueecliptic')
+    cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
 
-print(cx)
-print(c1, c2, c3, c4)
+    print(cx)
+    print(c1, c2, c3, c4)
 
 
-left   = np.min([ra1, ra2])
-right  = np.max([ra3, ra4])
-top    = np.max([dec1, dec4])
-bottom = np.min([dec2, dec3])
+    left   = np.min([ra1, ra2])
+    right  = np.max([ra3, ra4])
+    top    = np.max([dec1, dec4])
+    bottom = np.min([dec2, dec3])
 
-print(left, right, top, bottom)
+    print(left, right, top, bottom)
 
 eclim = {'s0002': [[298, 388], [-90, 0]],
          's0005': [[19, 111], [-90, 0]],
