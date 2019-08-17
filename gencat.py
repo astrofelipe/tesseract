@@ -28,6 +28,7 @@ TOP_LEFT     = glob.glob('/horus/TESS/FFI/%s/*%d-3-3*' % (sec, args.Sector))[0]
 BOTTOM_RIGHT = glob.glob('/horus/TESS/FFI/%s/*%d-3-4*' % (sec, args.Sector))[0]
 
 for img in [TOP_LEFT, BOTTOM_RIGHT]:
+    print(img)
     hdr = fits.getheader(img, 1)
     dat = fits.getdata(img)
     w   = WCS(hdr)
@@ -37,8 +38,8 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
     ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
 
-    print(ra1,ra2,ra3,ra4)
-    print(dec1,dec2,dec3,dec4)
+    #print(ra1,ra2,ra3,ra4)
+    #print(dec1,dec2,dec3,dec4)
 
 
     #Ecliptic limits:
@@ -51,8 +52,8 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     c4 = SkyCoord(ra4, dec4, unit='deg').transform_to('geocentrictrueecliptic')
     cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
 
-    print(cx)
-    print(c1, c2, c3, c4)
+    #print(cx)
+    #print(c1, c2, c3, c4)
 
 
     left   = np.min([ra1, ra2])
@@ -60,7 +61,7 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     top    = np.max([dec1, dec4])
     bottom = np.min([dec2, dec3])
 
-    print(left, right, top, bottom)
+    print(left, right, top, bottom, '\n')
 
 eclim = {'s0002': [[298, 388], [-90, 0]],
          's0005': [[19, 111], [-90, 0]],
@@ -69,7 +70,8 @@ eclim = {'s0002': [[298, 388], [-90, 0]],
          's0008': [[101, 193], [-90, 0]],
          's0009': [[125, 218], [-90, 0]],
          's0010': [[154, 244], [-90, 0]],
-         's0011': [[181, 271], [-90, 0]]}
+         's0011': [[181, 271], [-90, 0]],
+         's0012': [[209, 299], [-90, 0]]}
 
 elo, ela = eclim[sec]
 print(elo,ela)
