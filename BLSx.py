@@ -2,11 +2,12 @@ import glob
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.ndimage import median_filter
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
 from astropy.stats import BoxLeastSquares as BLS
 from scipy.ndimage import median_filter
-#from transitleastsquares import transitleastsquares
+from transitleastsquares import transitleastsquares, period_grid
 
 parser = argparse.ArgumentParser(description='BLS for a folder with many LC files...')
 parser.add_argument('Folder', help='Folder containing FITS files')
@@ -32,21 +33,37 @@ def run_BLS(fl):
     t = t[~mask]
     f = f[~mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
-    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
+    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=61, polyorder=2, niters=3)
 
-    durations = np.linspace(0.05, 0.2, 60)# * u.day
+    #masky      = lc.flux > 0.8
+    #lc         = TessLightCurve(time=t[masky], flux=f[masky]).flatten(window_length=61, polyorder=2, niters=3)
+
+    periods   = np.exp(np.linspace(np.log(7), np.log(27), 2000))
+    #durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
+
+    #result    = model.power(periods, 0.2, oversample=5)
+    result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4)
     #try:
-    result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
+    #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
     #except:
     #    print(fl)
     idx       = np.argmax(result.power)
 
+    '''
     period = result.period[idx]
     t0     = result.transit_time[idx]
     dur    = result.duration[idx]
     depth  = result.depth[idx]
     snr    = result.depth_snr[idx]
+    '''
+    print(result)
+    period = result.period
+    t0     = result.T0
+    dur    = result.duration
+    depth  = 1 - result.depth
+    snr    = result.snr
+
 
     try:
         stats  = model.compute_stats(period, dur, t0)
@@ -60,7 +77,11 @@ def run_BLS(fl):
 
     if args.target is not None:
         pfig, pax = plt.subplots()
-        pax.plot(result.period, result.power, '-k')
+
+        trend = median_filter(result.power, 201)
+        #pax.plot(result.periods, result.power/trend, '-k')
+        pax.plot(result.periods, result.power, '-k')
+        #pax.plot(result.period, trend, '-r')
         pax.set_xlabel(r'Period  (days)', fontweight='bold')
         pax.set_ylabel(r'Power', fontweight='bold')
 
@@ -72,8 +93,7 @@ if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
     t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
     mask       = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
-    lc         = TessLightCurve(time=t, flux=f).flatten(window_length=21, polyorder=2, niters=3)
-
+    lc         = TessLightCurve(time=t, flux=f).flatten(window_length=61, polyorder=2, niters=3)
 
     result = run_BLS(targetfile)
     period = result[1]
@@ -87,7 +107,7 @@ if args.target is not None:
     fig2, ax2 = plt.subplots(figsize=[20,3])
     ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
     ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
-    ax2.scatter(lc.time[~mask], lc.flux[~mask], s=10, color='gold', edgecolor='black', lw=.5, zorder=-3)
+    #ax2.scatter(lc.time[~mask], lc.flux[~mask], s=10, color='gold', edgecolor='black', lw=.5, zorder=-3)
 
     fig, ax = plt.subplots(figsize=[10,4])
 
