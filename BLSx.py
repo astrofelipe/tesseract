@@ -43,7 +43,7 @@ def run_BLS(fl):
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
     #result    = model.power(periods, 0.2, oversample=5)
-    result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4)
+    result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
     #try:
     #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
     #except:
@@ -57,7 +57,6 @@ def run_BLS(fl):
     depth  = result.depth[idx]
     snr    = result.depth_snr[idx]
     '''
-    print(result)
     period = result.period
     t0     = result.T0
     dur    = result.duration
