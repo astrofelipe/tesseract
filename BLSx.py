@@ -38,19 +38,19 @@ def run_BLS(fl):
     #masky      = lc.flux > 0.8
     #lc         = TessLightCurve(time=t[masky], flux=f[masky]).flatten(window_length=61, polyorder=2, niters=3)
 
-    periods   = np.exp(np.linspace(np.log(7), np.log(27), 2000))
-    #durations = np.linspace(0.05, 0.2, 60)# * u.day
+    periods   = np.exp(np.linspace(np.log(1), np.log(25), 2000))
+    durations = np.linspace(0.05, 0.2, 60)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
-    #result    = model.power(periods, 0.2, oversample=5)
-    result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
+    result    = model.power(periods, durations, oversample=2, objective='snr')
+    #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
     #try:
     #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
     #except:
     #    print(fl)
     idx       = np.argmax(result.power)
 
-    '''
+
     period = result.period[idx]
     t0     = result.transit_time[idx]
     dur    = result.duration[idx]
@@ -62,6 +62,7 @@ def run_BLS(fl):
     dur    = result.duration
     depth  = 1 - result.depth
     snr    = result.snr
+    '''
 
 
     try:
@@ -69,24 +70,28 @@ def run_BLS(fl):
         depth_even = stats['depth_even'][0]
         depth_odd  = stats['depth_odd'][0]
         depth_half = stats['depth_half'][0]
+        t0, t1     = stats['transit_times'][:2]
+        ntra       = len(stats['transit_times'])
     except:
         depth_even = 0
         depth_odd  = 0
         depth_half = 0
+        t1         = 0
+        ntra       = 0
 
     if args.target is not None:
         pfig, pax = plt.subplots()
 
         trend = median_filter(result.power, 201)
         #pax.plot(result.periods, result.power/trend, '-k')
-        pax.plot(result.periods, result.power, '-k')
+        pax.plot(result.period, result.power, '-k')
         #pax.plot(result.period, trend, '-r')
         pax.set_xlabel(r'Period  (days)', fontweight='bold')
         pax.set_ylabel(r'Power', fontweight='bold')
 
         pfig.tight_layout()
 
-    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half
+    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra
 
 if args.target is not None:
     targetfile = folder + 'TIC%d.dat' % args.target
@@ -104,6 +109,10 @@ if args.target is not None:
     ph = (t-t0 + 0.5*period) % period - 0.5*period
 
     fig2, ax2 = plt.subplots(figsize=[20,3])
+
+    t0s  = np.arange(t0, lc.time[-1], period)
+    for ti0 in t0s:
+        ax2.axvline(ti0)
     ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
     ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
     #ax2.scatter(lc.time[~mask], lc.flux[~mask], s=10, color='gold', edgecolor='black', lw=.5, zorder=-3)
