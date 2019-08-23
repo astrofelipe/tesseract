@@ -34,7 +34,6 @@ rank = MPI.COMM_WORLD.rank
 size = MPI.COMM_WORLD.size
 
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
-#h5s = [h5py.File(f, 'r', driver='mpio', comm=MPI.COMM_WORLD) for f in fs]
 h5s = [h5py.File(f, 'r') for f in fs]
 
 if args.Targets[-3:] == 'pkl':
@@ -51,7 +50,6 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
-    #tics, ra, dec = np.genfromtxt(args.Targets, usecols=(0,1,2), delimiter=',', skip_header=1).astype(int)
     catalog = pd.read_csv(args.Targets)
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
@@ -111,7 +109,7 @@ def make_lc(tic, ra, dec):
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
-    time = hdus[1].data['TIME'][q] + hdus[1].header['BJDREFI']
+    time = hdus[1].data['TIME'][q]# + hdus[1].header['BJDREFI']
     flux = hdus[1].data['FLUX'][q]
     errs = hdus[1].data['FLUX_ERR'][q]
     bkgs = np.zeros(len(flux))
