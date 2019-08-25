@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import median_filter
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
-from astropy.stats import BoxLeastSquares as BLS
+from astropy.timeseries import BoxLeastSquares as BLS
 from scipy.ndimage import median_filter
 from transitleastsquares import transitleastsquares, period_grid
 
