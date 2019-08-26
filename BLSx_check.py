@@ -12,13 +12,14 @@ parser.add_argument('--max-depth', type=float, default=0.04, help='Maximum depth
 parser.add_argument('--min-period', type=float, default=0, help='Minimum period')
 parser.add_argument('--max-period', type=float, default=999, help='Maximum period')
 parser.add_argument('--start', type=int, default=0, help='Iteration to start from')
+parser.add_argument('--ntra' type=int, default=2, help='Minimum number of transits')
 parser.add_argument('--nogaia', action='store_true')
 
 args = parser.parse_args()
 
 names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_odd', 'depth_half', 't1', 'ntra']
 BLSdata = pd.read_csv(args.File, delimiter=' ', names=names)
-mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
+mask    = ((BLSdata['ntran'] >= args.ntra) & (BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
 BLSdata = BLSdata[mask]
 
 if not args.nogaia:
