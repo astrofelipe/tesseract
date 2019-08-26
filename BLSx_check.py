@@ -16,7 +16,7 @@ parser.add_argument('--nogaia', action='store_true')
 
 args = parser.parse_args()
 
-names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_odd', 'depth_half']
+names   = ['Files', 'P', 't0', 'duration', 'depth', 'snr', 'depth_even', 'depth_odd', 'depth_half', 't1', 'ntra']
 BLSdata = pd.read_csv(args.File, delimiter=' ', names=names)
 mask    = ((BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
 BLSdata = BLSdata[mask]
