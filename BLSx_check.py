@@ -45,6 +45,9 @@ for i in range(args.start, len(BLSdata)):
         depth  = chunk.iloc[j,4]
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
+
+        transits = np.arange(t0, t[-1], period)
+
         lc   = TessLightCurve(time=t, flux=y).flatten()
 
         p    = (t - t0 + 0.5*period) % period - 0.5*period
@@ -62,6 +65,8 @@ for i in range(args.start, len(BLSdata)):
             rval = np.nan
 
         lcs[j].plot(lc.time, lc.flux, '.', ms=1)
+        for t0s in transits:
+            lcs[j].axvline(t0s, color='orange')
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)')
 
