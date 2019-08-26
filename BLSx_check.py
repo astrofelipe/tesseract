@@ -12,7 +12,7 @@ parser.add_argument('--max-depth', type=float, default=0.04, help='Maximum depth
 parser.add_argument('--min-period', type=float, default=0, help='Minimum period')
 parser.add_argument('--max-period', type=float, default=999, help='Maximum period')
 parser.add_argument('--start', type=int, default=0, help='Iteration to start from')
-parser.add_argument('--ntra' type=int, default=2, help='Minimum number of transits')
+parser.add_argument('--ntra', type=int, default=2, help='Minimum number of transits')
 parser.add_argument('--nogaia', action='store_true')
 
 args = parser.parse_args()
