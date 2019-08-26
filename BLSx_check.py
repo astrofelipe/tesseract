@@ -47,6 +47,7 @@ for i in range(args.start, len(BLSdata)):
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
 
         transits = np.arange(t0, t[-1], period)
+        print(t0, t[-1], period)
 
         lc   = TessLightCurve(time=t, flux=y).flatten()
 
