@@ -78,8 +78,8 @@ elo, ela = eclim[sec]
 print(elo,ela)
 
 #Not pole
-eclos = np.arange(elo[0], elo[1]+1.1, 3) % 360
-eclas = np.arange(ela[0], ela[1]+1.1, 3)
+eclos = np.arange(elo[0], elo[1]+1.1, 6) % 360
+eclas = np.arange(ela[0], ela[1]+1.1, 6)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
@@ -123,8 +123,8 @@ supercata1 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm
 print(supercata1)
 print('\nScanning... (2/2)')
 #Pole
-eclos = np.arange(0, 360+1.1, 5)
-eclas = np.arange(-92, -72-1.1, 5)
+eclos = np.arange(0, 360+1.1, 6)
+eclas = np.arange(-92, -72-1.1, 6)
 
 supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
 print(supercata2)
