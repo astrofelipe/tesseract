@@ -28,7 +28,7 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
-    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=51, polyorder=2, niters=3)
+    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=51, polyorder=2, niters=5)
 
     #Test Fill
     diffs = np.diff(lc.time)
