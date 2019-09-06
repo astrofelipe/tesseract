@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import median_filter
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
+from astropy.stats import mad_std
 from astropy.timeseries import BoxLeastSquares as BLS
 from scipy.ndimage import median_filter
 from transitleastsquares import transitleastsquares, period_grid
@@ -13,8 +14,8 @@ parser = argparse.ArgumentParser(description='BLS for a folder with many LC file
 parser.add_argument('Folder', help='Folder containing FITS files')
 parser.add_argument('--target', type=int, default=None, help='Run on single target')
 #parser.add_argument('--mags', type=float, nargs=2, help='Magnitude limits')
-parser.add_argument('--max-period', type=float, default=30.)
-parser.add_argument('--min-period', type=float, default=0.01)
+parser.add_argument('--max-period', type=float, default=25)
+parser.add_argument('--min-period', type=float, default=0.2)
 parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
 parser.add_argument('--TLS', action='store_true')
 parser.add_argument('--output', default='BLS_result.dat')
@@ -27,26 +28,59 @@ if folder[-1] != '/':
 
 def run_BLS(fl):
     t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
+    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=51, polyorder=2, niters=3)
 
-    mask1  = ((t > 4913180) & (t < 4913183))
+    #Test Fill
+    diffs = np.diff(lc.time)
+    stdd  = np.nanstd(diffs)
+    medd  = np.nanmedian(diffs)
+
+    maskgaps = diffs > 0.2#np.abs(diffs-medd) > stdd
+    maskgaps = np.concatenate((maskgaps,[False]))
+
+    '''
+    for mg in np.where(maskgaps)[0]:
+        addtime = np.arange(lc.time[mg]+0.05, lc.time[mg+1], 0.05)
+        addflux = np.random.normal(1, 8e-4, len(addtime))
+
+        lc.time = np.concatenate((lc.time, addtime))
+        lc.flux = np.concatenate((lc.flux, addflux))
+
+    addorder = np.argsort(lc.time)
+    lc.time = lc.time[addorder]
+    lc.flux = lc.flux[addorder]
+    '''
+
+    fmed = np.nanmedian(lc.flux)
+    fstd = np.nanstd(lc.flux)
+    stdm = lc.flux < 0.94#np.abs(lc.flux-fmed) > 3*fstd
+
+    mask1  = ((lc.time > 2458347) & (lc.time < 2458350))
+    mask3  = ((lc.time > 2458382) & (lc.time < 2458384))
+    mask4  = ((lc.time > 2458419) & (lc.time < 2458422)) + ((lc.time > 2458422) & (lc.time < 2458424)) + ((lc.time > 2458436) & (lc.time < 2458437))
+    mask5  = ((lc.time > 2458437.8) & (lc.time < 2458438.7)) + ((lc.time > 2458450) & (lc.time < 2458452)) + ((lc.time > 2458463.4) & (lc.time < 2458464.2))
+    mask6  = ((lc.time > 2458476.7) & (lc.time < 2458478.7))
+    mask7  = ((lc.time > 2458491.6) & (lc.time < 2458492)) + ((lc.time > 2458504.6) & (lc.time < 2458505.2))
+    mask8  = ((lc.time > 2458517.4) & (lc.time < 2458518)) + ((lc.time > 2458530) & (lc.time < 2458532))
     #s10: 4913400--4913404 4913414.2--4913429
-    mask10 = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
+    mask10 = ((lc.time > 4913400) & (lc.time < 4913403.5)) + ((lc.time > 4913414.2) & (lc.time < 4913417)) #s10
+    mask11 = ((lc.time > 2458610.6) & (lc.time < 2458611.6)) + ((lc.time > 2458610.6) & (lc.time < 2458611.6))
+    mask12 = ((lc.time > 2458624.5) & (lc.time < 2458626))
+    mask13 = ((lc.time > 2458653.5) & (lc.time < 2458655.75)) + ((lc.time > 2458668.5) & (lc.time < 2458670))
 
-    mask   = mask1 + mask10
+    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
 
-    t = t[~mask]
-    f = f[~mask]
+    lc.time = lc.time[~mask]
+    lc.flux = lc.flux[~mask]
     #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
-    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=61, polyorder=2, niters=3)
+    #lc   = TessLightCurve(time=t, flux=f).flatten(window_length=31, polyorder=3, niters=3)
 
-    #masky      = lc.flux > 0.8
-    #lc         = TessLightCurve(time=t[masky], flux=f[masky]).flatten(window_length=61, polyorder=2, niters=3)
 
-    periods   = np.exp(np.linspace(np.log(1), np.log(25), 2000))
-    durations = np.linspace(0.05, 0.2, 60)# * u.day
+    periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 10000))
+    durations = np.linspace(0.05, 0.15, 50)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
-    result    = model.power(periods, durations, oversample=2, objective='snr')
+    result    = model.power(periods, durations, oversample=5)#, objective='snr')
     #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
     #try:
     #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
@@ -83,25 +117,14 @@ def run_BLS(fl):
         t1         = 0
         ntra       = 0
 
-    if args.target is not None:
-        pfig, pax = plt.subplots()
-
-        trend = median_filter(result.power, 201)
-        #pax.plot(result.periods, result.power/trend, '-k')
-        pax.plot(result.period, result.power, '-k')
-        #pax.plot(result.period, trend, '-r')
-        pax.set_xlabel(r'Period  (days)', fontweight='bold')
-        pax.set_ylabel(r'Power', fontweight='bold')
-
-        pfig.tight_layout()
-
-    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra
+    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra, result.period, result.power, lc.time, lc.flux, diffs
 
 if args.target is not None:
+    from matplotlib.gridspec import GridSpec
     targetfile = folder + 'TIC%d.dat' % args.target
-    t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
-    mask       = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
-    lc         = TessLightCurve(time=t, flux=f).flatten(window_length=61, polyorder=2, niters=3)
+    #t,f        = np.genfromtxt(targetfile, usecols=(0,1), unpack=True)
+    #mask       = ((t > 4913400) & (t < 4913403.5)) + ((t > 4913414.2) & (t < 4913417)) #s10
+    #lc         = TessLightCurve(time=t, flux=f).flatten(window_length=31, polyorder=2, niters=3)
 
     result = run_BLS(targetfile)
     period = result[1]
@@ -109,21 +132,36 @@ if args.target is not None:
     dur    = result[3]
     depth  = result[4]
     snr    = result[5]
+    t      = result[13]
+    f      = result[14]
+    diffs  = result[15]
+    pers   = result[11]
+    powers = result[12]
+
+    maskgaps = diffs > 0.2#np.abs(diffs-medd) > stdd
+    maskgaps = np.concatenate((maskgaps,[False]))
+
+    fig = plt.figure(figsize=[16,6], constrained_layout=True)
+    gs  = GridSpec(2,6, figure=fig)
+
+    pax = fig.add_subplot(gs[1,:2])
+    pax.plot(pers, powers, '-k')
+    pax.set_xlabel(r'Period  (days)', fontweight='bold')
+    pax.set_ylabel(r'Power', fontweight='bold')
+
 
     ph = (t-t0 + 0.5*period) % period - 0.5*period
 
-    fig2, ax2 = plt.subplots(figsize=[20,3])
+    ax2 = fig.add_subplot(gs[0,:])
+    ax2.plot(t, f, 'k', lw=.8, zorder=-5)
+    ax2.scatter(t, f, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
+    if t0 > 1e6:
+        t0s  = np.arange(t0, t[-1], period)
+        for ti0 in t0s:
+            ax2.axvline(ti0, alpha=.5)
 
-    t0s  = np.arange(t0, lc.time[-1], period)
-    for ti0 in t0s:
-        ax2.axvline(ti0)
-    ax2.plot(lc.time, lc.flux, 'k', lw=.8, zorder=-5)
-    ax2.scatter(lc.time, lc.flux, s=10, color='tomato', edgecolor='black', lw=.5, zorder=-4)
-    #ax2.scatter(lc.time[~mask], lc.flux[~mask], s=10, color='gold', edgecolor='black', lw=.5, zorder=-3)
-
-    fig, ax = plt.subplots(figsize=[10,4])
-
-    ax.plot(ph*24, lc.flux, '.k', ms=5)
+    ax = fig.add_subplot(gs[1,2:4])
+    ax.plot(ph*24, f, '.k', ms=5)
     print(ph.max(), ph.min())
 
     ax.set_xlim(-48*dur, 48*dur)
