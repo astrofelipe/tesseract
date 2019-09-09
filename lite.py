@@ -27,6 +27,7 @@ parser.add_argument('Targets', type=str)
 parser.add_argument('--ncpu', type=int, default=20)
 parser.add_argument('--output', action='store_true')
 parser.add_argument('--size', type=int, default=21)
+parser.add_argument('--circ', action='store_true')
 
 args = parser.parse_args()
 
@@ -123,8 +124,12 @@ def make_lc(tic, ra, dec):
     x = x - int(x) + args.size//2
     y = y - int(y) + args.size//2
 
-    daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
-    dap  = np.array([select_aperture(d, x, y) for d in daps])
+    if not args.circ:
+        daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
+        dap  = np.array([select_aperture(d, x, y) for d in daps])
+    else:
+        XX, YY = np.ogrid[:args.size, :args.size]
+        dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in range(1,5)]
 
     #Aperture photometry
     lcfl = np.einsum('ijk,ljk->li', flux - bkgs[:,None,None], dap)
