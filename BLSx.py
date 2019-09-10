@@ -80,7 +80,7 @@ def run_BLS(fl):
     durations = np.linspace(0.1, 0.2, 50)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
-    result    = model.power(periods, 0.15, oversample=20)#, objective='snr')
+    result    = model.power(periods, durations, oversample=20)#, objective='snr')
     #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
     #try:
     #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
