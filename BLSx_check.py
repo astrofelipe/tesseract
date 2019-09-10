@@ -73,6 +73,7 @@ for i in range(args.start, len(BLSdata)):
 
         lcf[j].plot(p, lc.flux, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
+        lcf[j].set_ylim(1-1.5*chunk['depth'], 1.005)
 
         lc2[j].plot(p2, lc.flux, '.', ms=1)
         lc2[j].set_xlim(-0.2, 0.2)
