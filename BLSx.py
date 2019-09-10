@@ -186,7 +186,7 @@ else:
     #results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
 
     #results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(costoso)(f) for f in tqdm(allfiles)))
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles)))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles[:10])))[:11]
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
