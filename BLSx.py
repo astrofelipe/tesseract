@@ -117,7 +117,10 @@ def run_BLS(fl):
         t1         = 0
         ntra       = 0
 
-    return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra, result.period, result.power, lc.time, lc.flux, diffs
+    if args.target is not None:
+        return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra, result.period, result.power, lc.time, lc.flux, diffs
+    else:
+        return fl, period, t0, dur, depth, snr, depth_even, depth_odd, depth_half, t1, ntra
 
 if args.target is not None:
     from matplotlib.gridspec import GridSpec
@@ -186,7 +189,7 @@ else:
     #results  = np.memmap('temp.npz', dtype='float32', mode='w+', shape=(len(allfiles),9))
 
     #results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(costoso)(f) for f in tqdm(allfiles)))
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles[:10])))[:10]
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_BLS)(f) for f in tqdm(allfiles[:10])))
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
