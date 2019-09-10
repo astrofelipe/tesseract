@@ -76,11 +76,11 @@ def run_BLS(fl):
     #lc   = TessLightCurve(time=t, flux=f).flatten(window_length=31, polyorder=3, niters=3)
 
 
-    periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 10000))
-    durations = np.linspace(0.05, 0.15, 50)# * u.day
+    periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 12000))
+    durations = np.linspace(0.1, 0.2, 50)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
-    result    = model.power(periods, 0.1, oversample=5)#, objective='snr')
+    result    = model.power(periods, 0.15, oversample=20)#, objective='snr')
     #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
     #try:
     #result    = model.autopower(durations, frequency_factor=2.0, maximum_period=args.max_period)
@@ -138,7 +138,7 @@ if args.target is not None:
     pers   = result[11]
     powers = result[12]
 
-    print(period,t0)
+    print(period,t0,dur)
 
     maskgaps = diffs > 0.2#np.abs(diffs-medd) > stdd
     maskgaps = np.concatenate((maskgaps,[False]))
