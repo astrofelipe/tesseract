@@ -52,7 +52,7 @@ if args.Targets[-3:] == 'pkl':
 
 else:
     catalog = pd.read_csv(args.Targets, names=['ID', 'ra', 'dec', 'mag'])
-    print(catalog)
+    print(catalog.columns)
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
