@@ -52,6 +52,7 @@ if args.Targets[-3:] == 'pkl':
 
 else:
     catalog = pd.read_csv(args.Targets, names=['ID', 'ra', 'dec', 'mag'])
+    print(catalog)
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
@@ -153,8 +154,6 @@ def make_lc(tic, ra, dec):
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
 
     return 1
-
-print(tics)
 
 for i in range(len(tics)):
     if os.path.isfile('TIC%d.dat' % tics[i]):
