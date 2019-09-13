@@ -154,6 +154,7 @@ def make_lc(tic, ra, dec):
 
     return 1
 
+print(tics)
 
 for i in range(len(tics)):
     if os.path.isfile('TIC%d.dat' % tics[i]):
