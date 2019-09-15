@@ -76,7 +76,7 @@ def run_BLS(fl):
     #lc   = TessLightCurve(time=t, flux=f).flatten(window_length=31, polyorder=3, niters=3)
 
 
-    periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 12000))
+    periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 5000))
     durations = np.linspace(0.05, 0.15, 20)# * u.day
     model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
 
