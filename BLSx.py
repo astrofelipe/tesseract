@@ -55,7 +55,7 @@ def run_BLS(fl):
     fstd = np.nanstd(lc.flux)
     stdm = lc.flux < 0.94#np.abs(lc.flux-fmed) > 3*fstd
 
-    mask1  = ((lc.time > 2458347) & (lc.time < 2458350))
+    mask1  = ((lc.time > 2458325) & (lc.time < 2458326)) + ((lc.time > 2458347) & (lc.time < 2458350)) + ((lc.time > 2458352.5) & (lc.time < 2458353.2))
     mask3  = ((lc.time > 2458382) & (lc.time < 2458384))
     mask4  = ((lc.time > 2458419) & (lc.time < 2458422)) + ((lc.time > 2458422) & (lc.time < 2458424)) + ((lc.time > 2458436) & (lc.time < 2458437))
     mask5  = ((lc.time > 2458437.8) & (lc.time < 2458438.7)) + ((lc.time > 2458450) & (lc.time < 2458452)) + ((lc.time > 2458463.4) & (lc.time < 2458464.2))
