@@ -10,6 +10,7 @@ data = np.genfromtxt(args.File, usecols=(0,1,2))
 strd = np.genfromtxt(args.File, usecols=(3), dtype='str')
 print(strd.shape, data.shape)
 time = data[:,0]
+flux = data[:,1]
 
 mask1  = ((time > 2458347) & (time < 2458350))
 mask3  = ((time > 2458382) & (time < 2458384))
@@ -23,7 +24,9 @@ mask11 = ((time > 2458610.6) & (time < 2458611.6)) + ((time > 2458610.6) & (time
 mask12 = ((time > 2458624.5) & (time < 2458626))
 mask13 = ((time > 2458653.5) & (time < 2458655.75)) + ((time > 2458668.5) & (time < 2458670))
 
-mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13
+maskf = (flux < 0.94)
+
+mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + maskf
 
 strd2 = strd[~mask]
 data2 = data[~mask]
