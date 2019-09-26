@@ -119,7 +119,11 @@ def gocat(i, j):
     print(catalogdata)
     return catalogdata
 
-supercata1 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
+supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1)))
+print(supercata1)
+for s in supercata1:
+    print(type(supercata1))
+supercata1 = vstack(supercata1)
 
 print(supercata1)
 print('\nScanning... (2/2)')
