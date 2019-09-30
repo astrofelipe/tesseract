@@ -119,9 +119,9 @@ def gocat(i, j):
     return catalogdata
 
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1)))
-print(supercata1)
-for s in supercata1:
-    print(type(supercata1))
+#print(supercata1)
+#for s in supercata1:
+#    print(type(supercata1))
 supercata1 = vstack(supercata1)
 
 print(supercata1)
@@ -131,7 +131,6 @@ eclos = np.arange(0, 360+1.1, 5)
 eclas = np.arange(-92, -72-1.1, 5)
 
 supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
-print(supercata2)
 '''
 for i in tqdm(range(len(eclos) - 1)):
     eloi1 = int(eclos[i])
@@ -165,7 +164,6 @@ for i in tqdm(range(len(eclos) - 1)):
 '''
 
 supercata = vstack([supercata1, supercata2])
-print(supercata)
 supercata = unique(supercata, keys=['ID'])
 
 catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
