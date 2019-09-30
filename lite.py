@@ -24,7 +24,6 @@ from joblib import Parallel, delayed
 parser = argparse.ArgumentParser(description='Generate lightcurves!')
 parser.add_argument('Sector', type=int, help='TESS Sector')
 parser.add_argument('Targets', type=str)
-parser.add_argument('--ncpu', type=int, default=20)
 parser.add_argument('--output', action='store_true')
 parser.add_argument('--size', type=int, default=21)
 parser.add_argument('--circ', action='store_true')
@@ -51,7 +50,7 @@ if args.Targets[-3:] == 'pkl':
 
 
 else:
-    catalog = pd.read_csv(args.Targets,names=['ID', 'ra', 'dec', 'mag'])
+    catalog = pd.read_csv(args.Targets, names=['ID', 'ra', 'dec', 'Tmag'])
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
