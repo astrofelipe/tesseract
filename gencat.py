@@ -114,9 +114,9 @@ def gocat(i, j):
     sid = res[0]#[sma]
 
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
-    print(sid)
     catalogdata = catalogdata[mask]
-    print(catalogdata)
+    print(type(catalogdata))
+
     return catalogdata
 
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1)))
