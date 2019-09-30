@@ -108,10 +108,10 @@ def gocat(i, j):
     ras  = np.array(catalogdata['ra'])
     dec  = np.array(catalogdata['dec'])
 
-    res = ts2p(tics, ras, dec)
+    res = ts2p(tics, ras, dec, trySector=args.Sector)
 
-    sma = res[3] == args.Sector
-    sid = res[0][sma]
+    #sma = res[3] == args.Sector
+    sid = res[0]#[sma]
 
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
 
