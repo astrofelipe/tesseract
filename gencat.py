@@ -92,8 +92,8 @@ def gocat(i, j):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
-    if eloi1==360 and eloi2==0:
-        return
+    #if eloi1==360 and eloi2==0:
+    #    return
 
     elai1 = int(eclas[j])
     elai2 = int(eclas[j+1])
@@ -115,7 +115,6 @@ def gocat(i, j):
 
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
     catalogdata = catalogdata[mask]
-    print(type(catalogdata))
 
     return catalogdata
 
