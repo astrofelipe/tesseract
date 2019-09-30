@@ -114,7 +114,7 @@ def gocat(i, j):
     sid = res[0]#[sma]
 
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
-
+    print(catalogdata)
     catalogdata = catalogdata[mask]
     print(catalogdata)
     return catalogdata
