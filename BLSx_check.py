@@ -25,7 +25,7 @@ BLSdata = ascii.read(args.File, names=names)
 mask    = ((BLSdata['ntra'] >= args.ntra) & (BLSdata['depth'] < args.max_depth) & (BLSdata['P'] > args.min_period) & (BLSdata['P'] < args.max_period))# + ((np.abs(BLSdata['P']) - 13.4) > 0.55)
 BLSdata = BLSdata[mask]
 
-plt.style.use('fivethirtyeight')
+plt.style.use('bmh')
 
 if not args.nogaia:
     import astropy.units as u
