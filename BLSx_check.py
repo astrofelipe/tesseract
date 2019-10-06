@@ -36,6 +36,7 @@ for i in range(args.start, len(BLSdata)):
     lcs = [fig.add_subplot(gs[k,:5]) for k in range(6)]
     lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
     lc2 = [fig.add_subplot(gs[k,6]) for k in range(6)]
+    lcb = [fig.add_subplot(gs[k,7]) for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
 
