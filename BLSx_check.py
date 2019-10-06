@@ -95,6 +95,7 @@ for i in range(args.start, len(BLSdata)):
 
         lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (fn, period, depth, rval, rval*np.sqrt(depth)*9.95))
 
+        chunk['Files'][j] = chunk['Files'][j].split('TIC')[-1].split('.')[0]
     chunk['duration'] = chunk['duration']*24
     chunk['depth'] = int(chunk['depth']*1e6)
     print(chunk)
