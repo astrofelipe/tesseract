@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import argparse
+from matplotlib.widgets import Button
 from lightkurve.lightcurve import TessLightCurve
 from matplotlib.gridspec import GridSpec
 
@@ -37,6 +38,7 @@ for i in range(args.start, len(BLSdata)):
     lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
     lc2 = [fig.add_subplot(gs[k,6]) for k in range(6)]
     lcb = [fig.add_subplot(gs[k,7]) for k in range(6)]
+    bu1 = [Button(lcb[k], 'Aaaa') for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
 
