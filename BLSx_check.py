@@ -33,12 +33,20 @@ for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
     fig = plt.figure(constrained_layout=True, figsize=[8*2, 6*1.5])
-    gs  = GridSpec(6, 8, figure=fig)
-    lcs = [fig.add_subplot(gs[k,:5]) for k in range(6)]
-    lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
-    lc2 = [fig.add_subplot(gs[k,6]) for k in range(6)]
-    lcb = [fig.add_subplot(gs[k,7]) for k in range(6)]
-    bu1 = [Button(lcb[k], 'Aaaa') for k in range(6)]
+    gs  = GridSpec(12, 8, figure=fig)
+    lcs = [fig.add_subplot(gs[2*k:2*(k+1),:4]) for k in range(6)]
+    lcf = [fig.add_subplot(gs[2*k:2*(k+1),4]) for k in range(6)]
+    lc2 = [fig.add_subplot(gs[2*k:2*(k+1),5]) for k in range(6)]
+
+    opc = [fig.add_subplot(gs[2*k,6]) for k in range(6)]
+    oeb = [fig.add_subplot(gs[2*(k+1),6]) for k in range(6)]
+    orr = [fig.add_subplot(gs[2*k,7]) for k in range(6)]
+    oot = [fig.add_subplot(gs[2*(k+1),7]) for k in range(6)]
+
+    bpc = [Button(opc[k], 'Planet') for k in range(6)]
+    beb = [Button(oeb[k], 'Eclipsing Binary') for k in range(6)]
+    brr = [Button(orr[k], 'RR Lyrae') for k in range(6)]
+    bot = [Button(oot[k], 'Other Variable') for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
 
