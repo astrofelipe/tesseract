@@ -53,13 +53,12 @@ for i in range(args.start, len(BLSdata)):
     chunk = BLSdata[6*i:6*(i+1)]
 
     for j in range(6):
-        fn     = chunk['Files']#chunk.iloc[j,0]
-        period = chunk['P']#chunk.iloc[j,1]
-        t0     = chunk['t0']#chunk.iloc[j,2]
-        depth  = chunk['depth']#chunk.iloc[j,4]
+        fn     = chunk['Files'][j]#chunk.iloc[j,0]
+        period = chunk['P'][j]#chunk.iloc[j,1]
+        t0     = chunk['t0'][j]#chunk.iloc[j,2]
+        depth  = chunk['depth'][j]#chunk.iloc[j,4]
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
-
         lc   = TessLightCurve(time=t, flux=y).flatten()
 
         p    = (t - t0 + 0.5*period) % period - 0.5*period
