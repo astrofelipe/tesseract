@@ -31,8 +31,8 @@ if not args.nogaia:
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(constrained_layout=True, figsize=[7*2, 7*1.5])
-    gs  = GridSpec(7, 7, figure=fig)
+    fig = plt.figure(constrained_layout=True, figsize=[8*2, 6*1.5])
+    gs  = GridSpec(6, 8, figure=fig)
     lcs = [fig.add_subplot(gs[k,:5]) for k in range(6)]
     lcf = [fig.add_subplot(gs[k,5]) for k in range(6)]
     lc2 = [fig.add_subplot(gs[k,6]) for k in range(6)]
