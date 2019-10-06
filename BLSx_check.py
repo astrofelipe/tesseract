@@ -67,11 +67,9 @@ for i in range(args.start, len(BLSdata)):
         p2   = (t - t0 + period) % period - 0.5*period
 
         if not args.nogaia:
-            chunk.iloc[j,0] = obj
-
             cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
             rval  = cdata[0]['radius_val']
-            chunk.iloc[j]['rval'] = rval
+            chunk[j]['rval'] = rval
 
         else:
             rval = np.nan
