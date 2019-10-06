@@ -51,6 +51,7 @@ for i in range(args.start, len(BLSdata)):
     bot = [Button(oot[k], 'Other Variable') for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
+    print(chunk)
 
     for j in range(6):
         fn     = chunk.iloc[j,0]
