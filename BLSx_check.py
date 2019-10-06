@@ -69,7 +69,7 @@ for i in range(args.start, len(BLSdata)):
         if not args.nogaia:
             cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
             rval  = cdata[0]['radius_val']
-            chunk[j]['rval'] = rval
+            #chunk[j]['rval'] = rval
 
         else:
             rval = np.nan
