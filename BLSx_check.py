@@ -97,8 +97,7 @@ for i in range(args.start, len(BLSdata)):
 
         chunk['Files'][j] = chunk['Files'][j].split('TIC')[-1].split('.')[0]
     chunk['duration'] = chunk['duration']*24
-    chunk['depth'] = chunk['depth']*1e6
-    chunk['depth'].dtype = 'int32'
+    chunk['depth'] = np.array(chunk['depth']*1e6).astype(int)
     print(chunk)
     plt.show()
     plt.close(fig)
