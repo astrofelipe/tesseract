@@ -94,10 +94,10 @@ for i in range(args.start, len(BLSdata)):
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
         #inf[j].set_axis_off()
 
+        chunk['depth'][j] = chunk['depth'][j]*1e6
         lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95))
 
     chunk['duration'] = chunk['duration']*24
-    chunk['depth']    = chunk['depth']*1e6
     chunk['duration'].format = '%.2f'
     chunk['depth'].format    = '%d'
 
