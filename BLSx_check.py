@@ -83,6 +83,7 @@ for i in range(args.start, len(BLSdata)):
                 lcs[j].axvline(t0s, color='orange')
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)')
+        lcf[j].set_ylim(1-1.5*depth, 1.005)
 
         lcf[j].plot(p, lc.flux, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
@@ -90,6 +91,7 @@ for i in range(args.start, len(BLSdata)):
 
         lc2[j].plot(p2, lc.flux, '.', ms=1)
         lc2[j].set_xlim(-0.2, 0.2)
+        lcf[j].set_ylim(1-0.5*depth, 1.005)
 
         #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
         #inf[j].set_axis_off()
