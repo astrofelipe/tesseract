@@ -7,12 +7,11 @@ import pandas as pd
 import glob
 import os
 #from everest.mathutils import SavGol
-#from eveport import PLD
+from eveport import PLD
 try:
     from lightkurve.lightcurve import TessLightCurve
     from lightkurve.search import search_tesscut
     from lightkurve.targetpixelfile import KeplerTargetPixelFile
-    from lightkurve import PLDCorrector
 except:
     os.system('rm ~/.astropy/config/*.cfg')
     from lightkurve.lightcurve import TessLightCurve
@@ -237,18 +236,19 @@ else:
     print(dap[bidx].sum(),'pixels in aperture')
     lkf  = lkf[bidx]
 
+    #PLD?
+    if args.pld:
+        #det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=8)
+        pld_flux = PLD(flux, dap[bidx], lkf.flux)
+        lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
+        #det_lc = det_lc.flatten(polyorder=2, window_length=51)
+
+
 
 if iP is None:
     mask = np.ones(time.size).astype(bool)
 else:
     mask = mask_planet(time, it0, iP, dur=idur)
-
-
-if args.pld:
-    det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=8)
-    lkf = TessLightCurve(time=time, flux=det_flux, flux_err=det_err)
-    #det_lc = det_lc.flatten(polyorder=2, window_length=51)
-
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)

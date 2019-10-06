@@ -1,13 +1,13 @@
 #from everest.mathutils import Interpolate, SavGol
 import numpy as np
-import everest
+#import everest
 import celerite
 from sklearn.decomposition import PCA
 from itertools import combinations_with_replacement as multichoose
 
-class rPLDYay(everest.rPLD):#, mode='rpld'):
-    def load_tpf(self):
-        super(rPLDYay, self).load_tpf()
+#class rPLDYay(everest.rPLD):#, mode='rpld'):
+#    def load_tpf(self):
+#        super(rPLDYay, self).load_tpf()
 
         #self.transitmask = transitmask
         #if args.inject[0] is not None: self.get_norm()
@@ -16,7 +16,26 @@ class rPLDYay(everest.rPLD):#, mode='rpld'):
     #    def setup(self, **kwargs):
     #        self.X1N = X1N
 
-def PLD(time, flux, ferr, lc, ap, n=None, mask=None, gp_timescale=30):
+def PLD(flux, aper, sap_flux):
+    #1st order
+    X_pld = np.reshape(flux[:, aper], (len(flux), -1))
+    X_pld = X_pld / np.sum(flux[:, aper], axis=-1)[:, None]
+
+    #2nd order + PCA
+    X2_pld  = np.reshape(X_pld[:, None, :] * X_pld[:, :, None], (len(flux), -1))
+    U, _, _ = np.linalg.svd(X2_pld, full_matrices=False)
+    X2_pld  = U[:, :X_pld.shape[1]]
+
+    #Design matrix + fit
+    X_pld = np.concatenate((np.ones((len(flux), 1)), X_pld, X2_pld), axis=-1)
+    XTX   = np.dot(X_pld.T, X_pld)
+    w_pld = np.linalg.solve(XTX, np.dot(X_pld.T, sap_flux))
+    pld_flux = np.dot(X_pld, w_pld)
+
+    return pld_flux
+
+
+def PLD2(time, flux, ferr, lc, ap, n=None, mask=None, gp_timescale=30):
     if n is None:
         n = min(20, ap.sum())
 
