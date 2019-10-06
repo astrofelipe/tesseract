@@ -51,13 +51,12 @@ for i in range(args.start, len(BLSdata)):
     bot = [Button(oot[k], 'Other Variable') for k in range(6)]
 
     chunk = BLSdata[6*i:6*(i+1)]
-    print(chunk)
 
     for j in range(6):
-        fn     = chunk.iloc[j,0]
-        period = chunk.iloc[j,1]
-        t0     = chunk.iloc[j,2]
-        depth  = chunk.iloc[j,4]
+        fn     = chunk['Files']#chunk.iloc[j,0]
+        period = chunk['P']#chunk.iloc[j,1]
+        t0     = chunk['t0']#chunk.iloc[j,2]
+        depth  = chunk['depth']#chunk.iloc[j,4]
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
 
