@@ -81,7 +81,7 @@ for i in range(args.start, len(BLSdata)):
                 lcs[j].axvline(t0s, color='orange')
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)')
-        lcs[j].set_ylim(1-1.5*depth, 1.005)
+        lcs[j].set_ylim(1-2*depth, 1+depth)
 
         lcf[j].plot(p, lc.flux, '.', ms=1)
         lcf[j].set_xlim(-0.2, 0.2)
