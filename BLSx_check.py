@@ -60,12 +60,13 @@ for i in range(args.start, len(BLSdata)):
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
         lc   = TessLightCurve(time=t, flux=y).flatten()
+        obj  = (fn.split('/')[-1])[3:-4]
+        chunk['Files'][j] = obj
 
         p    = (t - t0 + 0.5*period) % period - 0.5*period
         p2   = (t - t0 + period) % period - 0.5*period
 
         if not args.nogaia:
-            obj   = (fn.split('/')[-1])[3:-4]
             chunk.iloc[j,0] = obj
 
             cdata = Catalogs.query_object('TIC' + obj, radius=0.018, catalog='Gaia')
@@ -95,7 +96,6 @@ for i in range(args.start, len(BLSdata)):
 
         lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (fn, period, depth, rval, rval*np.sqrt(depth)*9.95))
 
-        chunk['Files'][j] = chunk['Files'][j].split('TIC')[-1].split('.')[0]
     chunk['duration'] = chunk['duration']*24
     chunk['depth']    = chunk['depth']*1e6
     chunk['duration'].format = '%.2f'
