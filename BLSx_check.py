@@ -80,16 +80,16 @@ for i in range(args.start, len(BLSdata)):
         if t0 > 50:
             transits = np.arange(t0, t[-1], period)
             for t0s in transits:
-                lcs[j].axvline(t0s, color='orange')
+                lcs[j].axvline(t0s, lw=1, alpha=.5)
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
-        lcs[j].set_ylabel('Norm Flux (ppm)')
+        lcs[j].set_ylabel('Norm Flux (ppm)', fontsize=10)
         lcs[j].set_ylim(1-2*depth, 1+depth)
 
-        lcf[j].plot(p, lc.flux, '.', ms=1)
+        lcf[j].plot(p, lc.flux, '.', ms=1.5)
         lcf[j].set_xlim(-0.2, 0.2)
         lcf[j].set_ylim(1-1.5*depth, 1.005)
 
-        lc2[j].plot(p2, lc.flux, '.', ms=1)
+        lc2[j].plot(p2, lc.flux, '.', ms=1.5)
         lc2[j].set_xlim(-0.2, 0.2)
         lc2[j].set_ylim(1-0.5*depth, 1.005)
 
@@ -97,7 +97,7 @@ for i in range(args.start, len(BLSdata)):
         #inf[j].set_axis_off()
 
         chunk['depth'][j] = chunk['depth'][j]*1e6
-        lcs[j].set_title(r'%s  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95))
+        lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=12)
 
     chunk['duration'] = chunk['duration']*24
     chunk['duration'].format = '%.2f'
