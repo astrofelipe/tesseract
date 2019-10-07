@@ -82,7 +82,7 @@ for i in range(args.start, len(BLSdata)):
         if t0 > 50:
             transits = np.arange(t0, t[-1], period)
             for t0s in transits:
-                lcs[j].axvline(t0s, lw=1, alpha=.5)
+                lcs[j].axvline(t0s, lw=5, alpha=.2, color='tomato')
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)', fontsize=10)
         lcs[j].set_ylim(1-2*depth, 1+depth)
