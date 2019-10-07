@@ -54,6 +54,8 @@ for i in range(args.start, len(BLSdata)):
 
     chunk = BLSdata[6*i:6*(i+1)]
 
+    funcs = []
+
     for j in range(6):
         fn     = chunk['Files'][j]#chunk.iloc[j,0]
         period = chunk['P'][j]#chunk.iloc[j,1]
@@ -103,7 +105,9 @@ for i in range(args.start, len(BLSdata)):
         def on_press(event):
             print(period)
 
-        bpc[j].on_clicked(on_press)
+        funcs.append(on_press)
+
+        bpc[j].on_clicked(funcs[j])
 
     chunk['duration'] = chunk['duration']*24
     chunk['duration'].format = '%.2f'
