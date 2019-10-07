@@ -103,7 +103,7 @@ for i in range(args.start, len(BLSdata)):
         chunk['depth'][j] = chunk['depth'][j]*1e6
         lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=12)
 
-        bpc[j].on_clicked(on_press(P))
+        bpc[j].on_clicked(on_press(period))
 
     chunk['duration'] = chunk['duration']*24
     chunk['duration'].format = '%.2f'
