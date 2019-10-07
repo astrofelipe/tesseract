@@ -54,6 +54,9 @@ for i in range(args.start, len(BLSdata)):
 
     chunk = BLSdata[6*i:6*(i+1)]
 
+    def on_press(event, P):
+        print(P)
+
     for j in range(6):
         fn     = chunk['Files'][j]#chunk.iloc[j,0]
         period = chunk['P'][j]#chunk.iloc[j,1]
@@ -100,7 +103,7 @@ for i in range(args.start, len(BLSdata)):
         chunk['depth'][j] = chunk['depth'][j]*1e6
         lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=12)
 
-        bpc[j].on_clicked(print('aaa %s' % obj))
+        bpc[j].on_clicked(on_press(P))
 
     chunk['duration'] = chunk['duration']*24
     chunk['duration'].format = '%.2f'
