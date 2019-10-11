@@ -66,6 +66,7 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
 eclim = {'s0001': [[271, 361], [-90, 0]],
          's0002': [[298, 388], [-90, 0]],
          's0003': [[326, 415], [-90, 0]],
+         's0004': [[326, 465], [-90, 0]]
          's0005': [[19, 111], [-90, 0]],
          's0006': [[46, 140], [-90, 0]],
          's0007': [[74, 166], [-90, 0]],
@@ -127,8 +128,8 @@ supercata1 = vstack(supercata1)
 print(supercata1)
 print('\nScanning... (2/2)')
 #Pole
-eclos = np.arange(0, 360+1.1, 5)
-eclas = np.arange(-92, -72-1.1, 5)
+eclos = np.arange(0, 361, 5)
+eclas = np.arange(-70, -91, 5)
 
 supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
 '''
