@@ -41,6 +41,7 @@ parser.add_argument('--pld', action='store_true')
 parser.add_argument('--psf', action='store_true')
 parser.add_argument('--circ', action='store_true')
 parser.add_argument('--norm', action='store_true')
+parser.add_argument('--flatten', action='store_true')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -143,7 +144,8 @@ for i,f in enumerate(flux):
     bkgs[i]    = bkg.calc_background(f)
 
 if args.psf:
-    flux_psf = np.zeros(len(flux))
+    #flux_psf = np.zeros(len(flux))
+    #ferr_psf = np.zeros(len(errs))
 
     import tensorflow as tf
     from vaneska.models import Gaussian
@@ -151,6 +153,7 @@ if args.psf:
 
     nstars   = 1
     flux_psf = tf.Variable(np.ones(nstars)*np.nanmax(flux[0]), dtype=tf.float64)
+    ferr_psf = tf.Variable(np.ones(nstars)*np.nanmax(errs[0]), dtype=tf.float64)
     bkg_psf  = tf.Variable(bkgs[0], dtype=tf.float64)
     xshift   = tf.Variable(0.0, dtype=tf.float64)
     yshift   = tf.Variable(0.0, dtype=tf.float64)
@@ -169,9 +172,11 @@ if args.psf:
     mean += bkg_psf
 
     psf_data = tf.placeholder(dtype=tf.float64, shape=flux[0].shape)
+    psf_derr  = tf.placeholder(dtype=tf.float64, shape=errs[0].shape)
     bkgval   = tf.placeholder(dtype=tf.float64)
 
-    nll = tf.reduce_sum(tf.squared_difference(mean, psf_data))
+    #nll = tf.reduce_sum(tf.squared_difference(mean, psf_data))
+    nll = tf.reduce_sum(tf.truediv(tf.squared_difference(mean, psf_data), psf_derr))
 
     var_list = [flux_psf, xshift, yshift, a, b, c, bkg_psf]
     grad     = tf.gradients(nll, var_list)
@@ -184,28 +189,35 @@ if args.psf:
                      xshift: (-1.0, 1.0),
                      yshift: (-1.0, 1.0),
                      a: (0, np.infty),
-                     b: (0, np.infty),
+                     b: (-0.5, 0.5),
                      c: (0, np.infty)
                     }
 
     optimizer = tf.contrib.opt.ScipyOptimizerInterface(nll, var_list, method='TNC', tol=1e-4, var_to_bounds=var_to_bounds)
 
     fout   = np.zeros((len(flux), nstars))
+    ferr   = np.zeros((len(errs), nstars))
     bkgout = np.zeros(len(flux))
 
     for i in tqdm(range(len(flux))):
-        optim = optimizer.minimize(session=sess, feed_dict={psf_data:flux[i], bkgval:bkgs[i]})
+        optim = optimizer.minimize(session=sess, feed_dict={psf_data:flux[i], psf_derr:errs[i], bkgval:bkgs[i]})
         fout[i] = sess.run(flux_psf)
+        ferr[i] = sess.run(ferr_psf)
         bkgout[i] = sess.run(bkg_psf)
 
     sess.close()
 
     psf_flux = fout[:,0]
-    psf_bkg = bkgout
+    psf_ferr = ferr[:,0]
+    print(psf_ferr)
+    psf_bkg  = bkgout
 
     #Lightkurves
-    lks = TessLightCurve(time=time, flux=psf_flux)#, flux_err=flux_psf_err)
-    lkf = lks.flatten(polyorder=2, window_length=91) if args.norm else lks
+    lks = TessLightCurve(time=time, flux=psf_flux)
+    lkf = lks.flatten(polyorder=2, window_length=91) if args.flatten else lks
+
+    if args.norm:
+        lkf.flux = lkf.flux / np.nanmedian(lkf.flux)
 
 else:
     #DBSCAN Aperture
