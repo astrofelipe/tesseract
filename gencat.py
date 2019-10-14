@@ -66,7 +66,7 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
 eclim = {'s0001': [[271, 361], [-90, 0]],
          's0002': [[298, 388], [-90, 0]],
          's0003': [[326, 415], [-90, 0]],
-         's0004': [[340, 453], [-90, 0]],
+         's0004': [[345, 450], [-90, 0]],
          's0005': [[19, 111], [-90, 0]],
          's0006': [[46, 140], [-90, 0]],
          's0007': [[74, 166], [-90, 0]],
@@ -80,8 +80,8 @@ elo, ela = eclim[sec]
 print(elo,ela)
 
 #Not pole
-eclos = np.arange(elo[0], elo[1]+1.1, 4) % 360
-eclas = np.arange(ela[0], ela[1]+1.1, 4)
+eclos = np.arange(elo[0], elo[1]+1.1, 6) % 360
+eclas = np.arange(ela[0], ela[1]+1.1, 6)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
