@@ -3,30 +3,18 @@ import argparse
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
-import pandas as pd
 import glob
 import os
-#from everest.mathutils import SavGol
-from eveport import PLD
-try:
-    from lightkurve.lightcurve import TessLightCurve
-    from lightkurve.search import search_tesscut
-    from lightkurve.targetpixelfile import KeplerTargetPixelFile
-except:
-    os.system('rm ~/.astropy/config/*.cfg')
-    from lightkurve.lightcurve import TessLightCurve
-    from lightkurve.search import search_tesscut
-    from lightkurve.targetpixelfile import KeplerTargetPixelFile
-
+from eveport import PLD, PLD2
+from lightkurve.lightcurve import TessLightCurve
 from utils import mask_planet, FFICut, pixel_border
 from autoap import generate_aperture, select_aperture
-from photutils import MMMBackground, SExtractorBackground
+from photutils import MMMBackground
 from astropy.utils.console import color_print
 from astropy.coordinates import SkyCoord
-from astropy.stats import SigmaClip
+from astropy.stats import SigmaClip, mad_std
 from astropy.wcs import WCS
 from astropy.io import fits
-from scipy.ndimage import median_filter
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
@@ -42,6 +30,7 @@ parser.add_argument('--psf', action='store_true')
 parser.add_argument('--circ', action='store_true')
 parser.add_argument('--norm', action='store_true')
 parser.add_argument('--flatten', action='store_true')
+parser.add_argument('--pixlcs', action='store_true')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -53,18 +42,13 @@ if len(args.TIC) < 2:
         import sys
         color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
-    #cata   = '../TIC_5.csv'# % args.Sector
-    #cata   = pd.read_csv(cata, comment='#')
-    #cid    = cata['TICID'] == args.TIC
-    #target = cata[cid]
+
     color_print('TIC: ', 'lightcyan', '%d' % args.TIC, 'default')
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
 
 
     ra  = float(target[0]['ra'])
     dec = float(target[0]['dec'])
-    #cam = int(target[0]['Camera'])
-    #ccd = int(target[0]['CCD'])
 
 else:
     ra, dec = args.TIC
@@ -74,20 +58,9 @@ color_print('RA Dec: ', 'lightcyan', '%f %f' % (ra, dec), 'default')
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
 ccd = ccd[0]
-#print(args.TIC, ra, dec, cam, ccd)
 
 
 coord = SkyCoord(ra, dec, unit='deg')
-
-'''
-#if args.everest:
-    from sklearn.neighbors import KDTree
-    X    = np.transpose([cata['RA'], cata['Dec']])
-    tree = KDTree(X)
-    nd, ni = tree.query(X, k=11)
-    ni = ni[:,1:]
-    print(cata.iloc[ni[0]])
-'''
 
 
 if args.folder is not None:
@@ -102,17 +75,12 @@ if args.folder is not None:
     x,y = w.all_world2pix(ra, dec, 0)
     print(x,y)
 
-    '''
-    fig, ax = plt.subplots()
-    ax.matshow(np.log10(fits.getdata(fnames[1])))
-    ax.plot(x,y,'.r')
-    plt.show()
-    '''
-
     allhdus = FFICut(ffis, y, x, args.size)
 
 else:
     #Online mode
+    from lightkurve.search import search_tesscut
+
     color_print('Querying MAST...', 'lightcyan')
     allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
     w       = WCS(allhdus.hdu[2].header)
@@ -133,6 +101,7 @@ time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
+berr = np.zeros(len(flux))
 
 #Star position
 x,y = w.all_world2pix(ra, dec, 0)
@@ -142,11 +111,9 @@ for i,f in enumerate(flux):
     sigma_clip = SigmaClip(sigma=3)
     bkg        = MMMBackground(sigma_clip=sigma_clip)
     bkgs[i]    = bkg.calc_background(f)
+    berr[i]    = mad_std(f)
 
 if args.psf:
-    #flux_psf = np.zeros(len(flux))
-    #ferr_psf = np.zeros(len(errs))
-
     import tensorflow as tf
     from vaneska.models import Gaussian
     from tqdm import tqdm
@@ -205,11 +172,11 @@ if args.psf:
         ferr[i] = sess.run(ferr_psf)
         bkgout[i] = sess.run(bkg_psf)
 
+
     sess.close()
 
     psf_flux = fout[:,0]
     psf_ferr = ferr[:,0]
-    print(psf_ferr)
     psf_bkg  = bkgout
 
     #Lightkurves
@@ -237,9 +204,7 @@ else:
 
     #Lightkurves
     lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
-    mfs = [median_filter(lk.flux, size=55) for lk in lks]
     lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
-    #lkf = [TessLightCurve(time=time, flux=lcfl[i]/mfs[i], flux_err=lcer[i]/mfs[i]) for i in range(len(lcfl))] if args.norm else lks
 
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
@@ -250,25 +215,56 @@ else:
 
     #PLD?
     if args.pld:
-        #det_flux, det_err = PLD(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=8)
+        if iP is None:
+            mask = np.ones(time.size).astype(bool)
+        else:
+            mask = mask_planet(time, it0, iP, dur=idur)
+
+        #det_flux, det_err = PLD2(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=5)
+        #lkf = TessLightCurve(time=time, flux=det_flux, flux_err=lkf.flux_err)
         pld_flux = PLD(flux, dap[bidx], lkf.flux)
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
         #det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
+if args.pixlcs:
+    #pfig = plt.figure(figsize=[10,10])
+    #pgs  = gridspec.GridSpec(args.size, args.size)
+    #pax  = np.array([plt.subplot(pgs[i,j]) for i in range(args.size) for j in range(args.size)]).reshape(args.size,args.size)
+
+    pfig, pax = plt.subplots(figsize=[8,8])
+    tmin = np.nanmin(time)
+    tlen = np.nanmax(time) - tmin
+    tnor = (time - tmin) / tlen
+
+    pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='bone')
+
+    theflux = flux - bkgs[:,None,None]
+    for i in range(args.size):
+        for j in range(args.size):
+            fmin = np.nanmin(theflux[:,i,j])
+            flen = np.nanmax(theflux[:,i,j]) - fmin
+            fnor = (theflux[:,i,j] - fmin) / flen
+
+            pax.plot(j+tnor-0.5, i+fnor-0.5, '.', color='lime' if dap[bidx][i,j] else 'tomato', ms=.5)#, lw=.5)
+
+    pax.set_xticks(np.arange(-.5, args.size, 1), minor=True)
+    pax.set_yticks(np.arange(-.5, args.size, 1), minor=True)
+    pax.grid(which='minor')
+    pfig.tight_layout()
 
 
-if iP is None:
-    mask = np.ones(time.size).astype(bool)
-else:
-    mask = mask_planet(time, it0, iP, dur=idur)
 
 if not args.noplots:
     #aps    = CircularAperture([(x,y)], r=2.5)
-    fig1 = plt.figure(figsize=[16,3], dpi=120)
+    fig1 = plt.figure(figsize=[12,3], dpi=120)
     gs   = gridspec.GridSpec(2, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
     ax0 = plt.subplot(gs[1,1])
-    ax0.plot(time, bkgs, '.k', ms=2)
+    ax0.errorbar(time, bkgs, yerr=berr, fmt='ok', ms=2)
+    #ax0.plot(time, bkgs if not args.psf else bkgout, '.k', ms=2)
+    ax0.set_title('Background')
+    ax0.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
+    ax0.set_xlabel(r'BJD', fontweight='bold')
 
     ax1 = plt.subplot(gs[:,0])
     ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r', aspect='equal')
@@ -283,14 +279,14 @@ if not args.noplots:
     #aps.plot(color='w', ax=ax1[0])
     #ax1[1].matshow(bkgs[4])
 
-    ax = plt.subplot(gs[0,1])
+    ax = plt.subplot(gs[0,1], sharex=ax0)
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
-    ax.set_xlabel(r'BJD', fontweight='bold')
     #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
     #if args.pld:
     #    ax.plot(time, det_lc.flux*np.nanmedian(lkf.flux)/np.nanmedian(det_lc.flux), color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
+    ax.set_title('Light curve')
 
 
     fig1.tight_layout()
