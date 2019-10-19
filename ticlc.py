@@ -226,36 +226,30 @@ else:
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
         #det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
-if args.pixlcs:
-    #pfig = plt.figure(figsize=[10,10])
-    #pgs  = gridspec.GridSpec(args.size, args.size)
-    #pax  = np.array([plt.subplot(pgs[i,j]) for i in range(args.size) for j in range(args.size)]).reshape(args.size,args.size)
-
-    pfig, pax = plt.subplots(figsize=[8,8])
-    tmin = np.nanmin(time)
-    tlen = np.nanmax(time) - tmin
-    tnor = (time - tmin) / tlen
-
-    pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='bone')
-
-    theflux = flux - bkgs[:,None,None]
-    for i in range(args.size):
-        for j in range(args.size):
-            fmin = np.nanmin(theflux[:,i,j])
-            flen = np.nanmax(theflux[:,i,j]) - fmin
-            fnor = (theflux[:,i,j] - fmin) / flen
-
-            pax.plot(j+tnor-0.5, i+fnor-0.5, '.', color='lime' if dap[bidx][i,j] else 'tomato', ms=.5)#, lw=.5)
-
-    pax.set_xticks(np.arange(-.5, args.size, 1), minor=True)
-    pax.set_yticks(np.arange(-.5, args.size, 1), minor=True)
-    pax.grid(which='minor')
-    pfig.tight_layout()
-
-
 
 if not args.noplots:
-    #aps    = CircularAperture([(x,y)], r=2.5)
+    if args.pixlcs:
+        pfig, pax = plt.subplots(figsize=[8,8])
+        tmin = np.nanmin(time)
+        tlen = np.nanmax(time) - tmin
+        tnor = (time - tmin) / tlen
+
+        pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='Blues_r')
+
+        theflux = flux - bkgs[:,None,None]
+        for i in range(args.size):
+            for j in range(args.size):
+                fmin = np.nanmin(theflux[:,i,j])
+                flen = np.nanmax(theflux[:,i,j]) - fmin
+                fnor = (theflux[:,i,j] - fmin) / flen
+
+                pax.plot(j+tnor-0.5, i+fnor-0.5, '-', color='lime' if dap[bidx][i,j] else 'tomato', lw=.1)
+
+        pax.set_xticks(np.arange(-.5, args.size, 1), minor=True)
+        pax.set_yticks(np.arange(-.5, args.size, 1), minor=True)
+        pax.grid(which='minor', zorder=99)
+        pfig.tight_layout()
+
     fig1 = plt.figure(figsize=[12,3], dpi=120)
     gs   = gridspec.GridSpec(2, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
