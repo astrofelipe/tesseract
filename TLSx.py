@@ -40,7 +40,7 @@ def run_TLS(fn):
     lc.flux = lc.flux[~mask]
 
     model   = TLS(lc.time, lc.flux, lc.flux_err)
-    results = model.power(n_transits_min=1, period_min=1, use_threads=args.ncpu, show_progress_bar=False)
+    results = model.power(n_transits_min=1, period_min=1, use_threads=1, show_progress_bar=False)
 
     if args.target is not None:
         return results
@@ -77,8 +77,8 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    #results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
-    results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
+    #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
     print(results)
