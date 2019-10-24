@@ -50,7 +50,9 @@ def run_TLS(fn):
 
     else:
         try:
-            return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, np.nanmedian(results.depth_mean_even), np.nanmedian(results.depth_mean_odd), results.odd_even_mismatch, results.transit_times[1], results.transit_count
+            depth_mean_even = np.nanmedian(results.depth_mean_even)
+            depth_mean_odd  = np.nanmedian(results.depth_mean_odd)
+            return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, depth_mean_even, depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
         except:
             return fn, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
 
@@ -69,7 +71,7 @@ if args.target is not None:
     ax.set_xlim(-results.duration*1.5, results.duration*1.5)
     ax.set_ylim(results.depth*0.995, 1.005)
 
-    print(1-results.depth)
+    print(results)
 
     plt.show()
 
@@ -80,8 +82,9 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
-    print(results)
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:1500])))
+    rmask    = np.isfinite(results[:,5])
+    results  = results[rmask]
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
