@@ -69,6 +69,7 @@ if args.target is not None:
 
 else:
     from joblib import Parallel, delayed
+    import glob
 
     allfiles = glob.glob(folder + 'TIC*.dat')
 
