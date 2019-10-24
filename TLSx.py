@@ -43,7 +43,7 @@ def run_TLS(fn):
         model   = TLS(lc.time, lc.flux, lc.flux_err)
         results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
     except:
-        return fn, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+        return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
     if args.target is not None:
         return results
@@ -54,7 +54,7 @@ def run_TLS(fn):
             depth_mean_odd  = np.nanmedian(results.depth_mean_odd)
             return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, depth_mean_even, depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
         except:
-            return fn, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan
+            return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
 if args.target is not None:
     fn      = args.Folder + 'TIC%d.dat' % args.target
