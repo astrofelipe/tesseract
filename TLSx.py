@@ -82,7 +82,8 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:1500])))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:500])))
+    print(results[:,5])
     rmask    = np.isfinite(results[:,5])
     results  = results[rmask]
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
