@@ -90,6 +90,6 @@ else:
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results['col5'])[::-1]
     results  = results[order]
-    #print(results[:,:6])
+    print(results)
 
     np.savetxt(args.output, results, fmt='%s')
