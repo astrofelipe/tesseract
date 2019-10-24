@@ -46,7 +46,10 @@ def run_TLS(fn):
         return results
 
     else:
-        return fn, results.period, results.T0, results.duration, results.depth, results.SDE, results.depth_mean_even, results.depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
+        try:
+            return fn, results.period, results.T0, results.duration, results.depth, results.SDE, results.depth_mean_even, results.depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
+        except:
+            return
 
 if args.target is not None:
     fn      = args.Folder + 'TIC%d.dat' % args.target
