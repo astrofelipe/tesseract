@@ -84,11 +84,11 @@ else:
 
     results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
     print(results[:,5])
-    rmask    = np.isfinite(np.array(results[:,5]).astype(float))
+    rmask    = results[:,5] != 99
     results  = results[rmask]
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
-    print(results[:,:6])
+    #print(results[:,:6])
 
     np.savetxt(args.output, results, fmt='%s')
