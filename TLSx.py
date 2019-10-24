@@ -50,7 +50,7 @@ def run_TLS(fn):
 
     else:
         try:
-            return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, results.depth_mean_even, results.depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
+            return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, np.nanmedian(results.depth_mean_even), np.nanmedian(results.depth_mean_odd), results.odd_even_mismatch, results.transit_times[1], results.transit_count
         except:
             return
 
