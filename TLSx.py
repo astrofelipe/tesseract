@@ -80,7 +80,8 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
+    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:1000])))
+    print(results)
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results[:,5])[::-1]
     results  = results[order]
