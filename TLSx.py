@@ -35,7 +35,7 @@ def run_TLS(fn):
     mask12 = ((lc.time > 2458624.5) & (lc.time < 2458626))
     mask13 = ((lc.time > 2458653.5) & (lc.time < 2458655.75)) + ((lc.time > 2458668.5) & (lc.time < 2458670))
 
-    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
+    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + (stdm & mask3)
 
     lc.time = lc.time[~mask]
     lc.flux = lc.flux[~mask]
