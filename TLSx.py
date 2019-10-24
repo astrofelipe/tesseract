@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+from astropy.table import Table
 from lightkurve.lightcurve import TessLightCurve
 from transitleastsquares import transitleastsquares as TLS
 
@@ -82,7 +83,7 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = np.array(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
+    results  = Table(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
     print(results[:,5])
     rmask    = results[:,5] != 99
     results  = results[rmask]
