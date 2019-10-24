@@ -69,6 +69,7 @@ if args.target is not None:
 
 else:
     from joblib import Parallel, delayed
+    from tqdm import tqdm
     import glob
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
