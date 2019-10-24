@@ -85,7 +85,7 @@ else:
 
     results  = Table(rows=Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
     print(results)
-    rmask    = results['col5'] != 99
+    rmask    = results['col5'] > 0
     results  = results[rmask]
     #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
     order    = np.argsort(results['col5'])[::-1]
