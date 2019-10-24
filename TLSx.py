@@ -40,7 +40,7 @@ def run_TLS(fn):
     lc.flux = lc.flux[~mask]
 
     model   = TLS(lc.time, lc.flux, lc.flux_err)
-    results = model.power(n_transits_min=1, period_min=1, use_threads=args.cpu, show_progress_bar=False)
+    results = model.power(n_transits_min=1, period_min=1, use_threads=args.ncpu, show_progress_bar=False)
 
     if args.target is not None:
         return results
