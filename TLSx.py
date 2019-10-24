@@ -39,15 +39,18 @@ def run_TLS(fn):
     lc.time = lc.time[~mask]
     lc.flux = lc.flux[~mask]
 
-    model   = TLS(lc.time, lc.flux, lc.flux_err)
-    results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
+    try:
+        model   = TLS(lc.time, lc.flux, lc.flux_err)
+        results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
+    except:
+        return
 
     if args.target is not None:
         return results
 
     else:
         try:
-            return fn, results.period, results.T0, results.duration, results.depth, results.SDE, results.depth_mean_even, results.depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
+            return fn, results.period, results.T0, results.duration, 1-results.depth, results.SDE, results.depth_mean_even, results.depth_mean_odd, results.odd_even_mismatch, results.transit_times[1], results.transit_count
         except:
             return
 
@@ -66,7 +69,7 @@ if args.target is not None:
     ax.set_xlim(-results.duration*1.5, results.duration*1.5)
     ax.set_ylim(results.depth*0.995, 1.005)
 
-    print(results.odd_even_mismatch)
+    print(1-results.depth)
 
     plt.show()
 
