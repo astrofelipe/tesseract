@@ -83,7 +83,7 @@ else:
 
     allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = Table(Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
+    results  = Table(rows=Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles[:100])))
     print(results)
     rmask    = results[:,5] != 99
     results  = results[rmask]
