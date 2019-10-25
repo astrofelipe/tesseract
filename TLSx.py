@@ -21,7 +21,7 @@ def run_TLS(fn):
 
     fmed = np.nanmedian(lc.flux)
     fstd = np.nanstd(lc.flux)
-    stdm = lc.flux < 0.97#np.abs(lc.flux-fmed) > 3*fstd
+    stdm = (lc.flux < 0.93) & (lc.time > 2458380) & (lc.time < 2458415)
 
     mask1  = ((lc.time > 2458325) & (lc.time < 2458326)) + ((lc.time > 2458347) & (lc.time < 2458350)) + ((lc.time > 2458352.5) & (lc.time < 2458353.2))
     mask3  = ((lc.time > 2458382) & (lc.time < 2458384)) + ((lc.time > 2458407) & (lc.time < 2458410)) + ((lc.time > 2458393.5) & (lc.time < 2458397))
@@ -35,7 +35,7 @@ def run_TLS(fn):
     mask12 = ((lc.time > 2458624.5) & (lc.time < 2458626))
     mask13 = ((lc.time > 2458653.5) & (lc.time < 2458655.75)) + ((lc.time > 2458668.5) & (lc.time < 2458670))
 
-    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + (stdm & mask3)
+    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
 
     lc.time = lc.time[~mask]
     lc.flux = lc.flux[~mask]
