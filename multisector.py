@@ -1,6 +1,7 @@
 import os
 import glob
 import argparse
+import numpy as np
 
 parser = argparse.ArgumentParser(description='Find multiple sector targets and run TLS')
 parser.add_argument('Folder', type=str, help='Folder with LCs (organized by sector and magnitude bin)')
