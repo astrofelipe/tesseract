@@ -14,4 +14,17 @@ subfolder = args.File.split('_')[-1].split('.')[0]
 
 if args.target:
     fns = glob.glob(args.Folder + '*/%s/TIC%d.dat' % (subfolder, args.target))
-    print(fns)
+
+    t,f,e = [],[],[]
+
+    for fn in fns:
+        tt,ff,ee = np.genfromtxt(fn, unpack=True, usecols=(0,1,2))
+        t.append(tt)
+        f.append(ff)
+        e.append(ee)
+
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    ax.plot(tt,ff, '-k', lw=1)
+
+    plt.show()
