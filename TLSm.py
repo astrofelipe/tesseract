@@ -2,6 +2,7 @@ import glob
 import argparse
 import numpy as np
 from TLSx import the_TLS
+from cleaner import cleaner
 
 parser = argparse.ArgumentParser(description='Run TLS over selected multisector LCs')
 parser.add_argument('Folder', type=str, help='Folder with LCs (organized by sector and magnitude)')
@@ -29,8 +30,13 @@ if args.target:
     f = np.concatenate(f)
     e = np.concatenate(e)
 
+    cm = cleaner(t,f)
+    t  = t[cm]
+    f  = f[cm]
+    e  = e[cm]
+
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
-    ax.plot(t,f, '-k', lw=1)
+    ax.plot(t,f, '.k')
 
     plt.show()
