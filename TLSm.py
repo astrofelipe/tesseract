@@ -43,6 +43,9 @@ if args.target:
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=[10,3])
+    ax.plot(t, f, '-k', lw=0.5)
+
+    fig, ax = plt.subplots(figsize=[10,3])
     ax.plot(results.periods, results.power, '-k', lw=0.5)
 
     fig, ax = plt.subplots()
