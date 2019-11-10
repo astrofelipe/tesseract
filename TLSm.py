@@ -1,6 +1,7 @@
 import glob
 import argparse
 import numpy as np
+from lightkurve.lightcurve import TessLightCurve
 from TLSx import the_TLS
 from cleaner import cleaner
 
@@ -30,11 +31,13 @@ if args.target:
     f = np.concatenate(f)
     e = np.concatenate(e)
 
-    cm = cleaner(t,f)
-    t  = t[cm]
-    f  = f[cm]
-    e  = e[cm]
+    lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
+    cm = cleaner(lc.time, lc.flux)
+    lc.time = t[cm]
+    lc.flux = f[cm]
+    lc.flux_err = e[cm]
+    
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.plot(t,f, '.k')
