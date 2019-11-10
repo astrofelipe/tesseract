@@ -18,7 +18,7 @@ bas_files = [os.path.basename(f) for f in all_files]
 unique, uidx, ucounts = np.unique(bas_files, return_index=True, return_counts=True)
 
 mask = ucounts > 1
-data = np.transpose([unique, uidx, ucounts])
+data = np.transpose([unique, ucounts])
 data = data[mask]
 data = data[np.argsort(data[:,2])[::-1]]
 

@@ -15,8 +15,11 @@ parser.add_argument('--output', default='TLS_result.dat')
 args = parser.parse_args()
 
 def run_TLS(fn):
-    #fn    = '%sTIC%d.dat' % (args.Folder, TIC)
     t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
+
+    return the_TLS(t,f,e)
+
+def the_TLS(t,f,e):
     lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
     fmed = np.nanmedian(lc.flux)
@@ -57,39 +60,40 @@ def run_TLS(fn):
         except:
             return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
-if args.target is not None:
-    fn      = args.Folder + 'TIC%d.dat' % args.target
-    results = run_TLS(fn)
+if __name__ == '__main__':
+    if args.target is not None:
+        fn      = args.Folder + 'TIC%d.dat' % args.target
+        results = run_TLS(fn)
 
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots(figsize=[10,3])
-    ax.plot(results.periods, results.power, '-k', lw=0.5)
-    print(results.keys())
-    fig, ax = plt.subplots()
-    phase = (results.model_lightcurve_time - results.T0 + 0.5*results.period) % results.period - 0.5*results.period
-    ax.plot((results.folded_phase-0.5)*results.period, results.folded_y, '.k')
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots(figsize=[10,3])
+        ax.plot(results.periods, results.power, '-k', lw=0.5)
+        print(results.keys())
+        fig, ax = plt.subplots()
+        phase = (results.model_lightcurve_time - results.T0 + 0.5*results.period) % results.period - 0.5*results.period
+        ax.plot((results.folded_phase-0.5)*results.period, results.folded_y, '.k')
 
-    ax.set_xlim(-results.duration*1.5, results.duration*1.5)
-    ax.set_ylim(results.depth*0.995, 1.005)
+        ax.set_xlim(-results.duration*1.5, results.duration*1.5)
+        ax.set_ylim(results.depth*0.995, 1.005)
 
-    print(results)
+        print(results)
 
-    plt.show()
+        plt.show()
 
-else:
-    from joblib import Parallel, delayed
-    from tqdm import tqdm
-    import glob
+    else:
+        from joblib import Parallel, delayed
+        from tqdm import tqdm
+        import glob
 
-    allfiles = glob.glob(args.Folder + 'TIC*.dat')
+        allfiles = glob.glob(args.Folder + 'TIC*.dat')
 
-    results  = Table(rows=Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
-    print(results)
-    rmask    = results['col5'] > 0
-    results  = results[rmask]
-    #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
-    order    = np.argsort(results['col5'])[::-1]
-    results  = results[order]
-    print(results)
+        results  = Table(rows=Parallel(n_jobs=args.ncpu, verbose=0)(delayed(run_TLS)(f) for f in tqdm(allfiles)))
+        print(results)
+        rmask    = results['col5'] > 0
+        results  = results[rmask]
+        #results  = np.array([run_TLS(f) for f in tqdm(allfiles)])
+        order    = np.argsort(results['col5'])[::-1]
+        results  = results[order]
+        print(results)
 
-    np.savetxt(args.output, results, fmt='%s')
+        np.savetxt(args.output, results, fmt='%s')
