@@ -19,7 +19,7 @@ if args.target:
 
     for fn in fns:
         tt,ff,ee = np.genfromtxt(fn, unpack=True, usecols=(0,1,2))
-        print(np.median(tt))
+        print(np.median(tt), fn)
         t.append(tt)
         f.append(ff)
         e.append(ee)
