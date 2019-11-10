@@ -19,12 +19,11 @@ def the_TLS(fn,t,f,e):
     f = f[~mask]
     e = e[~mask]
 
-    try:
-        model   = TLS(t, f, e)
-        results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
-    except:
-        print('aaa')
-        return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
+    #try:
+    model   = TLS(t, f, e)
+    results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
+    #except:
+    #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
     if args.target is not None:
         return results
