@@ -34,10 +34,10 @@ if args.target:
     lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
     cm = cleaner(lc.time, lc.flux)
-    lc.time = t[cm]
-    lc.flux = f[cm]
-    lc.flux_err = e[cm]
-    
+    lc.time = lc.time[cm]
+    lc.flux = lc.flux[cm]
+    lc.flux_err = lc.flux_err[cm]
+
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.plot(t,f, '.k')
