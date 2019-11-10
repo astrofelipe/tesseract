@@ -3,7 +3,7 @@ import argparse
 
 def cleaner(time, flux):
 
-    stdm = (flux < 0.93) & (time > 2458380) & (time < 2458415)
+    stdm = (flux < 0.98) & (time > 2458380) & (time < 2458415)
 
     mask1  = ((time > 2458325) & (time < 2458326)) + ((time > 2458347) & (time < 2458350)) + ((time > 2458352.5) & (time < 2458353.2))
     mask3  = ((time > 2458382) & (time < 2458384)) + ((time > 2458407) & (time < 2458410)) + ((time > 2458393.5) & (time < 2458397))
