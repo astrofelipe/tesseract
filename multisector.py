@@ -11,5 +11,5 @@ args = parser.parse_args()
 maxmag = str(args.MaxMag)
 minmag = str(args.MaxMag - 1) if maxmag != 9 else 'inf'
 
-all_files = glob.glob(args.Folder + '*/' + minmag + '-' + maxmag' + '/')
+all_files = glob.glob(args.Folder + '*/' + minmag + '-' + maxmag + '/')
 print(all_files)
