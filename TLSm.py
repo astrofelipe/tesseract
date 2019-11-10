@@ -38,10 +38,20 @@ if args.target:
     t  = t[~cm]
     f  = f[~cm]
     e  = e[~cm]
-    print(the_TLS(fn,t,f,e))
+    results = the_TLS(fn, t, f , e, target=args.target)
 
     import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=[10,3])
+    ax.plot(results.periods, results.power, '-k', lw=0.5)
+
     fig, ax = plt.subplots()
-    ax.plot(t, f, '.k')
+    phase   = (results.model_lightcurve_time - results.T0 + 0.5*results.period) % results.period - 0.5*results.period
+    ax.plot((results.folded_phase-0.5)*results.period, results.folded_y, '.k')
+
+    ax.set_xlim(-results.duration*1.5, results.duration*1.5)
+    ax.set_ylim(results.depth*0.995, 1.005)
+
+    print(results)
 
     plt.show()

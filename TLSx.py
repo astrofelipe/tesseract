@@ -6,13 +6,13 @@ from lightkurve.lightcurve import TessLightCurve
 from transitleastsquares import transitleastsquares as TLS
 
 
-def run_TLS(fn):
+def run_TLS(fn, min_period=0.2, target=None):
     t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
     lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
-    return the_TLS(fn, lc.time, lc.flux, lc.flux_err)
+    return the_TLS(fn, lc.time, lc.flux, lc.flux_err, min_period, target)
 
-def the_TLS(fn,t,f,e,min_period=0.2):
+def the_TLS(fn, t, f, e, min_period=0.2, target=None):
     mask  = cleaner(t, f)
 
     t = t[~mask]
@@ -25,7 +25,7 @@ def the_TLS(fn,t,f,e,min_period=0.2):
     #except:
     #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
-    if args.target is not None:
+    if target is not None:
         return results
 
     else:
