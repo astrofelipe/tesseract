@@ -19,7 +19,8 @@ if args.target:
 
     for fn in fns:
         tt,ff,ee = np.genfromtxt(fn, unpack=True, usecols=(0,1,2))
-        print(np.median(tt), fn)
+        if np.median(tt) > 3000000:
+            tt -= 2454833
         t.append(tt)
         f.append(ff)
         e.append(ee)
