@@ -23,23 +23,24 @@ if args.target:
         tt,ff,ee = np.genfromtxt(fn, unpack=True, usecols=(0,1,2))
         if np.median(tt) > 3000000:
             tt -= 2454833
-        t.append(tt)
-        f.append(ff)
-        e.append(ee)
+
+        lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
+        t.append(lc.time)
+        f.append(lc.flux)
+        e.append(lc.flux_err)
 
     t = np.concatenate(t)
     f = np.concatenate(f)
     e = np.concatenate(e)
 
-    lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
-    cm = cleaner(lc.time, lc.flux)
-    lc.time = lc.time[cm]
-    lc.flux = lc.flux[cm]
-    lc.flux_err = lc.flux_err[cm]
+    cm = cleaner(t, f)
+    t  = t[cm]
+    f  = f[cm]
+    e  = e[cm]
 
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
-    ax.plot(lc.time, lc.flux, '.k')
+    ax.plot(t, f, '.k')
 
     plt.show()
