@@ -38,7 +38,7 @@ if args.target:
     t  = t[~cm]
     f  = f[~cm]
     e  = e[~cm]
-    print(the_TLS(t,f,e))
+    print(the_TLS(fn,t,f,e))
 
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()

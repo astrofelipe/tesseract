@@ -10,9 +10,9 @@ def run_TLS(fn):
     t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
     lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
-    return the_TLS(lc.time, lc.flux, lc.flux_err)
+    return the_TLS(fn, lc.time, lc.flux, lc.flux_err)
 
-def the_TLS(t,f,e):
+def the_TLS(fn, t,f,e):
     mask  = cleaner(t, f)
 
     t = t[~mask]
