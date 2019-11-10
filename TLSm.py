@@ -30,8 +30,11 @@ if args.target:
         e.append(lc.flux_err)
 
     t = np.concatenate(t)
-    f = np.concatenate(f)
-    e = np.concatenate(e)
+    a = np.argsort(t)
+
+    t = t[a]
+    f = np.concatenate(f)[a]
+    e = np.concatenate(e)[a]
 
 
     cm = cleaner(t, f)
