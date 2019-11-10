@@ -5,21 +5,18 @@ import glob
 import os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from utils import pixel_border
 from mpi4py import MPI
-from joblib import Parallel, delayed
 from astropy.utils.console import color_print
 from astropy.io import fits
 from astropy.wcs import WCS
-from astroquery.mast import Catalogs
-from utils import mask_planet#, FFICut
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
-from tqdm import tqdm
 from astropy.stats import SigmaClip
 from photutils import MMMBackground
 from autoap import generate_aperture, select_aperture
 from lightkurve.lightcurve import TessLightCurve
 from tess_stars2px import tess_stars2px_function_entry as ts2p
-from joblib import Parallel, delayed
 
 parser = argparse.ArgumentParser(description='Generate lightcurves!')
 parser.add_argument('Sector', type=int, help='TESS Sector')
@@ -27,6 +24,7 @@ parser.add_argument('Targets', type=str)
 parser.add_argument('--output', action='store_true')
 parser.add_argument('--size', type=int, default=21)
 parser.add_argument('--circ', action='store_true')
+parser.add_argument('--onlyjpg', action='store_true')
 
 args = parser.parse_args()
 
@@ -70,7 +68,6 @@ def FFICut(ffis, x, y, size):
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
-    #for i,f in enumerate(tqdm(aflux)):
     for i,f in enumerate(aflux):
         ti = ffis['data'][0,i]
         tf = ffis['data'][1,i]
@@ -87,19 +84,13 @@ def FFICut(ffis, x, y, size):
     return TPF
 
 def make_lc(tic, ra, dec):
-    #target = Catalogs.query_object('TIC %d' % tic, radius=0.05, catalog='TIC')
-    #ra     = float(target[0]['ra'])
-    #dec    = float(target[0]['dec'])
-
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
-    #print('TIC: ', 'lightred', str(tic), 'default')
-    #print('Camera: ', 'lightred', str(cam[0]), 'default', ' / CCD: ', 'lightred', str(ccd[0]))
+
     idx = (cam[0]-1)*4 + (ccd[0]-1)
 
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
     ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
-    #print('\tSolving coordinates...')
     hdr = fits.getheader(ffi, 1)
 
     w   = WCS(hdr)
@@ -109,7 +100,7 @@ def make_lc(tic, ra, dec):
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
-    time = hdus[1].data['TIME'][q]# + hdus[1].header['BJDREFI']
+    time = hdus[1].data['TIME'][q]
     flux = hdus[1].data['FLUX'][q]
     errs = hdus[1].data['FLUX_ERR'][q]
     bkgs = np.zeros(len(flux))
@@ -136,20 +127,30 @@ def make_lc(tic, ra, dec):
 
     #Lightkurves
     lkf = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
-    #lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
 
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
     bidx = np.argmin(cdpp)
-    #print('\tCalculating best lightcurve')
-    #print('\t\tBest lk:', bidx)
-    #print('\t\t%d pixels in aperture' % dap[bidx].sum())
     lkf  = lkf[bidx]
 
+    #Save light curve
     inst   = np.repeat('TESS', len(time))
     output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
-    #print('\tSaving TIC%s.dat...' % tic)
+
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
+
+    #Save JPG preview
+    stamp = flux - bkgs[:,None,None]
+    fig, ax = plt.subplots(figsize=[4,3])
+    ax.matshow(np.log10(np.nanmedian(stamp[::10], axis=0)), cmap='YlGnBu_r', aspect='equal')
+
+    xm, ym = pixel_border(dap[bidx])
+    for xi,yi in zip(xm, ym):
+        ax.plot(xi, yi, color='lime', lw=1.25)
+
+    ax.plot(x, y, '.r')
+
+    fig.savefig('jpg/TIC%s.jpg' % tic, bbox_inches='tight', dpi=72)
 
     return 1
 
@@ -168,5 +169,3 @@ for i in range(len(tics)):
 
 for h in h5s:
     h.close()
-
-#Parallel(n_jobs=args.ncpu)(delayed(make_lc)(tics[i], ra[i], dec[i]) for i in tqdm(range(len(tics))))
