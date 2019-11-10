@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+from cleaner import cleaner
 from astropy.table import Table
 from lightkurve.lightcurve import TessLightCurve
 from transitleastsquares import transitleastsquares as TLS
@@ -7,35 +8,19 @@ from transitleastsquares import transitleastsquares as TLS
 
 def run_TLS(fn):
     t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
-
-    return the_TLS(t,f,e)
-
-def the_TLS(t,f,e):
     lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
-    fmed = np.nanmedian(lc.flux)
-    fstd = np.nanstd(lc.flux)
-    stdm = (lc.flux < 0.93) & (lc.time > 2458380) & (lc.time < 2458415)
+    return the_TLS(lc.time, lc.flux, lc.flux_err)
 
-    mask1  = ((lc.time > 2458325) & (lc.time < 2458326)) + ((lc.time > 2458347) & (lc.time < 2458350)) + ((lc.time > 2458352.5) & (lc.time < 2458353.2))
-    mask3  = ((lc.time > 2458382) & (lc.time < 2458384)) + ((lc.time > 2458407) & (lc.time < 2458410)) + ((lc.time > 2458393.5) & (lc.time < 2458397))
-    mask4  = ((lc.time > 2458419) & (lc.time < 2458422)) + ((lc.time > 2458422) & (lc.time < 2458424)) + ((lc.time > 2458436) & (lc.time < 2458437))
-    mask5  = ((lc.time > 2458437.8) & (lc.time < 2458438.7)) + ((lc.time > 2458450) & (lc.time < 2458452)) + ((lc.time > 2458463.4) & (lc.time < 2458464.2))
-    mask6  = ((lc.time > 2458476.7) & (lc.time < 2458478.7))
-    mask7  = ((lc.time > 2458491.6) & (lc.time < 2458492)) + ((lc.time > 2458504.6) & (lc.time < 2458505.2))
-    mask8  = ((lc.time > 2458517.4) & (lc.time < 2458518)) + ((lc.time > 2458530) & (lc.time < 2458532))
-    mask10 = ((lc.time > 4913400) & (lc.time < 4913403.5)) + ((lc.time > 4913414.2) & (lc.time < 4913417)) #s10
-    mask11 = ((lc.time > 2458610.6) & (lc.time < 2458611.6)) + ((lc.time > 2458610.6) & (lc.time < 2458611.6))
-    mask12 = ((lc.time > 2458624.5) & (lc.time < 2458626))
-    mask13 = ((lc.time > 2458653.5) & (lc.time < 2458655.75)) + ((lc.time > 2458668.5) & (lc.time < 2458670))
+def the_TLS(t,f,e):
+    mask  = cleaner(t, f)
 
-    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
-
-    lc.time = lc.time[~mask]
-    lc.flux = lc.flux[~mask]
+    t = t[~mask]
+    f = f[~mask]
+    e = e[~mask]
 
     try:
-        model   = TLS(lc.time, lc.flux, lc.flux_err)
+        model   = TLS(t, f, e)
         results = model.power(n_transits_min=1, period_min=args.min_period, use_threads=1, show_progress_bar=False)
     except:
         return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
