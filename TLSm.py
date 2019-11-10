@@ -40,6 +40,6 @@ if args.target:
 
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
-    ax.plot(t,f, '.k')
+    ax.plot(lc.time, lc.flux, '.k')
 
     plt.show()
