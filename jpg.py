@@ -8,7 +8,7 @@ parser.add_argument('Folder', type=str, help='Folder with LCs')
 args = parser.parse_args()
 
 ffipath = args.Folder.replace('LC','FFI').split('/')
-print(ffipath)
+print('/'.join(ffipath))
 
 lcs = glob.glob(args.Folder + 'TIC*.dat')
 
