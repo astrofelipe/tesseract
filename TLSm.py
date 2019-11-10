@@ -24,7 +24,7 @@ if args.target:
         if np.median(tt) > 3000000:
             tt -= 2454833
 
-        lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
+        lc = TessLightCurve(time=tt, flux=ff, flux_err=ee).flatten(window_length=51, polyorder=2, niters=5)
         t.append(lc.time)
         f.append(lc.flux)
         e.append(lc.flux_err)
