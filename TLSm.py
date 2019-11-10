@@ -23,6 +23,10 @@ if args.target:
         f.append(ff)
         e.append(ee)
 
+    t = np.concatenate(t)
+    f = np.concatenate(f)
+    e = np.concatenate(e)
+
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.plot(tt,ff, '-k', lw=1)
