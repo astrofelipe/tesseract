@@ -16,6 +16,10 @@ all_files = glob.glob(args.Folder + '*/' + minmag + '-' + maxmag + '/TIC*.dat')
 bas_files = [os.path.basename(f) for f in all_files]
 
 unique, uidx, ucounts = np.unique(bas_files, return_index=True, return_counts=True)
-print(unique)
-print(uidx)
-print(ucounts)
+
+mask = ucounts > 1
+data = np.vstack([unique, uidx, ucounts])
+data = data[mask]
+data = data[np.argsort(data[:,2])[::-1]]
+
+np.savetxt('multisec_%s-%s.dat' % (minmag,maxmag), data, fmt='%s')
