@@ -4,15 +4,6 @@ from astropy.table import Table
 from lightkurve.lightcurve import TessLightCurve
 from transitleastsquares import transitleastsquares as TLS
 
-parser = argparse.ArgumentParser(description='TLS for a folder with many LC files...')
-parser.add_argument('Folder', help='Folder containing .dat files')
-parser.add_argument('--target', type=int, default=None, help='Run on single target')
-parser.add_argument('--max-period', type=float, default=25)
-parser.add_argument('--min-period', type=float, default=0.2)
-parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
-parser.add_argument('--output', default='TLS_result.dat')
-
-args = parser.parse_args()
 
 def run_TLS(fn):
     t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
@@ -61,6 +52,16 @@ def the_TLS(t,f,e):
             return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='TLS for a folder with many LC files...')
+    parser.add_argument('Folder', help='Folder containing .dat files')
+    parser.add_argument('--target', type=int, default=None, help='Run on single target')
+    parser.add_argument('--max-period', type=float, default=25)
+    parser.add_argument('--min-period', type=float, default=0.2)
+    parser.add_argument('--ncpu', type=int, default=10, help='Number of CPUs to use')
+    parser.add_argument('--output', default='TLS_result.dat')
+
+    args = parser.parse_args()
+
     if args.target is not None:
         fn      = args.Folder + 'TIC%d.dat' % args.target
         results = run_TLS(fn)
