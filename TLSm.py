@@ -10,6 +10,8 @@ parser.add_argument('--target', type=int, default=None, help='Runs on single tar
 
 args = parser.parse_args()
 
+subfolder = args.File.split('_')[-1].split('.')[0]
+
 if args.target:
-    fns = glob.glob(args.Folder + '*/*/TIC%d.dat' % args.target)
+    fns = glob.glob(args.Folder + '*/%s/TIC%d.dat' % (subfolder, args.target))
     print(fns)
