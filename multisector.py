@@ -12,4 +12,9 @@ maxmag = str(args.MaxMag)
 minmag = str(args.MaxMag - 1) if maxmag != 9 else 'inf'
 
 all_files = glob.glob(args.Folder + '*/' + minmag + '-' + maxmag + '/TIC*.dat')
-print(all_files)
+bas_files = [os.path.basename(f) for f in all_files]
+
+unique, uidx, ucounts = np.unique(bas_files)
+print(unique)
+print(uidx)
+print(ucounts)
