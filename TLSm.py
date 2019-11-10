@@ -23,6 +23,7 @@ if args.target:
         f.append(ff)
         e.append(ee)
 
+    print(tt)
     t = np.concatenate(t)
     f = np.concatenate(f)
     e = np.concatenate(e)
