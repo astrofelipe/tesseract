@@ -35,9 +35,9 @@ if args.target:
 
 
     cm = cleaner(t, f)
-    t  = t[cm]
-    f  = f[cm]
-    e  = e[cm]
+    t  = t[~cm]
+    f  = f[~cm]
+    e  = e[~cm]
 
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
