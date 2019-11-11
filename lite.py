@@ -149,8 +149,9 @@ def make_lc(tic, ra, dec):
         ax.plot(xi, yi, color='lime', lw=1.25)
 
     ax.plot(x, y, '.r')
+    ax.set_axis_off()
 
-    fig.savefig('jpg/TIC%s.jpg' % tic, bbox_inches='tight', dpi=72)
+    fig.savefig('jpg/TIC%s.jpg' % tic, bbox_inches=0, dpi=42)
 
     return 1
 
