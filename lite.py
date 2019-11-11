@@ -159,7 +159,7 @@ def make_lc(tic, ra, dec):
     plt.axis('off')
     plt.axis('tight')
     plt.axis('image')
-    fig.savefig('img/TIC%s.png' % tic, dpi=72)
+    fig.savefig('img/TIC%s.png' % tic, bbox_inches='tight', dpi=72)
     plt.close(fig)
 
     return 1
