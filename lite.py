@@ -151,12 +151,15 @@ def make_lc(tic, ra, dec):
         ax.plot(xi, yi, color='lime', lw=1.25)
 
     ax.plot(x, y, '.r')
-    ax.set_axis_off()
-    fig.tight_layout()
+    #ax.set_axis_off()
+    #extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+    #fig.tight_layout()
     #fig.axes.get_xaxis().set_visible(False)
     #fig.axes.get_yaxis().set_visible(False)
-
-    fig.savefig('img/TIC%s.png' % tic, bbox_inches='tight', dpi=72, pad_inches=0)
+    plt.axis('off')
+    plt.axis('tight')
+    plt.axis('image')
+    fig.savefig('img/TIC%s.png' % tic, dpi=72)
     plt.close(fig)
 
     return 1
