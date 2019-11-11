@@ -156,6 +156,7 @@ def make_lc(tic, ra, dec):
     #fig.axes.get_yaxis().set_visible(False)
 
     fig.savefig('img/TIC%s.png' % tic, bbox_inches='tight', dpi=100, pad_inches=0)
+    fig.close()
 
     return 1
 
