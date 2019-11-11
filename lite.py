@@ -152,11 +152,11 @@ def make_lc(tic, ra, dec):
 
     ax.plot(x, y, '.r')
     ax.set_axis_off()
-    #fig.axes.get_xaxis().set_visible(False)
+    fig.axes.get_xaxis().set_visible(False)
     #fig.axes.get_yaxis().set_visible(False)
 
     fig.savefig('img/TIC%s.png' % tic, bbox_inches='tight', dpi=100, pad_inches=0)
-    fig.close()
+    plt.close(fig)
 
     return 1
 
