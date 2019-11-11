@@ -154,7 +154,7 @@ def make_lc(tic, ra, dec):
     ax.set_axis_off()
     fig.tight_layout()
 
-    fig.savefig('jpg/TIC%s.png' % tic, bbox_inches='tight', dpi=72)
+    fig.savefig('jpg/TIC%s.png' % tic, bbox_inches='tight', dpi=100, pad_inches=0)
 
     return 1
 
