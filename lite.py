@@ -144,7 +144,7 @@ def make_lc(tic, ra, dec):
     #Save JPG preview
     stamp = flux - bkgs[:,None,None]
     fig, ax = plt.subplots(figsize=[4,4])
-    ax.matshow(np.log10(np.nanmedian(stamp[::10], axis=0)), cmap='gist_gray', aspect='equal')
+    ax.matshow(np.log10(np.nanmedian(stamp[::10], axis=0)), cmap='gray', aspect='equal')
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
