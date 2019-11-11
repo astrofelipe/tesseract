@@ -145,7 +145,7 @@ def make_lc(tic, ra, dec):
     stamp = flux - bkgs[:,None,None]
     fig, ax = plt.subplots(figsize=[4,4])
     fig.patch.set_visible(False)
-    
+
     ax.matshow(np.log10(np.nanmedian(stamp[::10], axis=0)), cmap='gist_gray', aspect='equal')
 
     xm, ym = pixel_border(dap[bidx])
@@ -159,6 +159,7 @@ def make_lc(tic, ra, dec):
     #fig.axes.get_xaxis().set_visible(False)
     #fig.axes.get_yaxis().set_visible(False)
     plt.axis('off')
+    fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
     fig.savefig('img/TIC%s.png' % tic, dpi=72)
     plt.close(fig)
 
