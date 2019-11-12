@@ -146,7 +146,7 @@ def make_lc(tic, ra, dec):
     fig, ax = plt.subplots(figsize=[4,4])
     fig.patch.set_visible(False)
     stamp = np.log10(np.nanmedian(stamp[::10], axis=0))
-    stamp[np.isnan(stamp)] = 0
+    stamp[np.isnan(stamp)] = -8
 
     ax.matshow(stamp, cmap='gist_gray', aspect='equal')
 
