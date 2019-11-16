@@ -164,7 +164,7 @@ def make_lc(tic, ra, dec):
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
     fig.savefig('img/TIC%s.png' % tic, dpi=72)
 
-    plt.close()
+    plt.close(fig)
     del(fig,ax)
 
     return 1
