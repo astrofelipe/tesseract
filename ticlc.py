@@ -31,6 +31,7 @@ parser.add_argument('--circ', action='store_true')
 parser.add_argument('--norm', action='store_true')
 parser.add_argument('--flatten', action='store_true')
 parser.add_argument('--pixlcs', action='store_true')
+parser.add_argument('--pngstamp', action='store_true')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -38,7 +39,7 @@ iP, it0, idur = args.mask_transit
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
     args.TIC = int(args.TIC[0])
-    if os.path.isfile('TIC%d.dat' % args.TIC):
+    if os.path.isfile('TIC%d_%02d.dat' % (args.TIC, args.Sector)):
         import sys
         color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
@@ -286,10 +287,24 @@ if not args.noplots:
     fig1.tight_layout()
     plt.show()
 
+if args.pngstamp:
+    sfig, sax = plt.subplots(figsize=[4,4])
+    sax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='PuBu_r')
+
+    xm, ym = pixel_border(dap[bidx])
+    for xi,yi in zip(xm, ym):
+        sax.plot(xi, yi, color='lime', lw=2)
+
+    sax.text(0.9, 0.9, r'CCD: %d\\n Cam: %d' % (ccd, cam), ha='right', va='top', transform=sax.transAxes, color='lime', size='large')
+
+    plt.axis('off')
+    sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
+    sfig.savefig('TIC%s_%02d_st.png' % (args.TIC, args.Sector), dpi=100)
+
 inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
-np.savetxt('TIC%s.dat' % (args.TIC), output, fmt='%s')
+np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
 
 if args.folder is None:
     os.system('rm tesscut/*%s*' % ra)
