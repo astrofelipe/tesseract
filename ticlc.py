@@ -36,6 +36,8 @@ parser.add_argument('--pngstamp', action='store_true')
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
 
+plt.rc('font', family='serif')
+
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
     args.TIC = int(args.TIC[0])
@@ -84,6 +86,8 @@ else:
 
     color_print('Querying MAST...', 'lightcyan')
     allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
+    cam     = allhdus.hdu[2].header['CAMERA']
+    ccd     = allhdus.hdu[2].header['CCD']
     w       = WCS(allhdus.hdu[2].header)
 
 hdus  = allhdus.hdu
@@ -288,18 +292,18 @@ if not args.noplots:
     plt.show()
 
 if args.pngstamp:
-    sfig, sax = plt.subplots(figsize=[4,4])
+    sfig, sax = plt.subplots(figsize=[2.5,2.5])
     sax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='PuBu_r')
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
-        sax.plot(xi, yi, color='lime', lw=2)
+        sax.plot(xi, yi, color='lime', lw=1.5)
 
-    sax.text(0.9, 0.9, r'CCD: %d\\n Cam: %d' % (ccd, cam), ha='right', va='top', transform=sax.transAxes, color='lime', size='large')
+    sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='lime', size='x-large')
 
     plt.axis('off')
     sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
-    sfig.savefig('TIC%s_%02d_st.png' % (args.TIC, args.Sector), dpi=100)
+    sfig.savefig('TIC%s_%02d_st.png' % (args.TIC, args.Sector), dpi=240)
 
 inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
