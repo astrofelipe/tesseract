@@ -20,7 +20,11 @@ def the_TLS(fn, t, f, e, min_period=0.2, target=None):
     e = e[~mask]
 
     #try:
-    model   = TLS(t, f, e)
+    try:
+        model   = TLS(t, f, e)
+    except:
+        print(fn)
+        print(t)
     results = model.power(n_transits_min=1, period_min=min_period, use_threads=1, show_progress_bar=False)
     #except:
     #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
