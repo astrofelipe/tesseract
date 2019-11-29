@@ -21,15 +21,11 @@ def the_TLS(fn, t, f, e, min_period=0.2, target=None):
 
     #try:
     try:
-        model   = TLS(t, f, e)
+        model   = TLS(t, f, e) #Algunos targets pueden tener flujo negativo (borde FFI) y se cae
     except:
-        print('\n aaaaaaaaaaaaa')
-        print(fn)
-        print(t)
-        print('\n')
+        return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
+
     results = model.power(n_transits_min=1, period_min=min_period, use_threads=1, show_progress_bar=False)
-    #except:
-    #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
     if target is not None:
         return results
