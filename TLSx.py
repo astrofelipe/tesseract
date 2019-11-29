@@ -23,8 +23,10 @@ def the_TLS(fn, t, f, e, min_period=0.2, target=None):
     try:
         model   = TLS(t, f, e)
     except:
+        print('\n aaaaaaaaaaaaa')
         print(fn)
         print(t)
+        print('\n')
     results = model.power(n_transits_min=1, period_min=min_period, use_threads=1, show_progress_bar=False)
     #except:
     #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
