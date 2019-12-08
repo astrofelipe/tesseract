@@ -93,7 +93,7 @@ if wrapcheck:
 magbin = np.arange(args.min_mag, args.max_mag + 0.1, 0.1)
 
 print('Scanning... (1/2)')
-def gocat(i, j, im, jm):
+def gocat(i, j, im):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
@@ -137,7 +137,9 @@ print('\nScanning... (2/2)')
 eclos = np.arange(0, 361, 5)
 eclas = np.arange(-90, -71, 5)
 
-supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1))))
+supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
+                                                                   for j in tqdm(range(len(eclas) - 1))
+                                                                   for im in tqdm(range(len(magbin) - 1))))
 '''
 for i in tqdm(range(len(eclos) - 1)):
     eloi1 = int(eclos[i])
