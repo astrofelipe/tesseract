@@ -89,8 +89,11 @@ if wrapcheck:
     idx   = np.where(np.diff(eclos) < 0)[0]
     eclos = np.insert(eclos, idx+1, [360, 0])
 
+#Magnitudes (safer?)
+magbin = np.arange(args.min_mag, args.min_mag + 0.1, 0.1)
+
 print('Scanning... (1/2)')
-def gocat(i, j):
+def gocat(i, j, im, jm):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
@@ -103,7 +106,7 @@ def gocat(i, j):
     catalogdata = Catalogs.query_criteria(catalog='Tic',
                                           eclong=[eloi1, eloi2],
                                           eclat=[elai1, elai2],
-                                          Tmag=[args.min_mag, args.max_mag],
+                                          Tmag=[magbin[im], magbin[im+1]],
                                           objType='STAR')
 
     tics = np.array(catalogdata['ID'])
@@ -120,7 +123,9 @@ def gocat(i, j):
 
     return catalogdata
 
-supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j) for i in tqdm(range(len(eclos) - 1)) for j in tqdm(range(len(eclas) - 1)))
+supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
+                                                               for j in tqdm(range(len(eclas) - 1))
+                                                               for im in tqdm(range(len(magbin) - 1)))
 #print(supercata1)
 #for s in supercata1:
 #    print(type(supercata1))
