@@ -90,7 +90,7 @@ if wrapcheck:
     eclos = np.insert(eclos, idx+1, [360, 0])
 
 #Magnitudes (safer?)
-magbin = np.arange(args.min_mag, args.max_mag + 0.1, 0.1)
+magbin = np.linspace(args.min_mag, args.max_mag + 0.1, 5)
 
 print('Scanning... (1/2)')
 def gocat(i, j, im):
