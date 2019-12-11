@@ -68,7 +68,7 @@ coord = SkyCoord(ra, dec, unit='deg')
 
 if args.folder is not None:
     #Offline mode
-    fnames  = np.sort(glob.glob(args.folder + '*s%04d-%d-%d*.fits' % (args.Sector, cam, ccd)))
+    fnames  = np.sort(glob.glob(args.folder + 'tess*s%04d-%d-%d*ffic.fits' % (args.Sector, cam, ccd)))
     print(args.Sector, cam, ccd)
     print(fnames[5])
     fhdr    = fits.getheader(fnames[5], 1)
@@ -93,14 +93,7 @@ else:
 hdus  = allhdus.hdu
 
 #Data type
-qual = hdus[1].data['QUALITY'] == 0
-
-maskf = {'4':  (hdus[1].data['TIME'] < (2458419 - 2457000)) +
-               ((hdus[1].data['TIME'] > (2458424 - 2457000)) *
-               (hdus[1].data['TIME'] < 2458436.25 - 2457000)),
-         }
-
-ma = qual# & maskf['4']
+ma = hdus[1].data['QUALITY'] == 0
 
 time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
 flux = hdus[1].data['FLUX'][ma]
