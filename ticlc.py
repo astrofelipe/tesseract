@@ -89,13 +89,14 @@ else:
     cam     = allhdus.hdu[2].header['CAMERA']
     ccd     = allhdus.hdu[2].header['CCD']
     w       = WCS(allhdus.hdu[2].header)
+    hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
 hdus  = allhdus.hdu
 
 #Data type
 ma = hdus[1].data['QUALITY'] == 0
 
-time = hdus[1].data['TIME'][ma] + hdus[1].header['BJDREFI']
+time = hdus[1].data['TIME'][ma]
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
