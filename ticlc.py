@@ -87,8 +87,8 @@ else:
     color_print('Querying MAST...', 'lightcyan')
     hdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
     cam     = hdus[2].header['CAMERA']
-    ccd     = hdus.hdu[2].header['CCD']
-    w       = WCS(hdus.hdu[2].header)
+    ccd     = hdus[2].header['CCD']
+    w       = WCS(hdus[2].header)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
 #Data type
