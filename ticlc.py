@@ -78,20 +78,18 @@ if args.folder is not None:
     x,y = w.all_world2pix(ra, dec, 0)
     print(x,y)
 
-    allhdus = FFICut(ffis, y, x, args.size)
+    hdus = FFICut(ffis, y, x, args.size).hdu
 
 else:
     #Online mode
     from lightkurve.search import search_tesscut
 
     color_print('Querying MAST...', 'lightcyan')
-    allhdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
-    cam     = allhdus.hdu[2].header['CAMERA']
-    ccd     = allhdus.hdu[2].header['CCD']
-    w       = WCS(allhdus.hdu[2].header)
+    hdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
+    cam     = hdus[2].header['CAMERA']
+    ccd     = hdus.hdu[2].header['CCD']
+    w       = WCS(hdus.hdu[2].header)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
-
-hdus  = allhdus.hdu
 
 #Data type
 ma = hdus[1].data['QUALITY'] == 0
