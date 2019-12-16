@@ -46,7 +46,7 @@ if len(args.TIC) < 2:
         color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
 
-    color_print('TIC: ', 'lightcyan', '%d' % args.TIC, 'default')
+    color_print('TIC: ', 'lightcyan', args.TIC, 'default')
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
 
 
@@ -56,7 +56,7 @@ if len(args.TIC) < 2:
 else:
     ra, dec = args.TIC
 
-color_print('RA Dec: ', 'lightcyan', '%f %f' % (ra, dec), 'default')
+color_print('RA: ', 'lightcyan', ra, 'default', '\tDec: ', 'lightcyan', dec, 'default')
 
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
@@ -69,14 +69,11 @@ coord = SkyCoord(ra, dec, unit='deg')
 if args.folder is not None:
     #Offline mode
     fnames  = np.sort(glob.glob(args.folder + 'tess*s%04d-%d-%d*ffic.fits' % (args.Sector, cam, ccd)))
-    print(args.Sector, cam, ccd)
-    print(fnames[5])
     fhdr    = fits.getheader(fnames[5], 1)
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
-    print(x,y)
 
     hdus = FFICut(ffis, y, x, args.size).hdu
 
@@ -91,6 +88,14 @@ else:
     w       = WCS(hdus[2].header)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
+    x,y = w.all_world2pix(ra, dec, 0)
+
+color_print('Sector: ', 'lightcyan', args.Sector, 'default',
+            '\tCamera: ', 'lightcyan', cam, 'default',
+            '\tCCD: ', 'lightcyan', ccd, 'default')
+
+color_print('Pos X: ', 'lightcyan', x, 'default', '\tPos Y: ', 'lightcyan', y, 'default')
+
 #Data type
 ma = hdus[1].data['QUALITY'] == 0
 
@@ -99,9 +104,6 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
-
-#Star position
-x,y = w.all_world2pix(ra, dec, 0)
 
 #Background
 for i,f in enumerate(flux):
@@ -206,9 +208,11 @@ else:
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
     bidx = np.argmin(cdpp)
-    print('Best lk:', bidx)
-    print(dap[bidx].sum(),'pixels in aperture')
     lkf  = lkf[bidx]
+
+    color_print('Aperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ else 'No. ' + str(bidx), 'default',
+                '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
+
 
     #PLD?
     if args.pld:
@@ -284,14 +288,19 @@ if not args.noplots:
     plt.show()
 
 if args.pngstamp:
+    from matplotlib.colors import ListedColormap
+    my_cmap = plt.cm.Purples(np.arange(plt.cm.Purples.N))
+    my_cmap[:,0:3] *= 0.95
+    my_cmap = ListedColormap(my_cmap)
+
     sfig, sax = plt.subplots(figsize=[2.5,2.5])
-    sax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='PuBu_r')
+    sax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=my_cmap)
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
-        sax.plot(xi, yi, color='lime', lw=1.5)
+        sax.plot(xi, yi, color='#FF0043', lw=1.5)
 
-    sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='lime', size='x-large')
+    sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='x-large')
 
     plt.axis('off')
     sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
