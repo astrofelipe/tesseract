@@ -77,6 +77,10 @@ if args.folder is not None:
 
     hdus = FFICut(ffis, y, x, args.size).hdu
 
+    ex  = int(x-10.5)
+    ey  = int(y-10.5)
+    x,y = x-ex, y-ey
+
 #Online mode
 else:
     from lightkurve.search import search_tesscut
@@ -104,8 +108,6 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
-
-print(flux.shape)
 
 #Background
 for i,f in enumerate(flux):
@@ -271,17 +273,11 @@ if not args.noplots:
         for xi,yi in zip(xm, ym):
             ax1.plot(xi, yi, color='lime', lw=1.25)
 
-    #ax1[0].matshow(dap[bidx], alpha=.2)
-    #ax1.plot(x,y, '.r')
-    #aps.plot(color='w', ax=ax1[0])
-    #ax1[1].matshow(bkgs[4])
+    ax1.plot(x,y, '.r')
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
     ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
-    #ax.plot(time[~mask], lkf[bidx].flux[~mask], 'oc', ms=4, alpha=.9)
-    #if args.pld:
-    #    ax.plot(time, det_lc.flux*np.nanmedian(lkf.flux)/np.nanmedian(det_lc.flux), color='tomato', lw=.66)
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
 
