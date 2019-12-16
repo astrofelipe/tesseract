@@ -272,7 +272,7 @@ if not args.noplots:
             ax1.plot(xi, yi, color='lime', lw=1.25)
 
     #ax1[0].matshow(dap[bidx], alpha=.2)
-    ax1.plot(x,y, '.r')
+    #ax1.plot(x,y, '.r')
     #aps.plot(color='w', ax=ax1[0])
     #ax1[1].matshow(bkgs[4])
 
