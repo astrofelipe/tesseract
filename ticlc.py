@@ -65,9 +65,9 @@ ccd = ccd[0]
 
 coord = SkyCoord(ra, dec, unit='deg')
 
-
+#Offline mode
 if args.folder is not None:
-    #Offline mode
+    color_print('Extracting data from FFIs...', 'lightcyan')
     fnames  = np.sort(glob.glob(args.folder + 'tess*s%04d-%d-%d*ffic.fits' % (args.Sector, cam, ccd)))
     fhdr    = fits.getheader(fnames[5], 1)
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
@@ -77,8 +77,8 @@ if args.folder is not None:
 
     hdus = FFICut(ffis, y, x, args.size).hdu
 
+#Online mode
 else:
-    #Online mode
     from lightkurve.search import search_tesscut
 
     color_print('Querying MAST...', 'lightcyan')
@@ -104,6 +104,8 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
+
+print(flux.shape)
 
 #Background
 for i,f in enumerate(flux):
@@ -314,6 +316,6 @@ np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
 if args.folder is None:
     os.system('rm tesscut/*%s*' % ra)
 
-print('Done!\n')
+color_print('\nDone!\n', 'lightgreen')
 #output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
 #np.savetxt('TIC%d_s%04d-%d-%d_det.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
