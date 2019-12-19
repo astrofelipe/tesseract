@@ -32,6 +32,8 @@ parser.add_argument('--norm', action='store_true')
 parser.add_argument('--flatten', action='store_true')
 parser.add_argument('--pixlcs', action='store_true')
 parser.add_argument('--pngstamp', action='store_true')
+parser.add_argument('--cam', type=int, default=None)
+parser.add_argument('--ccd', type=int, default=None)
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -61,6 +63,10 @@ color_print('RA: ', 'lightcyan', ra, 'default', '\tDec: ', 'lightcyan', dec, 'de
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
 ccd = ccd[0]
+
+if args.ccd is not None:
+    cam = args.cam
+    ccd = args.ccd 
 
 
 coord = SkyCoord(ra, dec, unit='deg')
