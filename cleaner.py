@@ -14,8 +14,8 @@ def cleaner(time, flux):
     mask8  = ((time > 2458517.4) & (time < 2458518)) + ((time > 2458530) & (time < 2458532))
     mask10 = ((time > 4913400) & (time < 4913403.5)) + ((time > 4913414.2) & (time < 4913417)) #s10
     mask11 = ((time > 2458610.6) & (time < 2458611.6)) + ((time > 2458610.6) & (time < 2458611.6))
-    mask12 = ((time > 2458624.5) & (time < 2458626))
-    mask13 = ((time > 2458653.5) & (time < 2458655.75)) + ((time > 2458668.5) & (time < 2458670))
+    mask12 = ((time > 2458624.5) & (time < 2458626)) + ((time > 2458624.5) & (time < 2458626))
+    mask13 = ((time > 2458653.5) & (time < 2458655.75)) + ((time > 2458639.5) & (time < 2458641.5))
 
     mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
 
