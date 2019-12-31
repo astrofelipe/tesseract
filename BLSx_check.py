@@ -41,10 +41,10 @@ for i in range(args.start, len(BLSdata)):
     fig = plt.figure(constrained_layout=True, figsize=[12, 10])
     gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[6,2,2,1,6,2,2,1])
 
-    lcs = np.ravel([fig.add_subplot(gs[k//nlc, 4*(k//nlc)]) for k in range(2*nlc)])
-    lcf = np.ravel([fig.add_subplot(gs[k//nlc, 1+4*(k//nlc)]) for k in range(2*nlc)])
-    lc2 = np.ravel([fig.add_subplot(gs[k//nlc, 2+4*(k//nlc)]) for k in range(2*nlc)])
-    opr = np.ravel([fig.add_subplot(gs[k//nlc, 3+4*(k//nlc)]) for k in range(2*nlc)])
+    lcs = np.ravel([fig.add_subplot(gs[k%nlc, 4*(k//nlc)]) for k in range(2*nlc)])
+    lcf = np.ravel([fig.add_subplot(gs[k%nlc, 1+4*(k//nlc)]) for k in range(2*nlc)])
+    lc2 = np.ravel([fig.add_subplot(gs[k%nlc, 2+4*(k//nlc)]) for k in range(2*nlc)])
+    opr = np.ravel([fig.add_subplot(gs[k%nlc, 3+4*(k//nlc)]) for k in range(2*nlc)])
     pbu = [Button(opr[k], 'Print') for k in range(2*nlc)]
 
     chunk = BLSdata[2*nlc*i:2*nlc*(i+1)]
