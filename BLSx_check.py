@@ -33,7 +33,7 @@ if not args.nogaia:
     from astroquery.mast import Catalogs
     from astroquery.gaia import Gaia
 
-nlc = 10
+nlc = 5
 
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
@@ -107,5 +107,6 @@ for i in range(args.start, len(BLSdata)):
     chunk['depth'].format    = '%d'
 
     print(chunk)
+    plt.tight_layout()
     plt.show()
     plt.close(fig)
