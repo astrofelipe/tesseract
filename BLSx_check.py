@@ -38,8 +38,8 @@ nlc = 5
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(figsize=[22, 9])
-    gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[6,2,2,1,6,2,2,1])
+    fig = plt.figure(figsize=[22*0.7, 9*0.7])
+    gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[8,2,2,1,8,2,2,1])
 
     lcs = np.ravel([fig.add_subplot(gs[k%nlc, 4*(k//nlc)]) for k in range(2*nlc)])
     lcf = np.ravel([fig.add_subplot(gs[k%nlc, 1+4*(k//nlc)]) for k in range(2*nlc)])
