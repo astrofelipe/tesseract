@@ -98,7 +98,7 @@ for i in range(args.start, len(BLSdata)):
         def on_press(event):
             #chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
             hey = chunk[j]['Files', 'P', 't0', 'duration', 'depth']
-            print(hey)
+            print(hey.pformat())
 
         funcs.append(on_press)
 
