@@ -20,7 +20,7 @@ for sector in sector_folders:
     for cam in range(1,5):
         for ccd in range(1,5):
             print(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))
-            img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))[5]
+            img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))[7]
             hdr = fits.getheader(img, 1)
             w   = WCS(hdr)
 
@@ -38,7 +38,7 @@ for sector in sector_folders:
             TR = SkyCoord(ra4, dec4, unit='deg').transform_to('barycentrictrueecliptic')
 
             color_print('\tCAM %d, CCD %d' % (cam, ccd), 'lightgreen')
-            print('\t\t', TL.lat, TL.lon)
+            print('\t\t', TL.lat.degree, TL.lon.degree)
             print('\t\t', BL)
             print('\t\t', BR)
             print('\t\t', TR)
