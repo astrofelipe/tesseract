@@ -39,7 +39,7 @@ for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
     fig = plt.figure(figsize=[21, 1.5*nlc], dpi=72)
-    gs  = GridSpec(ncols=9, nrows=nlc, figure=fig, width_ratios=[9,2,2,1,0.5,9,2,2,1])
+    gs  = GridSpec(ncols=9, nrows=nlc, figure=fig, width_ratios=[9,3,3,1,1,9,3,3,1])
 
     lcs = np.ravel([fig.add_subplot(gs[k%nlc, 5*(k//nlc)]) for k in range(2*nlc)])
     lcf = np.ravel([fig.add_subplot(gs[k%nlc, 1+5*(k//nlc)]) for k in range(2*nlc)])
@@ -97,7 +97,7 @@ for i in range(args.start, len(BLSdata)):
 
         def on_press(event):
             #chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
-            print(chunk['Files', 'P', 't0', 'duration', 'depth'][j].as_void())
+            print(type(chunk['Files', 'P', 't0', 'duration', 'depth'][j].as_void()))
 
         funcs.append(on_press)
 
