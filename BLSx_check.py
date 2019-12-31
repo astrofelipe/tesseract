@@ -33,30 +33,26 @@ if not args.nogaia:
     from astroquery.mast import Catalogs
     from astroquery.gaia import Gaia
 
+nlc = 10
+
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(constrained_layout=True, figsize=[7.5*2, 5.5*1.5])
-    gs  = GridSpec(12, 8, figure=fig)
-    lcs = [fig.add_subplot(gs[2*k:2*(k+1),:4]) for k in range(6)]
-    lcf = [fig.add_subplot(gs[2*k:2*(k+1),4]) for k in range(6)]
-    lc2 = [fig.add_subplot(gs[2*k:2*(k+1),5]) for k in range(6)]
+    fig = plt.figure(constrained_layout=True, figsize=[12, 10])
+    gs  = GridSpec(nlc, 6, figure=fig, width_ratios=[3,1,1,3,1,1])
 
-    opc = [fig.add_subplot(gs[2*k,6]) for k in range(6)]
-    oeb = [fig.add_subplot(gs[2*k+1,6]) for k in range(6)]
-    orr = [fig.add_subplot(gs[2*k,7]) for k in range(6)]
-    oot = [fig.add_subplot(gs[2*k+1,7]) for k in range(6)]
+    lcs = np.ravel([fig.add_subplot(gs[k, 3*(k//nlc)]) for k in range(2*nlc)])
+    lcf = np.ravel([fig.add_subplot(gs[k, 1+3*(k//nlc)]) for k in range(2*nlc)])
+    lc2 = np.ravel([fig.add_subplot(gs[k, 2+3*(k//nlc)]) for k in range(2*nlc)])
 
-    bpc = [Button(opc[k], 'Planet') for k in range(6)]
-    beb = [Button(oeb[k], 'Eclipsing Binary') for k in range(6)]
-    brr = [Button(orr[k], 'RR Lyrae') for k in range(6)]
-    bot = [Button(oot[k], 'Other Variable') for k in range(6)]
+    opr = [fig.add_subplot(gs[k,3+3*(k//nlc)]) for k in range(2*nlc)]
+    pbu = [Button(opr[k], 'Print') for k in range(2*nlc)]
 
-    chunk = BLSdata[6*i:6*(i+1)]
+    chunk = BLSdata[2*nlc*i:2*nlc*(i+1)]
 
     funcs = []
 
-    for j in range(6):
+    for j in range(2*nlcs):
         fn     = chunk['Files'][j]#chunk.iloc[j,0]
         period = chunk['P'][j]#chunk.iloc[j,1]
         t0     = chunk['t0'][j]#chunk.iloc[j,2]
@@ -96,18 +92,16 @@ for i in range(args.start, len(BLSdata)):
         lc2[j].set_ylim(1-0.5*depth, 1.005)
 
 
-        #inf[j].text(0.5, 0.5, r'$P=%f$' % period, ha='center', va='center', transform=inf[j].transAxes)
-        #inf[j].set_axis_off()
 
         chunk['depth'][j] = chunk['depth'][j]*1e6
         lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=12)
 
         def on_press(event):
-            print(period)
+            print(chunk[j])
 
         funcs.append(on_press)
 
-        bpc[j].on_clicked(funcs[j])
+        pbu[j].on_clicked(funcs[j])
 
     chunk['duration'] = chunk['duration']*24
     chunk['duration'].format = '%.2f'
