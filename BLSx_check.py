@@ -34,6 +34,7 @@ if not args.nogaia:
     from astroquery.gaia import Gaia
 
 nlc = 7
+color = ['tomato', 'cyan']
 
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
@@ -73,20 +74,29 @@ for i in range(args.start, len(BLSdata)):
         else:
             rval = np.nan
 
-        lcs[j].plot(lc.time, lc.flux, '.', ms=1)
+        lcs[j].plot(lc.time, lc.flux, '.', ms=2)
         if t0 > 50:
             transits = np.arange(t0, t[-1], period)
             for t0s in transits:
                 lcs[j].axvline(t0s, lw=6, alpha=.3, color='tomato')
+
+            ranges   = transits - period/2
+            for ti in range(len(ranges)-1):
+                ci  = ti % 2
+                cma = (t > ranges[ti]) & (t < ranges[ti+1])
+
+                lcf[j].plot(p[cma], lc.flux[cma], '.', ms=3, color=color[ci])
+        else:
+            lcf[j].plot(p, lc.flux, '.', ms=3)
+            lcf[j].set_xlim(-0.2, 0.2)
+            lcf[j].set_ylim(1-1.5*depth, 1.005)
+
+
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
         lcs[j].set_ylabel('Norm Flux (ppm)', fontsize=10)
         lcs[j].set_ylim(1-2*depth, 1+depth)
 
-        lcf[j].plot(p, lc.flux, '.', ms=2.5)
-        lcf[j].set_xlim(-0.2, 0.2)
-        lcf[j].set_ylim(1-1.5*depth, 1.005)
-
-        lc2[j].plot(p2, lc.flux, '.', ms=1.5)
+        lc2[j].plot(p2, lc.flux, '.', ms=3)
         lc2[j].set_xlim(-0.2, 0.2)
         lc2[j].set_ylim(1-0.5*depth, 1.005)
 
