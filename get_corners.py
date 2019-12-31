@@ -10,7 +10,7 @@ parser.add_argument('Folder', type=str, help='Folder with subfolders (sectors) c
 
 args = parser.parse_args()
 
-sector_folders = np.sort(glob.glob(args.Folder + 's00*'))
+sector_folders = np.sort(glob.glob(args.Folder + 's00*/'))
 
 for sector in sector_folders:
     sn = int(sector[-2:])
