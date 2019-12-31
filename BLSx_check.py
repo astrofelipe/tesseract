@@ -80,8 +80,8 @@ for i in range(args.start, len(BLSdata)):
             for t0s in transits:
                 lcs[j].axvline(t0s, lw=6, alpha=.3, color='tomato')
 
-            ranges   = transits - period/2
-            for ti in range(len(ranges)):
+            ranges   = np.append([transits - period/2], [transits[-1] + period/2])
+            for ti in range(len(ranges)-1):
                 ci  = ti % 2
                 cma = (t > ranges[ti]) & (t < ranges[ti+1])
 
