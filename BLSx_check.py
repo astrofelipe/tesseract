@@ -38,7 +38,7 @@ nlc = 5
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(figsize=[22*0.8, 9*0.8])
+    fig = plt.figure(figsize=[22*0.8, nlc*0.8], dpi=72)
     gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[8,2,2,1,8,2,2,1])
 
     lcs = np.ravel([fig.add_subplot(gs[k%nlc, 4*(k//nlc)]) for k in range(2*nlc)])
@@ -93,7 +93,7 @@ for i in range(args.start, len(BLSdata)):
 
 
         chunk['depth'][j] = chunk['depth'][j]*1e6
-        lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=12)
+        lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=10)
 
         def on_press(event):
             print(chunk[j])
