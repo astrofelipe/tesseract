@@ -88,8 +88,8 @@ for i in range(args.start, len(BLSdata)):
                 lcf[j].plot(p[cma], lc.flux[cma], '.', ms=3, color=color[ci])
         else:
             lcf[j].plot(p, lc.flux, '.', ms=3)
-            lcf[j].set_xlim(-0.2, 0.2)
-            lcf[j].set_ylim(1-1.5*depth, 1.005)
+        lcf[j].set_xlim(-0.2, 0.2)
+        lcf[j].set_ylim(1-1.5*depth, 1.005)
 
 
         lcs[j].set_xlim(np.nanmin(t), np.nanmax(t))
