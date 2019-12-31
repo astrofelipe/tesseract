@@ -15,7 +15,7 @@ sector_folders = np.sort(glob.glob(args.Folder + 's00*/'))
 
 for sector in sector_folders:
     sn = int(sector[-3:-1])
-    color_print('SECTOR %d' % sn, 'cyan')
+    color_print('\nSECTOR %d' % sn, 'cyan')
 
     for cam in range(1,5):
         for ccd in range(1,5):
@@ -37,8 +37,8 @@ for sector in sector_folders:
             BR = SkyCoord(ra3, dec3, unit='deg').transform_to('barycentrictrueecliptic')
             TR = SkyCoord(ra4, dec4, unit='deg').transform_to('barycentrictrueecliptic')
 
-            color_print('\tCAM %d, CCD %d' % (cam, ccd), 'lightgreen')
-            print('\t\t', TL.lat.degree, TL.lon.degree)
-            print('\t\t', BL)
-            print('\t\t', BR)
-            print('\t\t', TR)
+            color_print('CAM %d, CCD %d' % (cam, ccd), 'lightgreen')
+            print('\t', TL.lon.degree, TL.lat.degree)
+            print('\t', BL.lon.degree, BL.lat.degree)
+            print('\t', BR.lon.degree, BR.lat.degree)
+            print('\t', TR.lon.degree, TR.lat.degree)
