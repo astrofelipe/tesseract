@@ -33,12 +33,12 @@ if not args.nogaia:
     from astroquery.mast import Catalogs
     from astroquery.gaia import Gaia
 
-nlc = 5
+nlc = 6
 
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(figsize=[20, 2*nlc], dpi=72)
+    fig = plt.figure(figsize=[20, nlc], dpi=72)
     gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[8,2,2,1,8,2,2,1])
 
     lcs = np.ravel([fig.add_subplot(gs[k%nlc, 4*(k//nlc)]) for k in range(2*nlc)])
@@ -96,7 +96,7 @@ for i in range(args.start, len(BLSdata)):
         lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=10)
 
         def on_press(event):
-            print(chunk[j])
+            print(chunk['Files', 'P', 't0', 'duration', 'depth'][j])
 
         funcs.append(on_press)
 
