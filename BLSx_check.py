@@ -107,6 +107,5 @@ for i in range(args.start, len(BLSdata)):
     chunk['depth'].format    = '%d'
 
     print(chunk)
-    plt.tight_layout()
     plt.show()
     plt.close(fig)
