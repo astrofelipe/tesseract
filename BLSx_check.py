@@ -97,7 +97,8 @@ for i in range(args.start, len(BLSdata)):
 
         def on_press(event):
             #chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
-            print(type(chunk['Files', 'P', 't0', 'duration', 'depth'][j].as_void()))
+            hey = chunk['Files', 'P', 't0', 'duration', 'depth'][j]
+            print(hey[:])
 
         funcs.append(on_press)
 
