@@ -3,13 +3,16 @@ import argparse
 import numpy as np
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
+from astropy.table import Table
 from astropy.utils.console import color_print
-from astropy.io import fits
+from astropy.io import fits, ascii
 
 parser = argparse.ArgumentParser(description='Get CCD corner coordinates')
 parser.add_argument('Folder', type=str, help='Folder with subfolders (sectors) containing FFIs')
 
 args = parser.parse_args()
+
+t = Table()
 
 sector_folders = np.sort(glob.glob(args.Folder + 's00*/'))
 
@@ -19,7 +22,6 @@ for sector in sector_folders:
 
     for cam in range(1,5):
         for ccd in range(1,5):
-            print(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))
             img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))[7]
             hdr = fits.getheader(img, 1)
             w   = WCS(hdr)
@@ -42,3 +44,9 @@ for sector in sector_folders:
             print('\t', BL.lon.degree, BL.lat.degree)
             print('\t', BR.lon.degree, BR.lat.degree)
             print('\t', TR.lon.degree, TR.lat.degree)
+
+            label    = 'S%02d_%d_%d' % (sn, cam, ccd)
+            t[label+'_lon'] = [TL.lon.degree, BL.lon.degree, BR.lon.degree, TR.lon.degree]
+            t[label+'_lat'] = [TL.lat.degree, BL.lat.degree, BR.lat.degree, TR.lat.degree]
+
+ascii.write(t, 'corners.dat', format='commented_header')
