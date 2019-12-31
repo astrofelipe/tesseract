@@ -13,7 +13,7 @@ args = parser.parse_args()
 sector_folders = np.sort(glob.glob(args.Folder + 's00*/'))
 
 for sector in sector_folders:
-    sn = int(sector[-2:])
+    sn = int(sector[-3:-1])
     color_print('SECTOR %d' % sn, 'cyan')
 
     for cam in range(1,5):
