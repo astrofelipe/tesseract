@@ -81,7 +81,7 @@ for i in range(args.start, len(BLSdata)):
                 lcs[j].axvline(t0s, lw=6, alpha=.3, color='tomato')
 
             ranges   = transits - period/2
-            for ti in range(len(ranges)-1):
+            for ti in range(len(ranges)):
                 ci  = ti % 2
                 cma = (t > ranges[ti]) & (t < ranges[ti+1])
 
