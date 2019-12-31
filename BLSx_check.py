@@ -57,6 +57,7 @@ for i in range(args.start, len(BLSdata)):
         period = chunk['P'][j]#chunk.iloc[j,1]
         t0     = chunk['t0'][j]#chunk.iloc[j,2]
         depth  = chunk['depth'][j]#chunk.iloc[j,4]
+        snr    = chunk['snr'][j]
 
         t, y = np.genfromtxt(fn, unpack=True, usecols=(0,1))
         lc   = TessLightCurve(time=t, flux=y).flatten()
@@ -103,7 +104,7 @@ for i in range(args.start, len(BLSdata)):
 
 
         chunk['depth'][j] = chunk['depth'][j]*1e6
-        lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=10)
+        lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$ / SNR$=%.3f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95, snr), fontsize=11)
 
         def on_press(event):
             #chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
@@ -118,7 +119,7 @@ for i in range(args.start, len(BLSdata)):
     chunk['duration'].format = '%.2f'
     chunk['depth'].format    = '%d'
 
-    print(chunk)
+    print(chunk['Files', 'P', 't0', 'duration', 'depth'])
     #gs.tight_layout(fig)
     plt.show()
     plt.close(fig)
