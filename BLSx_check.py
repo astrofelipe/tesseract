@@ -51,7 +51,7 @@ for i in range(args.start, len(BLSdata)):
 
     funcs = []
 
-    for j in range(2*nlcs):
+    for j in range(2*nlc):
         fn     = chunk['Files'][j]#chunk.iloc[j,0]
         period = chunk['P'][j]#chunk.iloc[j,1]
         t0     = chunk['t0'][j]#chunk.iloc[j,2]
