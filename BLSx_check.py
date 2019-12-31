@@ -38,7 +38,7 @@ nlc = 5
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
 
-    fig = plt.figure(constrained_layout=True, figsize=[18, nlc*0.8], dpi=72)
+    fig = plt.figure(constrained_layout=True, figsize=[20, nlc], dpi=72)
     gs  = GridSpec(ncols=8, nrows=nlc, figure=fig, width_ratios=[8,2,2,1,8,2,2,1])
 
     lcs = np.ravel([fig.add_subplot(gs[k%nlc, 4*(k//nlc)]) for k in range(2*nlc)])
