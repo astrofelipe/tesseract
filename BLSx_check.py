@@ -33,7 +33,7 @@ if not args.nogaia:
     from astroquery.mast import Catalogs
     from astroquery.gaia import Gaia
 
-nlc = 6
+nlc = 7
 
 for i in range(args.start, len(BLSdata)):
     print('\nIteration: ',i)
@@ -96,7 +96,8 @@ for i in range(args.start, len(BLSdata)):
         lcs[j].set_title(r'$%s$  /  $P=%f$  /  Depth$=%f$  /  $R_{\star}=%f$  /  $R_p = %f$' % (obj, period, depth, rval, rval*np.sqrt(depth)*9.95), fontsize=10)
 
         def on_press(event):
-            chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
+            #chunk['Files', 'P', 't0', 'duration', 'depth'][j].pprint(show_name=False, align='<')
+            print(chunk['Files', 'P', 't0', 'duration', 'depth'][j,:])
 
         funcs.append(on_press)
 
