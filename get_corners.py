@@ -37,4 +37,8 @@ for sector in sector_folders:
             BR = SkyCoord(ra3, dec3, unit='deg').transform_to('barycentrictrueecliptic')
             TR = SkyCoord(ra4, dec4, unit='deg').transform_to('barycentrictrueecliptic')
 
-            color_print('\tCAM %d: %f\tCCD %d: %f' % (cam, ccd), 'lightgreen')
+            color_print('\tCAM %d, CCD %d' % (cam, ccd), 'lightgreen')
+            print('\t\t', TL)
+            print('\t\t', BL)
+            print('\t\t', BR)
+            print('\t\t', TR)
