@@ -1,6 +1,7 @@
 import glob
 import argparse
 import numpy as np
+from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
 from astropy.utils.console import color_print
 from astropy.io import fits
