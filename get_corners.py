@@ -18,7 +18,7 @@ for sector in sector_folders:
 
     for cam in range(1,5):
         for ccd in range(1,5):
-            img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))
+            img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))[0]
             hdr = fits.getheader(img, 1)
             w   = WCS(hdr)
 
