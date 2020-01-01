@@ -46,7 +46,7 @@ for sector in sector_folders:
             print('\t', TR.lon.degree, TR.lat.degree)
 
             label    = 'S%02d_%d_%d' % (sn, cam, ccd)
-            t[label+'_lon'] = [TL.lon.degree, BL.lon.degree, BR.lon.degree, TR.lon.degree]
-            t[label+'_lat'] = [TL.lat.degree, BL.lat.degree, BR.lat.degree, TR.lat.degree]
+            t[label+'_lon'] = [TL.lon.degree, TR.lon.degree, BR.lon.degree, BL.lon.degree]
+            t[label+'_lat'] = [TL.lat.degree, TR.lat.degree, BR.lat.degree, BL.lat.degree]
 
 ascii.write(t, 'corners.dat', format='commented_header')
