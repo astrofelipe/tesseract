@@ -12,7 +12,7 @@ def run_TLS(fn, min_period=0.2, target=None):
 
     return the_TLS(fn, lc.time, lc.flux, lc.flux_err, min_period, target)
 
-def the_TLS(fn, t, f, e, min_period=0.2, target=None):
+def the_TLS(fn, t, f, e, min_period=0.2, target=None, use_threads=1, show_progress_bar=False):
     mask  = cleaner(t, f)
 
     t = t[~mask]
@@ -25,7 +25,7 @@ def the_TLS(fn, t, f, e, min_period=0.2, target=None):
     except:
         return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
-    results = model.power(n_transits_min=1, period_min=min_period, use_threads=1, show_progress_bar=False)
+    results = model.power(n_transits_min=1, period_min=min_period, use_threads=use_threads, show_progress_bar=show_progress_bar)
 
     if target is not None:
         return results
