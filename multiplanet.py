@@ -28,7 +28,7 @@ gs  = GridSpec(ncols=5, nrows=3, figure=fig, height_ratios=[3,2,2])
 
 #Light curve
 axlc = fig.add_subplot(gs[0,:])
-axlc.plot(lc.time, lc.flux, '.')
+axlc.plot(t, f, '.k', ms=1)
 
 color = ['r', 'c', 'm']
 #Iterate TLS
@@ -57,10 +57,11 @@ for i in range(args.nplanets):
         depth  = result.depth[idx]
 
     phase = (lc.time - t0 + 0.5*period) % period - 0.5*period
+    fph   = (t - t0 + 0.5*period) % period - 0.5*period
 
     ax = fig.add_subplot(gs[1,i])
-    ax.plot(phase, lc.flux, '.')
-    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)), 'o', color=color[i])
+    ax.plot(fph, f, '.', color=color[i])
+    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)), '^', color=color[i])
 
     ax.set_xlim(-2*dur, 2*dur)
     ax.set_title(r'$P=%f$' % period)
