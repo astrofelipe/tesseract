@@ -56,8 +56,8 @@ for i in range(args.nplanets):
         dur    = result.duration[idx]
         depth  = result.depth[idx]
 
-    if i==1:
-        period *= 2
+    #if i==1:
+    #    period *= 2
 
     phase = (lc.time - t0 + 0.5*period) % period - 0.5*period
     fph   = (t - t0 + 0.5*period) % period - 0.5*period
@@ -67,7 +67,7 @@ for i in range(args.nplanets):
     axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)), '^', color=color[i])
 
     ax.set_xlim(-2*dur, 2*dur)
-    ax.set_title(r'$P=%f$' % period)
+    ax.set_title(r'$P=%f$ / $T_0=%f' % (period,t0))
 
     ax2 = fig.add_subplot(gs[2,i])
     ax2.plot(periods, power, '-', lw=1)
