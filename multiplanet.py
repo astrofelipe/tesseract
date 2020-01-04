@@ -56,6 +56,9 @@ for i in range(args.nplanets):
         dur    = result.duration[idx]
         depth  = result.depth[idx]
 
+    if i==2:
+        period *= 2
+
     phase = (lc.time - t0 + 0.5*period) % period - 0.5*period
     fph   = (t - t0 + 0.5*period) % period - 0.5*period
 
