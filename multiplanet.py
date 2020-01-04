@@ -59,6 +59,7 @@ for i in range(args.nplanets):
 
     ax = fig.add_subplot(gs[1,i])
     ax.plot(phase, lc.flux, '.')
+    ax.plot(result.transit_times, 0.99*depth*np.ones(len(result.transit_times)), 'o')
 
     ax.set_xlim(-2*dur, 2*dur)
     ax.set_title(r'$P=%f$' % period)
