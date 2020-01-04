@@ -30,6 +30,7 @@ gs  = GridSpec(ncols=5, nrows=3, figure=fig, height_ratios=[3,2,2])
 axlc = fig.add_subplot(gs[0,:])
 axlc.plot(lc.time, lc.flux, '.')
 
+color = ['r', 'c', 'm']
 #Iterate TLS
 for i in range(args.nplanets):
     if args.method == 'TLS':
@@ -39,7 +40,7 @@ for i in range(args.nplanets):
         period = result.period
         t0     = result.T0
         dur    = result.duration
-        depth  = 1-result.depth
+        depth  = result.depth
 
         periods, power = result.periods, result.power
 
@@ -59,7 +60,7 @@ for i in range(args.nplanets):
 
     ax = fig.add_subplot(gs[1,i])
     ax.plot(phase, lc.flux, '.')
-    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)), 'or')
+    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)), 'o', color=color[i])
 
     ax.set_xlim(-2*dur, 2*dur)
     ax.set_title(r'$P=%f$' % period)
