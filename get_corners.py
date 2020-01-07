@@ -51,10 +51,9 @@ for sector in sector_folders[:4]:
             print('\t', BOTTOM[0].lon.degree, BOTTOM[0].lat.degree)
             print('\t', LEFT[0].lon.degree, LEFT[0].lat.degree)
 
-            print(TOP.lon.degree)
-
+            
             label    = 'S%02d_%d_%d' % (sn, cam, ccd)
-            t[label+'_lon'] = [TOP.lon.degree, RIGHT.lon.degree, BOTTOM.lon.degree, LEFT.lon.degree]
-            t[label+'_lat'] = [TOP.lat.degree, RIGHT.lat.degree, BOTTOM.lat.degree, LEFT.lat.degree]
+            t[label+'_lon'] = np.concatenate([TOP.lon.degree, RIGHT.lon.degree, BOTTOM.lon.degree, LEFT.lon.degree])
+            t[label+'_lat'] = np.concatenate([TOP.lat.degree, RIGHT.lat.degree, BOTTOM.lat.degree, LEFT.lat.degree])
 
 ascii.write(t, 'corners.dat', format='commented_header')
