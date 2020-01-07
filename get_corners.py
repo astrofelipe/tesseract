@@ -16,7 +16,7 @@ t = Table()
 
 sector_folders = np.sort(glob.glob(args.Folder + 's00*/'))
 
-for sector in sector_folders:
+for sector in sector_folders[:4]:
     sn = int(sector[-3:-1])
     color_print('\nSECTOR %d' % sn, 'cyan')
 
@@ -50,6 +50,8 @@ for sector in sector_folders:
             print('\t', RIGHT[0].lon.degree, RIGHT[0].lat.degree)
             print('\t', BOTTOM[0].lon.degree, BOTTOM[0].lat.degree)
             print('\t', LEFT[0].lon.degree, LEFT[0].lat.degree)
+
+            print(TOP.lon.degree)
 
             label    = 'S%02d_%d_%d' % (sn, cam, ccd)
             t[label+'_lon'] = [TOP.lon.degree, RIGHT.lon.degree, BOTTOM.lon.degree, LEFT.lon.degree]
