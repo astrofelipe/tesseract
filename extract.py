@@ -15,7 +15,7 @@ head2 = fits.getheader(filename, 1)
 TIC  = head['TICID']
 sec  = head['SECTOR']
 bjdr = head2['BJDREFI']
-q    = data['QUALITY'] == 0
+q    = (data['QUALITY'] == 0) & np.isfinite(data['PDCSAP_FLUX'])
 t    = data['TIME'][q] + bjdr
 f    = data['PDCSAP_FLUX'][q]
 e    = data['PDCSAP_FLUX_ERR'][q]
