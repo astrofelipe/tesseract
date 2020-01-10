@@ -15,10 +15,14 @@ head2 = fits.getheader(filename, 1)
 TIC  = head['TICID']
 sec  = head['SECTOR']
 bjdr = head2['BJDREFI']
+
 q    = (data['QUALITY'] == 0) & np.isfinite(data['PDCSAP_FLUX'])
-t    = data['TIME'][q] + bjdr
 f    = data['PDCSAP_FLUX'][q]
-e    = data['PDCSAP_FLUX_ERR'][q]
+med  = np.nanmedian(f)
+f   /= med
+
+t    = data['TIME'][q] + bjdr
+e    = data['PDCSAP_FLUX_ERR'][q] / med
 
 print(data['PDCSAP_FLUX'])
 
