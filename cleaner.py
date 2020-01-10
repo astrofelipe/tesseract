@@ -29,15 +29,18 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data = np.genfromtxt(args.File, usecols=(0,1,2))
-    strd = np.genfromtxt(args.File, usecols=(3), dtype='str')
-    print(strd.shape, data.shape)
     time = data[:,0]
     flux = data[:,1]
 
     mask = cleaner(time, flux)
 
-    strd2 = strd[~mask]
     data2 = data[~mask]
 
-    finaldata = np.c_[data2, strd2]
+    try:
+        strd = np.genfromtxt(args.File, usecols=(3), dtype='str')
+        strd2 = strd[~mask]
+        finaldata = np.c_[data2, strd2]
+    except:
+        finaldata = data2
+        
     np.savetxt(args.File.replace('.dat','clean.dat'), finaldata, fmt='%s')
