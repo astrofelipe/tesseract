@@ -9,7 +9,7 @@ args     = parser.parse_args()
 filename = args.File
 
 data = fits.getdata(filename)
-head = fits.getgeader(filename)
+head = fits.getheader(filename)
 
 TIC  = head['TICID']
 sec  = head['SECTOR']
