@@ -30,7 +30,7 @@ gs  = GridSpec(ncols=5, nrows=3, figure=fig, height_ratios=[3,2,2])
 axlc = fig.add_subplot(gs[0,:])
 axlc.plot(t, f, '.k', ms=1)
 
-color = ['r', 'c', 'm']
+color=cm.rainbow(np.linspace(0,1,args.nplanets))
 #Iterate TLS
 for i in range(args.nplanets):
     if args.method == 'TLS':

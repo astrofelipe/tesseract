@@ -24,7 +24,5 @@ f   /= med
 t    = data['TIME'][q] + bjdr
 e    = data['PDCSAP_FLUX_ERR'][q] / med
 
-print(data['PDCSAP_FLUX'])
-
 output = np.transpose((t,f,e))
 np.savetxt('TIC%d_%02d-SC.dat' % (TIC, sec), output, fmt='%s')
