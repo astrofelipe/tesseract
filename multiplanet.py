@@ -21,7 +21,8 @@ t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 ma    = cleaner(t, f)
 
 t,f,e = t[~ma], f[~ma], e[~ma]
-lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=27, polyorder=3, niters=3)
+wl    = 2*(int(np.sqrt(len(t)))//2)+1
+lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=wl, polyorder=2, niters=3)
 
 fig = plt.figure(constrained_layout=True, figsize=[15, 6])
 gs  = GridSpec(ncols=5, nrows=3, figure=fig, height_ratios=[3,2,2])
