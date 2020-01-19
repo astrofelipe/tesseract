@@ -29,7 +29,7 @@ gs  = GridSpec(ncols=5, nrows=3, figure=fig, height_ratios=[3,2,2])
 
 #Light curve
 axlc = fig.add_subplot(gs[0,:])
-axlc.plot(t, f, '.k', ms=1)
+axlc.plot(lc.time, lc.flux, '.k', ms=1)
 
 color = plt.cm.rainbow(np.linspace(0,1,args.nplanets))
 #Iterate TLS
