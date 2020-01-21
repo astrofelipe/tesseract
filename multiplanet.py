@@ -65,7 +65,7 @@ for i in range(args.nplanets):
 
     ax = fig.add_subplot(gs[1,i])
     ax.plot(fph, lc.flux, '.', color=color[i])
-    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)) - 2000e-6, '^', color=color[i])
+    axlc.plot(result.transit_times, depth*np.ones(len(result.transit_times)) - 2500e-6, '^', color=color[i])
 
     ax.set_xlim(-2*dur, 2*dur)
     ax.set_title(r'$P=%f$ / $T_0=%f$' % (period,t0))
