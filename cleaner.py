@@ -11,7 +11,7 @@ def cleaner(time, flux):
     mask5  = ((time > 2458437.8) & (time < 2458438.7)) + ((time > 2458450) & (time < 2458452)) + ((time > 2458463.4) & (time < 2458464.2))
     mask6  = ((time > 2458476.7) & (time < 2458478.7)) #check 2do
     mask7  = ((time > 2458491.6) & (time < 2458492)) + ((time > 2458504.6) & (time < 2458505.2))
-    mask8  = ((time > 2458517.4) & (time < 2458518)) + ((time > 2458530) & (time < 2458536))
+    mask8  = ((time > 2458517.4) & (time < 2458518)) + ((time > 2458530) & (time < 2458537))
     mask9  = ((time > 2458543) & (time < 2458545)) + ((time > 2458556) & (time < 2458559))
     mask10 = ((time > 4913400) & (time < 4913403.5)) + ((time > 4913414.2) & (time < 4913417))
     mask11 = ((time > 2458596) & (time < 2458599)) + ((time > 2458610) & (time < 2458613)) + ((time > 2458623) & (time < 2458625)) #checked
@@ -42,5 +42,5 @@ if __name__ == '__main__':
         finaldata = np.c_[data2, strd2]
     except:
         finaldata = data2
-        
+
     np.savetxt(args.File.replace('.dat','clean.dat'), finaldata, fmt='%s')
