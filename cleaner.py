@@ -13,7 +13,7 @@ def cleaner(time, flux):
     mask7  = ((time > 2458491.6) & (time < 2458492)) + ((time > 2458504.6) & (time < 2458505.2))
     mask8  = ((time > 2458517.4) & (time < 2458518)) + ((time > 2458530) & (time < 2458537.5))
     mask9  = ((time > 2458543) & (time < 2458545)) + ((time > 2458556) & (time < 2458559))
-    mask10 = ((time > 4913400) & (time < 4913403.5)) + ((time > 4913414.2) & (time < 4913417))
+    mask10 = ((time > 2458581.6) & (time < 2458669.5))
     mask11 = ((time > 2458596) & (time < 2458599)) + ((time > 2458610) & (time < 2458613)) + ((time > 2458623) & (time < 2458625)) + ((time > 2458599.3) & (time < 2458600.5)) + ((time > 2458614) & (time < 2458614.75)) #checked
     mask12 = ((time > 2458624) & (time < 2458627)) + ((time > 2458639) & (time < 2458641)) #no problems @ end?
     mask13 = ((time > 2458657.5) & (time < 2458659)) + ((time > 2458667) & (time < 2458669)) + ((time > 2458681) & (time < 2458683)) #checked
