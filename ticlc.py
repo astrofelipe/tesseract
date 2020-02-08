@@ -66,7 +66,7 @@ ccd = ccd[0]
 
 if args.ccd is not None:
     cam = args.cam
-    ccd = args.ccd 
+    ccd = args.ccd
 
 
 coord = SkyCoord(ra, dec, unit='deg')
@@ -120,7 +120,8 @@ for i,f in enumerate(flux):
     sigma_clip = SigmaClip(sigma=3)
     bkg        = MMMBackground(sigma_clip=sigma_clip)
     bkgs[i]    = bkg.calc_background(f)
-    berr[i]    = mad_std(f)
+    mad_bkg    = mad_std(f)
+    berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
 if args.psf:
     import tensorflow as tf
@@ -212,7 +213,7 @@ else:
     lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 
     #Lightkurves
-    lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=lcer[i]) for i in range(len(lcfl))]
+    lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=np.sqrt(lcer[i]**2 + berr**2)) for i in range(len(lcfl))]
     lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
 
     #Select best
@@ -282,7 +283,7 @@ if not args.noplots:
     ax1.plot(x,y, '.r')
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
-    ax.plot(time, lkf.flux, '-ok', ms=2, lw=1.5)
+    ax.errorbar(time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
