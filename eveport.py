@@ -27,7 +27,7 @@ def PLD(flux, aper, sap_flux):
     X2_pld  = U[:, :X_pld.shape[1]]
 
     #Design matrix + fit
-    X_pld = np.concatenate((np.ones((len(flux), 1)), X_pld, X2_pld), axis=-1)
+    X_pld = np.concatenate((np.ones((len(flux), 1)), X_pld), axis=-1)#, X2_pld), axis=-1)
     XTX   = np.dot(X_pld.T, X_pld)
     w_pld = np.linalg.solve(XTX, np.dot(X_pld.T, sap_flux))
     pld_flux = np.dot(X_pld, w_pld)

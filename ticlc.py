@@ -83,6 +83,9 @@ if args.folder is not None:
 
     hdus = FFICut(ffis, y, x, args.size).hdu
 
+    if args.pld:
+        hdu_pld = FFICut(ffis, y, x, 2*args.size).hdu
+
     ex  = int(x-10.5)
     ey  = int(y-10.5)
     x,y = x-ex, y-ey
@@ -93,6 +96,8 @@ else:
 
     color_print('Querying MAST...', 'lightcyan')
     hdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
+    if args.pld:
+        hdu_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
     cam     = hdus[2].header['CAMERA']
     ccd     = hdus[2].header['CCD']
     w       = WCS(hdus[2].header)
@@ -114,6 +119,9 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
+
+if args.pld:
+    flux_pld = hdu_pld[1].data['FLUX'][ma]
 
 #Background
 for i,f in enumerate(flux):
@@ -232,11 +240,13 @@ else:
         else:
             mask = mask_planet(time, it0, iP, dur=idur)
 
-        #det_flux, det_err = PLD2(time, flux, errs, lkf[bidx].flux, dap[bidx], mask=mask, n=5)
-        #lkf = TessLightCurve(time=time, flux=det_flux, flux_err=lkf.flux_err)
-        pld_flux = PLD(flux, dap[bidx], lkf.flux)
+        flux_pld -= bkgs[:,None,None]
+        pldflsum = np.nansum(flux_pld, axis=0)
+        pldthr   = mad_std(pldflsum)
+        pldthm   = pldflsum > 3*pldthr
+
+        pld_flux = PLD(flux_pld, pldthm, lkf.flux)
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
-        #det_lc = det_lc.flatten(polyorder=2, window_length=51)
 
 
 if not args.noplots:
