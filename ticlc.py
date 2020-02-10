@@ -131,6 +131,8 @@ for i,f in enumerate(flux):
     mad_bkg    = mad_std(f)
     berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
+#PSF routine, taken from Eleanor
+#Works (?) but doesn't return errors and only fits one gaussian 
 if args.psf:
     import tensorflow as tf
     from vaneska.models import Gaussian
