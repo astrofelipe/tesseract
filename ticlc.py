@@ -35,7 +35,7 @@ parser.add_argument('--pixlcs', action='store_true', help='Shows light curves pe
 parser.add_argument('--pngstamp', action='store_true', help='Saves the postage stamp as png')
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
 parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number')
-parser.add_argument('--overwrite', action='store_true', help='Overwrites existing filename')
+parser.add_argument('--overwrite', action='store_false', help='Overwrites existing filename')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -45,7 +45,7 @@ plt.rc('font', family='serif')
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
     args.TIC = int(args.TIC[0])
-    if os.path.isfile('TIC%d_%02d.dat' % (args.TIC, args.Sector)):
+    if args.overwrite and os.path.isfile('TIC%d_%02d.dat' % (args.TIC, args.Sector)):
         import sys
         color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
