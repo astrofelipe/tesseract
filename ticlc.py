@@ -20,20 +20,21 @@ from tess_stars2px import tess_stars2px_function_entry as ts2p
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
 parser.add_argument('TIC', type=float, nargs='+', help='TIC ID or RA DEC')
 parser.add_argument('Sector', type=int, help='Sector')
-parser.add_argument('--folder', type=str, default=None)
+parser.add_argument('--folder', type=str, default=None, help='Uses local stored FFIs (stacked in hdf5 format, see FFI2h5.py)')
 parser.add_argument('--size', type=int, default=21, help='TPF size')
 parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, None), help='Mask Transits, input: period, t0')
 parser.add_argument('--everest', action='store_true')
-parser.add_argument('--noplots', action='store_true')
+parser.add_argument('--noplots', action='store_true', help="Doesn't show plots")
 parser.add_argument('--pld', action='store_true')
-parser.add_argument('--psf', action='store_true')
-parser.add_argument('--circ', action='store_true')
-parser.add_argument('--norm', action='store_true')
-parser.add_argument('--flatten', action='store_true')
-parser.add_argument('--pixlcs', action='store_true')
-parser.add_argument('--pngstamp', action='store_true')
-parser.add_argument('--cam', type=int, default=None)
-parser.add_argument('--ccd', type=int, default=None)
+parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleanor)')
+parser.add_argument('--circ', action='store_true', help='Forces circular apertures')
+parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input')
+parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
+parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
+parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
+parser.add_argument('--pngstamp', action='store_true', help='Saves the postage stamp as png')
+parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
+parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -132,7 +133,7 @@ for i,f in enumerate(flux):
     berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
 #PSF routine, taken from Eleanor
-#Works (?) but doesn't return errors and only fits one gaussian 
+#Works (?) but doesn't return errors and only fits one gaussian
 if args.psf:
     import tensorflow as tf
     from vaneska.models import Gaussian
@@ -211,10 +212,21 @@ else:
     x = x - int(x) + args.size//2
     y = y - int(y) + args.size//2
 
-    if not args.circ:
+    if args.manualap == -1:
+        #Choose pixels manually
+        print('Coming soon!')
+    elif args.manualap is not None:
+        #Text file input
+        apix1, apix2        = np.genfromtxt(args.manualap, dtype=int, unpack=True)
+        theap               = np.zeros(flux[0].shape).astype(bool)
+        theap[apix1, apix2] = True
+        dap   = [theap.astype(bool)]
+    elif not args.circ:
+        #K2P2 (clustering, watershed) algorithm
         daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
         dap  = np.array([select_aperture(d, x, y) for d in daps])
     else:
+        #Circular aperture (no resampling)
         XX, YY = np.ogrid[:args.size, :args.size]
         dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in range(1,5)]
 
