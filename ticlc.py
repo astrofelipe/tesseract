@@ -218,7 +218,7 @@ else:
         print('Coming soon!')
     elif args.manualap is not None:
         #Text file input
-        apix1, apix2        = np.genfromtxt(args.manualap, dtype=int, unpack=True)
+        apix2, apix1        = np.genfromtxt(args.manualap, dtype=int, unpack=True)
         theap               = np.zeros(flux[0].shape).astype(bool)
         theap[apix1, apix2] = True
         dap   = [theap.astype(bool)]
