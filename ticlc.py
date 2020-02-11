@@ -27,6 +27,7 @@ parser.add_argument('--everest', action='store_true')
 parser.add_argument('--noplots', action='store_true', help="Doesn't show plots")
 parser.add_argument('--pld', action='store_true')
 parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleanor)')
+parser.add_argument('--prf', action='store_true')
 parser.add_argument('--circ', action='store_true', help='Forces circular apertures')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
@@ -125,17 +126,26 @@ berr = np.zeros(len(flux))
 if args.pld:
     flux_pld = hdu_pld[1].data['FLUX'][ma]
 
+if args.manualap is not None:
+    apix2, apix1        = np.genfromtxt(args.manualap, unpack=True).astype(int)
+    theap               = np.zeros(flux[0].shape).astype(bool)
+    theap[apix1, apix2] = True
+
 #Background
 for i,f in enumerate(flux):
     sigma_clip = SigmaClip(sigma=3)
     bkg        = MMMBackground(sigma_clip=sigma_clip)
-    bkgs[i]    = bkg.calc_background(f)
+    bkgs[i]    = bkg.calc_background(f) if args.manualap is None else bkg.calc_background(f[~theap])
     mad_bkg    = mad_std(f)
     berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
+#PRF from lightkurve
+if args.prf:
+    print(type(hdus))
+
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
-if args.psf:
+elif args.psf:
     import tensorflow as tf
     from vaneska.models import Gaussian
     from tqdm import tqdm
@@ -217,11 +227,7 @@ else:
         #Choose pixels manually
         print('Coming soon!')
     elif args.manualap is not None:
-        #Text file input
-        apix2, apix1        = np.genfromtxt(args.manualap, dtype=int, unpack=True)
-        theap               = np.zeros(flux[0].shape).astype(bool)
-        theap[apix1, apix2] = True
-        dap   = [theap.astype(bool)]
+        dap   = [theap]
     elif not args.circ:
         #K2P2 (clustering, watershed) algorithm
         daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
