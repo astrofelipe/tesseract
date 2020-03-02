@@ -1,8 +1,8 @@
 # tesseract
 **tesseract** is a tool originally made for extract light curves from **TESS Full Frame Images** (FFIs). The philosophy is to make calls as simple as possible, this means that the basic usage is:
 
-  python ticlc.py <TIC ID> <TESS Sector>
-  python ticlc.py <RA> <DEC> <TESS Sector>
+    python ticlc.py <TIC ID> <TESS Sector>
+    python ticlc.py <RA> <DEC> <TESS Sector>
 
 This will output an ascii file with time, flux (aperture photometry) and flux error columns. Additionally there's an instrument column, so you can use this as input directly in [juliet](https://github.com/nespinoza/juliet). A preview plot will be displayed, showing the postage stamp used, the light curve and the estimated background.
 
