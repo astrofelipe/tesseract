@@ -5,6 +5,8 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import glob
 import os
+import astropy.units as u
+from matplotlib import rcParams
 from eveport import PLD, PLD2
 from lightkurve.lightcurve import TessLightCurve
 from utils import mask_planet, FFICut, pixel_border
@@ -23,25 +25,30 @@ parser.add_argument('Sector', type=int, help='Sector')
 parser.add_argument('--folder', type=str, default=None, help='Uses local stored FFIs (stacked in hdf5 format, see FFI2h5.py)')
 parser.add_argument('--size', type=int, default=21, help='TPF size')
 parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, None), help='Mask Transits, input: period, t0')
-parser.add_argument('--everest', action='store_true')
+#parser.add_argument('--everest', action='store_true')
 parser.add_argument('--noplots', action='store_true', help="Doesn't show plots")
-parser.add_argument('--pld', action='store_true')
+parser.add_argument('--pld', action='store_true', help='Pixel level decorrelation (Experimental)')
 parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleanor)')
-parser.add_argument('--prf', action='store_true')
+#parser.add_argument('--prf', action='store_true')
 parser.add_argument('--circ', action='store_true', help='Forces circular apertures')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
 parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
-parser.add_argument('--pngstamp', action='store_true', help='Saves the postage stamp as png')
+parser.add_argument('--pngstamp', type=str, default=None, help='Saves the postage stamp as png (input "full" or "minimal")')
+parser.add_argument('--gaia', action='store_true', help='Shows Gaia sources on stamps')
+parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia magnitude to consider')
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
 parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number')
+parser.add_argument('--cmap', type=str, default='YlGnBu_r', help='Colormap to use')
 parser.add_argument('--overwrite', action='store_false', help='Overwrites existing filename')
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
 
-plt.rc('font', family='serif')
+plt.rcParams['font.family']     = 'serif'
+plt.rcParams['xtick.labelsize'] = 8
+plt.rcParams['ytick.labelsize'] = 8
 
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
@@ -103,6 +110,8 @@ else:
         hdu_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
     cam     = hdus[2].header['CAMERA']
     ccd     = hdus[2].header['CCD']
+    row     = hdus[1].header['2CRV5P']
+    column  = hdus[1].header['1CRV5P']
     w       = WCS(hdus[2].header)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
@@ -113,6 +122,7 @@ color_print('Sector: ', 'lightcyan', args.Sector, 'default',
             '\tCCD: ', 'lightcyan', ccd, 'default')
 
 color_print('Pos X: ', 'lightcyan', x, 'default', '\tPos Y: ', 'lightcyan', y, 'default')
+color_print('CCD Row: ', 'lightcyan', row+x, 'default', '\tCCD Column: ', 'lightcyan', column+y, 'default')
 
 #Data type
 ma = hdus[1].data['QUALITY'] == 0
@@ -140,12 +150,34 @@ for i,f in enumerate(flux):
     berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
 #PRF from lightkurve
-if args.prf:
-    print(type(hdus))
+#if args.prf:
+#    print(type(hdus))
+
+#Gaia sources
+if args.gaia:
+    from astroquery.gaia import Gaia
+
+    gaiawh = u.Quantity(21*args.size*2, u.arcsec)
+    gaiar  = Gaia.cone_search_async(coord, gaiawh).get_results()
+
+    gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag
+    gra, gdec = gaiar['ra'][gma], gaiar['dec'][gma]
+    grpmag    = gaiar['phot_rp_mean_mag'][gma]
+    gaiar     = gaiar[gma]
+
+    gx, gy = w.all_world2pix(gra, gdec, 0)
+    gma2 = (gx >= -0.5) & (gx <= args.size-0.5) & (gy >= -0.5) & (gy <= args.size-0.5)
+    gx, gy = gx[gma2], gy[gma2]
+    grpmag = grpmag[gma2]
+
+    color_print('Nearby sources:\n', 'cyan')
+    gaiaresume = gaiar[gma2]
+    gaiaresume['label'] = np.arange(len(grpmag))
+    print(gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist'])
 
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
-elif args.psf:
+if args.psf:
     import tensorflow as tf
     from vaneska.models import Gaussian
     from tqdm import tqdm
@@ -250,7 +282,7 @@ else:
     bidx = np.argmin(cdpp)
     lkf  = lkf[bidx]
 
-    color_print('Aperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ else 'No. ' + str(bidx), 'default',
+    color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ else 'No. ' + str(bidx), 'default',
                 '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
 
 
@@ -277,7 +309,7 @@ if not args.noplots:
         tlen = np.nanmax(time) - tmin
         tnor = (time - tmin) / tlen
 
-        pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap='Blues_r')
+        pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap)
 
         theflux = flux - bkgs[:,None,None]
         for i in range(args.size):
@@ -298,13 +330,12 @@ if not args.noplots:
 
     ax0 = plt.subplot(gs[1,1])
     ax0.errorbar(time, bkgs, yerr=berr, fmt='ok', ms=2)
-    #ax0.plot(time, bkgs if not args.psf else bkgout, '.k', ms=2)
     ax0.set_title('Background')
     ax0.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax0.set_xlabel(r'BJD', fontweight='bold')
 
     ax1 = plt.subplot(gs[:,0])
-    ax1.matshow(np.log10(flux[0]), cmap='YlGnBu_r', aspect='equal')
+    ax1.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap, aspect='equal')
 
     if not args.psf:
         xm, ym = pixel_border(dap[bidx])
@@ -313,34 +344,74 @@ if not args.noplots:
 
     ax1.plot(x,y, '.r')
 
+    #Gaia sources
+    if args.gaia:
+        ax1.plot(gx[1:],gy[1:], '.', color='tomato')
+
     ax = plt.subplot(gs[0,1], sharex=ax0)
     ax.errorbar(time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
 
+    ax1.grid(which='minor', zorder=99)
 
     fig1.tight_layout()
     plt.show()
 
-if args.pngstamp:
+if args.pngstamp is not None:
     from matplotlib.colors import ListedColormap
-    my_cmap = plt.cm.Purples(np.arange(plt.cm.Purples.N))
-    my_cmap[:,0:3] *= 0.95
-    my_cmap = ListedColormap(my_cmap)
 
-    sfig, sax = plt.subplots(figsize=[2.5,2.5])
-    sax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=my_cmap)
+    sfig, sax = plt.subplots(figsize=[3,3])
+    stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
+                           cmap=args.cmap, origin='bottom',
+                           extent=[column-0.5, column+args.size-0.5, row-0.5, row+args.size-0.5])
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
-        sax.plot(xi, yi, color='#FF0043', lw=1.5)
+        sax.plot(column+xi, row+yi, color='#FF0043', lw=1.5)
 
-    sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='x-large')
+    sax.grid(which='minor', zorder=99)
 
-    plt.axis('off')
-    sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
-    sfig.savefig('TIC%s_%02d_st.png' % (args.TIC, args.Sector), dpi=240)
+    if args.gaia:
+        sax.scatter(column+gx[1:],row+gy[1:], c='chocolate', s=15/1.5**(grpmag[1:]-10), ec=None, zorder=9)
+
+    if args.pngstamp == 'minimal':
+        sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='large')
+
+        plt.axis('off')
+
+        sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
+        sfig.tight_layout()
+
+    else:
+        sax.scatter(column+x, row+y, color='#FF0043', s=15/1.5**(grpmag[0]-10), ec=None)
+        sax.text(0.5, 0.98, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=11, ha='center', va='bottom')
+        sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=8, transform=sax.transAxes, ha='center', va='bottom', ma='left')
+        cbar = sfig.colorbar(stamp, shrink=0.8)
+        cbar.set_label(r'$\log (\mathrm{Flux})$', fontsize=9)
+
+        import matplotlib.patheffects as path_effects
+        for i in range(1,len(gx)):
+            txt = sax.text(column+gx[i]+0.2, row+gy[i], i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
+            txt.set_path_effects([path_effects.Stroke(linewidth=.5, foreground='gray', alpha=.8),
+                       path_effects.Normal()])
+
+        sax.set_xticks(column + np.arange(0,args.size,5))
+        sax.set_yticks(row + np.arange(0,args.size,5))
+
+        sax.set_xlabel('CCD Column')
+        sax.set_ylabel('CCD Row')
+
+        for mi in range(6,17,2):
+            sax.scatter([], [], s=15/1.5**(mi-10), color='chocolate', label=mi, ec=None)
+        leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
+        leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
+
+        sax.set_xlim(column-0.5, column-0.5+args.size)
+        sax.set_ylim(row-0.5, row-0.5+args.size)
+
+    sfig.savefig('TIC%s_%02d_%s.png' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
 
 inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
@@ -348,7 +419,7 @@ output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
 
 if args.folder is None:
-    os.system('rm tesscut/*%s*' % ra)
+    os.system('rm tesscut/*%.6f*' % ra)
 
 color_print('\nDone!\n', 'lightgreen')
 #output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
