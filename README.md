@@ -6,7 +6,7 @@
 
 This will output an ascii file with time, flux (aperture photometry) and flux error columns. Additionally there's an instrument column, so you can use this as input directly in [juliet](https://github.com/nespinoza/juliet). A preview plot will be displayed, showing the postage stamp used, the light curve and the estimated background.
 
-You can personalize some parameters using the current available flags:
+You can customize some parameters using the current available flags:
 
     --size          Changes postage stamp height and width (Default: 21 pixels)
     --noplots       Doesn't display the preview plot
