@@ -39,6 +39,7 @@ Cool things to implement as time and priorities allow them :)
 - Import tesseract
 - Centroid output, SFF
 - Robust PSF/PRF photometry
+- Friendly way to name targets with RA DEC inputs
 
 # Citation
 Paper coming soon!
