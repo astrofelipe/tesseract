@@ -4,11 +4,11 @@
   python ticlc.py <TIC ID> <TESS Sector>
   python ticlc.py <RA> <DEC> <TESS Sector>
 
-This will output an ascii file with time, flux (aperture photometry) and flux error columns. Additionaly there's an instrument column, so you can use this as input directly in juliet. A preview plot will be displayed, showing the postage stamp used, the light curve and the estimated background.
+This will output an ascii file with time, flux (aperture photometry) and flux error columns. Additionally there's an instrument column, so you can use this as input directly in [juliet](https://github.com/nespinoza/juliet). A preview plot will be displayed, showing the postage stamp used, the light curve and the estimated background.
 
 You can personalize some parameters using the current available flags:
 
-  --size          Changes postage stamp height and width (Default: 21 pixels)
+    --size          Changes postage stamp height and width (Default: 21 pixels)
   --noplots       Doesn't display the preview plot
   --overwrite     Overwrites existing file (by default it doesn't)
 
