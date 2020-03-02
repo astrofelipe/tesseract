@@ -18,15 +18,28 @@ You can personalize some parameters using the current available flags:
     --pld           Pixel Level Decorrelation. I'm continuously changing this routine so probably won't work :)
     --mask-transit  Intended for pld (so it won't overfit/remove transits)
 
-  --norm          Output will be divided by the median flux (conserves variability)
-  --flatten       Output will be flattened (variability removal)
+    --norm          Output will be divided by the median flux (conserves variability)
+    --flatten       Output will be flattened (variability removal)
 
-  --pixlcs        Shows an additional plot with light curves per pixel
-  --pngstamp      Saves a high quality postage stamp. This can be a 'minimal' (image and aperture, no axes) or 'full' (axes, title, ticks)
-  --gaia          Adds Gaia sources to postage stamps plots
-  --maxgaiamag    Maximum Gaia RP magnitude to show in previous option (Default: 16)
+    --pixlcs        Shows an additional plot with light curves per pixel
+    --pngstamp      Saves a high quality postage stamp. This can be a 'minimal' (image and aperture, no axes) or 'full' (axes, title, ticks)
+    --gaia          Adds Gaia sources to postage stamps plots
+    --maxgaiamag    Maximum Gaia RP magnitude to show in previous option (Default: 16)
 
-  --folder        "Offline mode". Instead of making a request to the MAST, uses previously downloaded and stacked FFIs in hdf5 format (see FFI2h5.py)
-  --cmap          Changes cmap used in plots (Default: 'YlGnBu')
-  --cam           Overrides camera value. Can be useful for plots when the target is near an edge and queries tell that it doesn't belong to any Camera/CCD
-  --ccd           Same for CCD
+    --folder        "Offline mode". Instead of making a request to the MAST, uses previously downloaded and stacked FFIs in hdf5 format (see FFI2h5.py)
+    --cmap          Changes cmap used in plots (Default: 'YlGnBu')
+    --cam           Overrides camera value. Can be useful for plots when the target is near an edge and queries tell that it doesn't belong to any Camera/CCD
+    --ccd           Same for CCD
+
+#To do
+Cool things to implement as time and priorities allow them :)
+-PLD/EVEREST
+-Generate multiple sector light curves at once (cat and for are your friends for now)
+-Interactive pixel selection for apertures
+-Import tesseract
+-Centroid output, SFF
+-Robust PSF/PRF photometry
+
+
+#Citation
+Paper coming soon!
