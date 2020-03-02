@@ -31,7 +31,7 @@ You can personalize some parameters using the current available flags:
     --cam           Overrides camera value. Can be useful for plots when the target is near an edge and queries tell that it doesn't belong to any Camera/CCD
     --ccd           Same for CCD
 
-#To do
+# To do
 Cool things to implement as time and priorities allow them :)
 -PLD/EVEREST
 -Generate multiple sector light curves at once (cat and for are your friends for now)
@@ -40,6 +40,5 @@ Cool things to implement as time and priorities allow them :)
 -Centroid output, SFF
 -Robust PSF/PRF photometry
 
-
-#Citation
+# Citation
 Paper coming soon!
