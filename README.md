@@ -33,12 +33,12 @@ You can personalize some parameters using the current available flags:
 
 # To do
 Cool things to implement as time and priorities allow them :)
--PLD/EVEREST
--Generate multiple sector light curves at once (cat and for are your friends for now)
--Interactive pixel selection for apertures
--Import tesseract
--Centroid output, SFF
--Robust PSF/PRF photometry
+- PLD/EVEREST
+- Generate multiple sector light curves at once (cat and for are your friends for now)
+- Interactive pixel selection for apertures
+- Import tesseract
+- Centroid output, SFF
+- Robust PSF/PRF photometry
 
 # Citation
 Paper coming soon!
