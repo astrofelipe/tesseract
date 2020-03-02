@@ -9,14 +9,14 @@ This will output an ascii file with time, flux (aperture photometry) and flux er
 You can personalize some parameters using the current available flags:
 
     --size          Changes postage stamp height and width (Default: 21 pixels)
-  --noplots       Doesn't display the preview plot
-  --overwrite     Overwrites existing file (by default it doesn't)
+    --noplots       Doesn't display the preview plot
+    --overwrite     Overwrites existing file (by default it doesn't)
 
-  --circ          Uses circular apertures instead of default K2P2 method
-  --manualap      Allows to input a file containing pixels to be in the aperture (To do: Interactive mode)
-  --psf           Does PSF photometry (same routine as Eleanor). Experimental
-  --pld           Pixel Level Decorrelation. I'm continuously changing this routine so probably won't work :)
-  --mask-transit  Intended for pld (so it won't overfit/remove transits)
+    --circ          Uses circular apertures instead of default K2P2 method
+    --manualap      Allows to input a file containing pixels to be in the aperture (To do: Interactive mode)
+    --psf           Does PSF photometry (same routine as Eleanor). Experimental
+    --pld           Pixel Level Decorrelation. I'm continuously changing this routine so probably won't work :)
+    --mask-transit  Intended for pld (so it won't overfit/remove transits)
 
   --norm          Output will be divided by the median flux (conserves variability)
   --flatten       Output will be flattened (variability removal)
