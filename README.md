@@ -27,7 +27,7 @@ You can customize some parameters using the current available flags:
     --maxgaiamag    Maximum Gaia RP magnitude to show in previous option (Default: 16)
 
     --folder        "Offline mode". Instead of making a request to the MAST, uses previously downloaded and stacked FFIs in hdf5 format (see FFI2h5.py)
-    --cmap          Changes cmap used in plots (Default: 'YlGnBu')
+    --cmap          Changes cmap used in plots (Default: 'YlGnBu_r')
     --cam           Overrides camera value. Can be useful for plots when the target is near an edge and queries tell that it doesn't belong to any Camera/CCD
     --ccd           Same for CCD
 
