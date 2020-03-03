@@ -9,7 +9,7 @@ import astropy.units as u
 from matplotlib import rcParams
 from eveport import PLD, PLD2
 from lightkurve.lightcurve import TessLightCurve
-from utils import mask_planet, FFICut, pixel_border
+from utils import mask_planet, FFICut, pixel_border, dilution_factor
 from autoap import generate_aperture, select_aperture
 from photutils import MMMBackground
 from astropy.utils.console import color_print
@@ -116,6 +116,8 @@ else:
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
     x,y = w.all_world2pix(ra, dec, 0)
+    x  += 0.5
+    y  += 0.5
 
 color_print('Sector: ', 'lightcyan', args.Sector, 'default',
             '\tCamera: ', 'lightcyan', cam, 'default',
@@ -152,28 +154,6 @@ for i,f in enumerate(flux):
 #PRF from lightkurve
 #if args.prf:
 #    print(type(hdus))
-
-#Gaia sources
-if args.gaia:
-    from astroquery.gaia import Gaia
-
-    gaiawh = u.Quantity(21*args.size*2, u.arcsec)
-    gaiar  = Gaia.cone_search_async(coord, gaiawh).get_results()
-
-    gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag
-    gra, gdec = gaiar['ra'][gma], gaiar['dec'][gma]
-    grpmag    = gaiar['phot_rp_mean_mag'][gma]
-    gaiar     = gaiar[gma]
-
-    gx, gy = w.all_world2pix(gra, gdec, 0)
-    gma2 = (gx >= -0.5) & (gx <= args.size-0.5) & (gy >= -0.5) & (gy <= args.size-0.5)
-    gx, gy = gx[gma2], gy[gma2]
-    grpmag = grpmag[gma2]
-
-    color_print('Nearby sources:\n', 'cyan')
-    gaiaresume = gaiar[gma2]
-    gaiaresume['label'] = np.arange(len(grpmag))
-    print(gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist'])
 
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
@@ -252,8 +232,8 @@ if args.psf:
 
 else:
     #DBSCAN Aperture
-    x = x - int(x) + args.size//2
-    y = y - int(y) + args.size//2
+    #x = x - int(x) + args.size//2
+    #y = y - int(y) + args.size//2
 
     if args.manualap == -1:
         #Choose pixels manually
@@ -301,6 +281,38 @@ else:
         pld_flux = PLD(flux_pld, pldthm, lkf.flux)
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
 
+#Gaia sources and dilution factor
+if args.gaia:
+    from astroquery.gaia import Gaia
+
+    gaiawh = u.Quantity(21*args.size*2, u.arcsec)
+    gaiar  = Gaia.cone_search_async(coord, gaiawh).get_results()
+
+    gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag
+    gra, gdec = gaiar['ra'][gma], gaiar['dec'][gma]
+    grpmag    = gaiar['phot_rp_mean_mag'][gma]
+    gsep      = gaiar['dist'][gma]*3600
+    gaiar     = gaiar[gma]
+
+    gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
+    gma2 = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
+    gx, gy = gx[gma2], gy[gma2]
+    gsep   = gsep[gma2]
+    grpmag = grpmag[gma2]
+
+    color_print('Nearby sources:\n', 'cyan')
+    gaiaresume = gaiar[gma2]
+    gaiaresume['label'] = np.arange(len(grpmag))
+    gresume = gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
+    print(gresume)
+
+    didx = np.array((gx,gy)).astype(int)
+    iidx = (dap[bidx])[didx[1], didx[0]]
+    dfac = dilution_factor(grpmag[0], grpmag[iidx], gsep[iidx])
+    color_print('\nAdditional sources inside aperture: ', 'cyan', iidx.sum()-1, 'default')
+    color_print('Dilution factor: ', 'cyan', dfac, 'default')
+
+    sizes = 15/1.5**(grpmag-10)
 
 if not args.noplots:
     if args.pixlcs:
@@ -309,7 +321,7 @@ if not args.noplots:
         tlen = np.nanmax(time) - tmin
         tnor = (time - tmin) / tlen
 
-        pax.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap)
+        pax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap, extent=[0,args.size,0,args.size])
 
         theflux = flux - bkgs[:,None,None]
         for i in range(args.size):
@@ -318,7 +330,7 @@ if not args.noplots:
                 flen = np.nanmax(theflux[:,i,j]) - fmin
                 fnor = (theflux[:,i,j] - fmin) / flen
 
-                pax.plot(j+tnor-0.5, i+fnor-0.5, '-', color='lime' if dap[bidx][i,j] else 'tomato', lw=.1)
+                pax.plot(j+tnor, i+fnor, '-', color='lime' if dap[bidx][i,j] else 'tomato', lw=.1)
 
         pax.set_xticks(np.arange(-.5, args.size, 1), minor=True)
         pax.set_yticks(np.arange(-.5, args.size, 1), minor=True)
@@ -335,18 +347,19 @@ if not args.noplots:
     ax0.set_xlabel(r'BJD', fontweight='bold')
 
     ax1 = plt.subplot(gs[:,0])
-    ax1.matshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap, aspect='equal')
+    ax1.imshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap, aspect='equal',
+                            extent=[0,args.size,0,args.size], origin='bottom')
 
     if not args.psf:
         xm, ym = pixel_border(dap[bidx])
         for xi,yi in zip(xm, ym):
             ax1.plot(xi, yi, color='lime', lw=1.25)
 
-    ax1.plot(x,y, '.r')
+    ax1.scatter(x, y, color='#FF0043', s=sizes[0], ec=None)
 
     #Gaia sources
     if args.gaia:
-        ax1.plot(gx[1:],gy[1:], '.', color='tomato')
+        ax1.scatter(gx[1:], gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
     ax.errorbar(time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
@@ -354,7 +367,9 @@ if not args.noplots:
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
 
-    ax1.grid(which='minor', zorder=99)
+    ax1.grid(which='minor', zorder=99, lw=3)
+    ax1.set_xlim(0, args.size)
+    ax1.set_ylim(0, args.size)
 
     fig1.tight_layout()
     plt.show()
@@ -365,7 +380,8 @@ if args.pngstamp is not None:
     sfig, sax = plt.subplots(figsize=[3,3])
     stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
                            cmap=args.cmap, origin='bottom',
-                           extent=[column-0.5, column+args.size-0.5, row-0.5, row+args.size-0.5])
+                           extent=[column, column+args.size, row, row+args.size])
+                           #extent=[column-0.5, column+args.size-0.5, row-0.5, row+args.size-0.5])
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
@@ -374,7 +390,7 @@ if args.pngstamp is not None:
     sax.grid(which='minor', zorder=99)
 
     if args.gaia:
-        sax.scatter(column+gx[1:],row+gy[1:], c='chocolate', s=15/1.5**(grpmag[1:]-10), ec=None, zorder=9)
+        sax.scatter(column+gx[1:],row+gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     if args.pngstamp == 'minimal':
         sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='large')
@@ -385,7 +401,7 @@ if args.pngstamp is not None:
         sfig.tight_layout()
 
     else:
-        sax.scatter(column+x, row+y, color='#FF0043', s=15/1.5**(grpmag[0]-10), ec=None)
+        sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
         sax.text(0.5, 0.98, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=11, ha='center', va='bottom')
         sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=8, transform=sax.transAxes, ha='center', va='bottom', ma='left')
         cbar = sfig.colorbar(stamp, shrink=0.8)
@@ -393,7 +409,7 @@ if args.pngstamp is not None:
 
         import matplotlib.patheffects as path_effects
         for i in range(1,len(gx)):
-            txt = sax.text(column+gx[i]+0.2, row+gy[i], i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
+            txt = sax.text(column+gx[i]+.2, row+gy[i]+.2, i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
             txt.set_path_effects([path_effects.Stroke(linewidth=.5, foreground='gray', alpha=.8),
                        path_effects.Normal()])
 
@@ -408,8 +424,8 @@ if args.pngstamp is not None:
         leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
         leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
 
-        sax.set_xlim(column-0.5, column-0.5+args.size)
-        sax.set_ylim(row-0.5, row-0.5+args.size)
+        sax.set_xlim(column, column+args.size)
+        sax.set_ylim(row, row+args.size)
 
     sfig.savefig('TIC%s_%02d_%s.png' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
 

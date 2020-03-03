@@ -19,6 +19,11 @@ def mask_time(time, flux, sector):
         mask =
 '''
 
+def dilution_factor(m_primary, m_comp, sep, pixscale=21):
+    fac  = 10**((m_primary - m_comp)/2.5) * np.exp(-1.68*sep/pixscale)
+    dfac = 1/(1+np.sum(fac))
+    return dfac
+
 
 def mask_planet(t, t0, period, dur=0.25):
     phase  = (t - t0 + 0.5*period) % period - 0.5*period
@@ -113,15 +118,15 @@ def pixel_border(mask):
         for j in range(1,xdim-1):
             if mask[i,j]:
                 if not mask[i-1,j]:
-                    x.append(np.array([j-0.5,j+0.5]))
-                    y.append(np.array([i-0.5,i-0.5]))
+                    x.append(np.array([j,j+1]))
+                    y.append(np.array([i,i]))
                 if not mask[i+1,j]:
-                    x.append(np.array([j-0.5,j+0.5]))
-                    y.append(np.array([i+0.5,i+0.5]))
+                    x.append(np.array([j,j+1]))
+                    y.append(np.array([i+1,i+1]))
                 if not mask[i,j-1]:
-                    x.append(np.array([j-0.5,j-0.5]))
-                    y.append(np.array([i-0.5,i+0.5]))
+                    x.append(np.array([j,j]))
+                    y.append(np.array([i,i+1]))
                 if not mask[i,j+1]:
-                    x.append(np.array([j+0.5,j+0.5]))
-                    y.append(np.array([i-0.5,i+0.5]))
+                    x.append(np.array([j+1,j+1]))
+                    y.append(np.array([i,i+1]))
     return x,y
