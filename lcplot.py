@@ -11,4 +11,7 @@ args = parser.parse_args()
 fig, ax = plt.subplots(figsize=[15,3])
 
 for f in args.LCFiles:
-    print(f)
+    t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
+    ax.plot(t,f,'.k')
+
+plt.show()
