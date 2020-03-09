@@ -27,6 +27,9 @@ for f in args.LCFiles:
         tmask  = (ttimes > tmin) & (ttimes < tmax)
         ttimes = ttimes[tmask]
 
+        print('Transit times\n')
+        print(ttimes)
+
         for tt in ttimes:
             ax.axvline(tt)
 
