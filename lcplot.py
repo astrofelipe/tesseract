@@ -11,5 +11,5 @@ print(args.keys())
 
 fig, ax = plt.subplots(figsize=[15,3])
 
-for f in args['Light curves']:
+for f in args.Light_curves:
     print(f)
