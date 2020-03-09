@@ -12,7 +12,19 @@ fig, ax = plt.subplots(figsize=[15,3])
 
 for f in args.LCFiles:
     t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
-    print(t,f)
     ax.plot(t,f,'.k')
+
+    if args.transit is not None:
+        P, t0 = args.transit
+
+        tmin = np.nanmin(t)
+        tmax = np.nanmax(t)
+
+        ttimes = t0 + np.arange(-100,100)*P
+        tmask  = (ttimes > tmin) & (ttimes < tmax)
+        ttimes = ttimes[tmask]
+
+        for tt in ttimes:
+            ax.axvline(tt)
 
 plt.show()
