@@ -314,6 +314,9 @@ if args.gaia:
 
     sizes = 15/1.5**(grpmag-10)
 
+else:
+    sizes = 10*np.ones(1)
+
 if not args.noplots:
     if args.pixlcs:
         pfig, pax = plt.subplots(figsize=[8,8])
@@ -376,12 +379,13 @@ if not args.noplots:
 
 if args.pngstamp is not None:
     from matplotlib.colors import ListedColormap
+    plt.rcParams['xtick.labelsize'] = 6
+    plt.rcParams['ytick.labelsize'] = 6
 
-    sfig, sax = plt.subplots(figsize=[3,3])
+    sfig, sax = plt.subplots(figsize=[4,3])
     stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
-                           cmap=args.cmap, origin='bottom',
+                           cmap=args.cmap, origin='bottom', aspect='equal',
                            extent=[column, column+args.size, row, row+args.size])
-                           #extent=[column-0.5, column+args.size-0.5, row-0.5, row+args.size-0.5])
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
@@ -402,41 +406,46 @@ if args.pngstamp is not None:
 
     else:
         sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
-        sax.text(0.5, 0.98, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=11, ha='center', va='bottom')
-        sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=8, transform=sax.transAxes, ha='center', va='bottom', ma='left')
-        cbar = sfig.colorbar(stamp, shrink=0.8)
-        cbar.set_label(r'$\log (\mathrm{Flux})$', fontsize=9)
+        cbar = sfig.colorbar(stamp, pad=0.01)
+        cbar.set_label('log(Flux)', fontsize=8)
 
-        import matplotlib.patheffects as path_effects
-        for i in range(1,len(gx)):
-            txt = sax.text(column+gx[i]+.2, row+gy[i]+.2, i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
-            txt.set_path_effects([path_effects.Stroke(linewidth=.5, foreground='gray', alpha=.8),
-                       path_effects.Normal()])
+        if args.gaia:
+            sax.text(0.5, 0.98, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=8, ha='center', va='bottom')
+            sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
 
-        sax.set_xticks(column + np.arange(0,args.size,5))
-        sax.set_yticks(row + np.arange(0,args.size,5))
+            import matplotlib.patheffects as path_effects
+            for i in range(1,len(gx)):
+                txt = sax.text(column+gx[i]+.2, row+gy[i]+.2, i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
+                txt.set_path_effects([path_effects.Stroke(linewidth=.5, foreground='gray', alpha=.8),
+                           path_effects.Normal()])
 
-        sax.set_xlabel('CCD Column')
-        sax.set_ylabel('CCD Row')
+                for mi in range(6,17,2):
+                    sax.scatter([], [], s=15/1.5**(mi-10), color='chocolate', label=mi, ec=None)
+                leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
+                leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
+        else:
+            #sax.text(0.5, 0.9, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=8, ha='center', va='bottom')
+            #sax.text(0.25,1.025,'Sector: %02d / Cam:     %d / CCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
+            sax.set_title('TIC %s\nSector: %02d / Cam: %d / CCD: %d' % (args.TIC, args.Sector, cam, ccd), fontsize=8, pad=0)
 
-        for mi in range(6,17,2):
-            sax.scatter([], [], s=15/1.5**(mi-10), color='chocolate', label=mi, ec=None)
-        leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
-        leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
+
+
+        sax.set_xticks(column + np.arange(0, args.size, args.size//4))
+        sax.set_yticks(row + np.arange(0, args.size, args.size//4))
+
+        sax.set_xlabel('CCD Column', fontsize=8)
+        sax.set_ylabel('CCD Row', fontsize=8)
 
         sax.set_xlim(column, column+args.size)
         sax.set_ylim(row, row+args.size)
 
-    sfig.savefig('TIC%s_%02d_%s.png' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
+    sfig.savefig('TIC%s_%02d_%s.pdf' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
 
 inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
-#np.savetxt('TIC%d_s%04d-%d-%d.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
 np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
 
 if args.folder is None:
     os.system('rm tesscut/*%.6f*' % ra)
 
 color_print('\nDone!\n', 'lightgreen')
-#output = np.transpose([time, det_lc.flux, det_lc.flux_err, inst])
-#np.savetxt('TIC%d_s%04d-%d-%d_det.dat' % (args.TIC, args.Sector, cam, ccd), output, fmt='%s')
