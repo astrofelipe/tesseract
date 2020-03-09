@@ -12,6 +12,7 @@ fig, ax = plt.subplots(figsize=[15,3])
 
 for f in args.LCFiles:
     t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
+    print(t,f)
     ax.plot(t,f,'.k')
 
 plt.show()
