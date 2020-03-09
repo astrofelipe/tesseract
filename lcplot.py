@@ -7,7 +7,7 @@ parser.add_argument('Light curves', type=str, nargs='+', help='Light curve file(
 parser.add_argument('--transit', type=float, nargs=3, help='P and t0 values')
 
 args = parser.parse_args()
-print(args)
+print(args.keys())
 
 fig, ax = plt.subplots(figsize=[15,3])
 
