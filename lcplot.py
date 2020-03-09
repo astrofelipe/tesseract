@@ -10,5 +10,5 @@ args = parser.parse_args()
 
 fig, ax = plt.subplots(figsize=[15,3])
 
-for f in args.Light_curves:
+for f in args.Lightcurves:
     print(f)
