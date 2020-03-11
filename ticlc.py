@@ -36,6 +36,7 @@ parser.add_argument('--norm', action='store_true', help='Divides the flux by the
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
 parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
 parser.add_argument('--pngstamp', type=str, default=None, help='Saves the postage stamp as png (input "full" or "minimal")')
+parser.add_argument('--pngzoom', type=float, default=1, help='Zoom for --pngstamp')
 parser.add_argument('--gaia', action='store_true', help='Shows Gaia sources on stamps')
 parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia magnitude to consider')
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
@@ -406,23 +407,23 @@ if args.pngstamp is not None:
 
     else:
         sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
-        cbar = sfig.colorbar(stamp, pad=0.01)
+        cbar = sfig.colorbar(stamp, pad=0.025)
         cbar.set_label('log(Flux)', fontsize=8)
 
         if args.gaia:
-            sax.text(0.5, 0.98, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=8, ha='center', va='bottom')
+            sax.text(0.25, 1.15, 'TIC %s' % args.TIC, transform=sax.transAxes, fontsize=8, ha='center', va='bottom')
             sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
 
             import matplotlib.patheffects as path_effects
             for i in range(1,len(gx)):
-                txt = sax.text(column+gx[i]+.2, row+gy[i]+.2, i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w')
+                txt = sax.text(column+gx[i]+.2, row+gy[i]+.2, i, alpha=.8, fontsize=4, ha='left', va='bottom', color='w', clip_on=True)
                 txt.set_path_effects([path_effects.Stroke(linewidth=.5, foreground='gray', alpha=.8),
                            path_effects.Normal()])
 
-                for mi in range(6,17,2):
-                    sax.scatter([], [], s=15/1.5**(mi-10), color='chocolate', label=mi, ec=None)
-                leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
-                leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
+            for mi in range(6,17,2):
+                sax.scatter([], [], s=15/1.5**(mi-10), color='chocolate', label=mi, ec=None)
+            leg = sax.legend(ncol=3, fontsize=6, loc='lower center', bbox_to_anchor=(0.85, 1), frameon=False)
+            leg.set_title(r'$G_{RP}$ Magnitude', prop = {'size': 6})
         else:
             #sax.text(0.5, 0.9, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=8, ha='center', va='bottom')
             #sax.text(0.25,1.025,'Sector: %02d / Cam:     %d / CCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
@@ -436,8 +437,9 @@ if args.pngstamp is not None:
         sax.set_xlabel('CCD Column', fontsize=8)
         sax.set_ylabel('CCD Row', fontsize=8)
 
-        sax.set_xlim(column, column+args.size)
-        sax.set_ylim(row, row+args.size)
+        pngsize = args.size//(2*args.pngzoom)
+        sax.set_xlim(column + int(x) - pngsize, column + int(x) + pngsize)
+        sax.set_ylim(row + int(y) - pngsize, row + int(y) + pngsize)
 
     sfig.savefig('TIC%s_%02d_%s.pdf' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
 
