@@ -25,14 +25,15 @@ ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 tlim = np.max(to) - np.min(to)
 fnyq = (60*24/2)
 print(1/fnyq, tlim)
+print(1/tlim, fnyq)
 PSDe = np.mean(np.var(eo**2)) / fnyq
 pers = np.linspace(1/fnyq, tlim, 10000)
 freq = np.linspace(1/tlim, fnyq, 10000)
-pow  = LombScargle(to, fo, eo, normalization='psd').power(1/pers)
+pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
 #freq, pow = LombScargle(to, fo, eo, normalization='psd').autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
-ax.plot(pers, pow, '-k')
+ax.plot(freq, pow, '-k')
 #ax.axhline(PSDe, ls='--')
 #ax.axvline(1/args.P, c='r')
 
