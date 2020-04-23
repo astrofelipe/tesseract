@@ -29,7 +29,7 @@ pow  = LombScargle(to, fo, eo).power(freq)
 fig, ax = plt.subplots(figsize=[6,3])
 ax.plot(freq, pow, '-k')
 ax.axhline(PSDe, ls='--')
-ax.axvline(1/args.P, c='r')
+#ax.axvline(1/args.P, c='r')
 
 
 plt.show()
