@@ -34,7 +34,7 @@ pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
 
 fig, ax = plt.subplots(figsize=[6,3])
 ax.plot(freq, pow, '-k')
-#ax.axhline(PSDe, ls='--')
+ax.axhline(PSDe, ls='--')
 #ax.axvline(1/args.P, c='r')
 
 
