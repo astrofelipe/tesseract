@@ -25,7 +25,7 @@ ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 freq, pow = LombScargle(to, fo, eo).autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
-ax.plot(freq, pow, '-k')
+ax.plot(1/freq, pow, '-k')
 ax.axvline(args.P, c='r')
 
 
