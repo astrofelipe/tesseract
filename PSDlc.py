@@ -24,11 +24,11 @@ ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
 
 PSDe = np.mean(np.var(eo**2)) / 0.004
-freq = np.linspace(0,0.004, 10000)
+freq = np.linspace(0,2/(60*24), 10000)
 pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
 
 fig, ax = plt.subplots(figsize=[6,3])
-ax.plot(freq, pow, '-k')
+ax.plot(1/freq, pow, '-k')
 #ax.axhline(PSDe, ls='--')
 #ax.axvline(1/args.P, c='r')
 
