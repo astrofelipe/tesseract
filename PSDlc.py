@@ -26,7 +26,7 @@ tlim = int(np.max(to) - np.min(to))
 fnyq = (60*24/4)
 print(1/fnyq, tlim)
 print(1/tlim, fnyq)
-PSDe = np.mean(np.var(eo**2)) / fnyq
+PSDe = np.mean(np.var(eo**2)) / 0.004
 pers = np.linspace(1/fnyq, tlim, 10000)
 freq = np.linspace(1/tlim, fnyq, 10000)
 pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
