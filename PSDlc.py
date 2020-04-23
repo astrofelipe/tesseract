@@ -27,8 +27,8 @@ fnyq = (60*24/2)
 print(1/fnyq, tlim)
 PSDe = np.mean(np.var(eo**2)) / fnyq
 pers = np.linspace(1/fnyq, tlim)
-freq = np.linspace(fnyq, 1/tlim, 10000)
-pow  = LombScargle(to, fo, eo, normalization='psd').power(1/pers)
+freq = np.linspace(1/tlim, fnyq, 10000)
+pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
 #freq, pow = LombScargle(to, fo, eo, normalization='psd').autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
