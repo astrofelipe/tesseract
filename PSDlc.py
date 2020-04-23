@@ -26,6 +26,7 @@ freq, pow = LombScargle(to, fo, eo).autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
 ax.plot(freq, pow, '-k')
+ax.axvline(args.P, c='r')
 
 
 plt.show()
