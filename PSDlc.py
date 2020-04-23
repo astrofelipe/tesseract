@@ -23,7 +23,7 @@ fig, ax = plt.subplots(figsize=[10,3])
 ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
 tlim = np.max(to) - np.min(to)
-print(tlim)
+print(tlim, 1/tlim)
 fnyq = 2*2/(60*24)
 PSDe = np.mean(np.var(eo**2)) / fnyq
 freq = np.linspace(fnyq, 1/tlim, 10000)
