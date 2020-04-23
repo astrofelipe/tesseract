@@ -22,11 +22,13 @@ fig, ax = plt.subplots(figsize=[10,3])
 ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
 
+PSDe = np.mean(np.var(eo**2)) / 0.004
 freq, pow = LombScargle(to, fo, eo).autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
-ax.plot(1/freq, pow, '-k')
-ax.axvline(args.P, c='r')
+ax.plot(freq, pow, '-k')
+ax.axhline(PSDe, ls='--')
+ax.axvline(1/args.P, c='r')
 
 
 plt.show()
