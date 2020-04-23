@@ -22,9 +22,10 @@ to, fo, eo = t[mask], f[mask], e[mask]
 fig, ax = plt.subplots(figsize=[10,3])
 ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
+tlim = np.max(to) - np.min(to)
 fnyq = 2*2/(60*24)
 PSDe = np.mean(np.var(eo**2)) / fnyq
-freq = np.linspace(0, fnyq, 10000)
+freq = np.linspace(1/tlim, fnyq, 10000)
 pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
 
 fig, ax = plt.subplots(figsize=[6,3])
