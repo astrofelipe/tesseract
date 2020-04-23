@@ -5,8 +5,8 @@ from astropy.timeseries import LombScargle
 
 parser = argparse.ArgumentParser(description='Calculates the PSD for the out of transit light curve')
 parser.add_argument('File', help='File containing the light curve')
-parser.add_argument('t0', help='Ephemeris')
-parser.add_argument('P', help='Period')
+parser.add_argument('t0', type=float, help='Ephemeris')
+parser.add_argument('P', type=float, help='Period')
 parser.add_argument('--dur', type=float, help='x1.5 Duration of the transit', default=0.3)
 
 args = parser.parse_args()
