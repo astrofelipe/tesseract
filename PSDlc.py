@@ -23,7 +23,7 @@ ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
 
 PSDe = np.mean(np.var(eo**2)) / 0.004
-freq = np.linspace(0,0.004, 5000)
+freq = np.linspace(0,0.004, 10000)
 pow  = LombScargle(to, fo, eo).power(freq)
 
 fig, ax = plt.subplots(figsize=[6,3])
