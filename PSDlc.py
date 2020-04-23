@@ -20,7 +20,8 @@ mask  = np.abs(phase) > args.dur
 to, fo, eo = t[mask], f[mask], e[mask]
 
 fig, ax = plt.subplots(figsize=[10,3])
-ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
+#ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
+ax.plot(to, fo, '.k', ms=1, alpha=.66)
 
 tlim = int(np.max(to) - np.min(to))
 fnyq = (60*24/4)
