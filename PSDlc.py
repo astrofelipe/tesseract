@@ -34,11 +34,11 @@ ls = LombScargle(to, fo, eo, normalization='psd')
 pers = np.linspace(1/fnyq, tlim, 10000)
 freq = np.linspace(1/tlim, fnyq, 10000)
 pow  = ls.power(freq)
-fap  = ls.false_alarm_probability(pow.max(), method='bootstrap')
+fap  = ls.false_alarm_probability(pow.max())
 #freq, pow = LombScargle(to, fo, eo, normalization='psd').autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
-ax.plot(freq, pow, '-k')
+ax.plot(1/freq, pow, '-k')
 ax.axhline(fap, ls='--')
 #ax.axvline(1/args.P, c='r')
 
