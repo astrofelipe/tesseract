@@ -21,4 +21,11 @@ to, fo, eo = t[mask], f[mask], e[mask]
 fig, ax = plt.subplots(figsize=[10,3])
 ax.errorbar(to, fo, yerr=eo, fmt='.k', ms=1, alpha=.66)
 
+
+freq, pow = LombScargle(to, fo, eo).autopower()
+
+fig, ax = plt.subplots(figsize=[6,3])
+ax.plot(freq, pow, '-k')
+
+
 plt.show()
