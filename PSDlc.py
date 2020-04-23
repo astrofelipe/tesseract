@@ -27,14 +27,18 @@ fnyq = (60*24/4)
 print(1/fnyq, tlim)
 print(1/tlim, fnyq)
 PSDe = np.mean(np.var(eo**2)) / 0.004
+
+ls = LombScargle(to, fo, eo, normalization='psd')
+
 pers = np.linspace(1/fnyq, tlim, 10000)
 freq = np.linspace(1/tlim, fnyq, 10000)
-pow  = LombScargle(to, fo, eo, normalization='psd').power(freq)
+pow  = ls.power(freq)
+fap  = ls.false_alarm_probability(pow.max())
 #freq, pow = LombScargle(to, fo, eo, normalization='psd').autopower()
 
 fig, ax = plt.subplots(figsize=[6,3])
 ax.plot(freq, pow, '-k')
-ax.axhline(PSDe, ls='--')
+ax.axhline(fap, ls='--')
 #ax.axvline(1/args.P, c='r')
 
 
