@@ -14,6 +14,7 @@ args = parser.parse_args()
 
 
 t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
+insts = np.genfromtxt(args.File, usecols=(3,), dtype=str)
 phase = (t - args.t0 + 0.5*args.P) % args.P - 0.5*args.P
 mask  = np.abs(phase) > args.dur
 
@@ -39,8 +40,11 @@ fap  = ls.false_alarm_probability(pow.max())
 
 fig, ax = plt.subplots(figsize=[6,3])
 ax.plot(pers, pow, '-k')
-ax.axhline(fap, ls='--')
+#ax.axhline(fap, ls='--')
 #ax.axvline(1/args.P, c='r')
 
 
 plt.show()
+
+
+data = np.transpose([to,fo,eo])
