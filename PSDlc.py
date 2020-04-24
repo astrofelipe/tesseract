@@ -15,6 +15,7 @@ args = parser.parse_args()
 
 t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 insts = np.genfromtxt(args.File, usecols=(3,), dtype=str)
+print(insts)
 phase = (t - args.t0 + 0.5*args.P) % args.P - 0.5*args.P
 mask  = np.abs(phase) > args.dur
 
