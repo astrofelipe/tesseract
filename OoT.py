@@ -52,4 +52,4 @@ ax.plot(pers, pow, '-k')
 plt.show()
 '''
 
-data2.write(args.File.replace('.dat', '_OoT.dat'))
+data2.write(args.File.replace('.dat', '_OoT.dat'), format='ascii.no_header')
