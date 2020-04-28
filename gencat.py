@@ -75,7 +75,8 @@ eclim = {'s0001': [[271, 361], [-90, 0]],
          's0010': [[154, 244], [-90, 0]],
          's0011': [[181, 271], [-90, 0]],
          's0012': [[209, 299], [-90, 0]],
-         's0013': [[235, 330], [-90,0]]}
+         's0013': [[235, 330], [-90, 0]],
+         's0014': [[65,190], [90, 0]]}
 
 elo, ela = eclim[sec]
 print(elo,ela)
@@ -103,9 +104,11 @@ def gocat(i, j, im):
     elai1 = int(eclas[j])
     elai2 = int(eclas[j+1])
 
+    dec_max = 30 if args.Sector > 13 else 90
     catalogdata = Catalogs.query_criteria(catalog='Tic',
                                           eclong=[eloi1, eloi2],
                                           eclat=[elai1, elai2],
+                                          dec=[-90, dec_max],
                                           Tmag=[magbin[im], magbin[im+1]],
                                           objType='STAR')
 
