@@ -40,6 +40,7 @@ results = dataset.fit(n_live_points=len(params)*15)#, use_dynesty=True, dynesty_
 
 
 model_fit = results.lc.evaluate('inst', t=t, GPregressors=t)
+print(model_fit)
 
 fig, ax = plt.subplots(figsize=[15,6], nrows=2, sharex=True)
 
