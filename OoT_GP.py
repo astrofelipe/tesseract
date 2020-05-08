@@ -1,5 +1,6 @@
 import argparse
 import juliet
+import numpy as np
 
 parser = argparse.ArgumentParser(description='Out of transit GP fit')
 parser.add_argument('File', type=str, help='Light curve file with transits (1 instrument)')
