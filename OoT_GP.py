@@ -44,6 +44,6 @@ fig, ax = plt.subplots(figsize=[15,6], nrows=2, sharex=True)
 ax[0].errorbar(t, f, yerr=e, fmt='.', color='k')
 ax[0].plot(t, model_fit, color='r')
 
-ax[1].errorbar(t, (f-model_fit)1*e6, yerr=e*1e6, fmt='.', color='k')
+ax[1].errorbar(t, (f-model_fit)*1e6, yerr=e*1e6, fmt='.', color='k')
 
 plt.show()
