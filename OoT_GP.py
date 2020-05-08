@@ -33,20 +33,20 @@ for par, dis, hyp in zip(params, dists, hyper):
     priors[par] = {}
     priors[par]['distribution'], priors[par]['hyperparameters'] = dis, hyp
 
-dataset = juliet.load(priors=priors, t_lc=time, y_lc=flux, yerr_lc=ferr,
+dataset = juliet.load(priors=priors, t_lc=time, y_lc=flux, yerr_lc=ferr, verbose=True,
                       GP_regressors_lc=time, out_folder='GPO_' + args.File.split('.')[0])
 
 results = dataset.fit(n_live_points=len(params)*15)#, use_dynesty=True, dynesty_nthreads=30)
 
 
 model_fit = results.lc.evaluate('inst', t=t, GPregressors=t)
-gp_fit    = results.lc.model['inst']['GP']
+#gp_fit    = results.lc.model['inst']['GP']
 
 fig, ax = plt.subplots(figsize=[15,6], nrows=2, sharex=True)
 
 ax[0].errorbar(t, f, yerr=e, fmt='.', color='k')
-ax[0].plot(t, gp_fit, color='r')
+ax[0].plot(t, model_fit, color='r')
 
-ax[1].errorbar(t, (f-gp_fit)*1e6, yerr=e*1e6, fmt='.', color='k')
+ax[1].errorbar(t, (f-model_fit)*1e6, yerr=e*1e6, fmt='.', color='k')
 
 plt.show()
