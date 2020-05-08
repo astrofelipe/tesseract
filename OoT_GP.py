@@ -19,7 +19,7 @@ t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 
 phase = juliet.utils.get_phases(t, P, t0)
 omask = np.abs(phase) > 1.5*dur
-print(len(omask), omask.sum())
+#print(len(omask), omask.sum())
 
 time, flux, ferr = {}, {}, {}
 time['inst'], flux['inst'], ferr['inst'] = t[omask], f[omask], e[omask]
@@ -37,8 +37,7 @@ for par, dis, hyp in zip(params, dists, hyper):
 dataset = juliet.load(priors=priors, t_lc=time, y_lc=flux, yerr_lc=ferr, verbose=True,
                       GP_regressors_lc=time, out_folder='GPO_' + args.File.split('.')[0])
 
-results = dataset.fit(n_live_points=len(params)*15)#, use_dynesty=True, dynesty_nthreads=30)
-
+results = dataset.fit(n_live_points=500)#, use_dynesty=True, dynesty_nthreads=30)
 
 model_fit = results.lc.evaluate('inst', t=t, GPregressors=t)
 #gp_fit    = results.lc.model['inst']['GP']
