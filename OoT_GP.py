@@ -37,13 +37,13 @@ dataset = juliet.load(priors=priors, t_lc=time, y_lc=flux, yerr_lc=ferr,
 results = dataset.fit(n_live_points=len(params)*15, use_dynesty=True, dynesty_nthreads=30)
 
 
-model_fit = results.lc.evaluate('inst')
+model_fit = results.lc.evaluate('inst', times=t)
 
 fig, ax = plt.subplots(figsize=[15,6], nrows=2, sharex=True)
 
-ax[0].errorbar(time, flux, yerr=ferr, fmt='.', color='k')
-ax[0].plot(time, model_fit, color='r')
+ax[0].errorbar(t, f, yerr=e, fmt='.', color='k')
+ax[0].plot(t, model_fit, color='r')
 
-ax[1].errorbar(time, (flux-model_fit)1*e6, yerr=ferr*1e6, fmt='.', color='k')
+ax[1].errorbar(t, (f-model_fit)1*e6, yerr=e*1e6, fmt='.', color='k')
 
 plt.show()
