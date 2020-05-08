@@ -19,6 +19,7 @@ t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 
 phase = juliet.utils.get_phases(t, P, t0)
 omask = np.abs(phase) > 1.5*dur
+print(len(omask), omask.sum())
 
 time, flux, ferr = {}, {}, {}
 time['inst'], flux['inst'], ferr['inst'] = t[omask], f[omask], e[omask]
