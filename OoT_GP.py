@@ -45,7 +45,7 @@ model_fit = results.lc.evaluate('inst', t=t, GPregressors=t)
 fig, ax = plt.subplots(figsize=[15,6], nrows=2, sharex=True)
 
 ax[0].errorbar(t, f, yerr=e, fmt='.', color='k')
-ax[0].plot(t, model_fit, color='r')
+ax[0].plot(t, model_fit, color='r', zorder=100)
 
 ax[1].errorbar(t, (f-model_fit)*1e6, yerr=e*1e6, fmt='.', color='k')
 
