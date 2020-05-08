@@ -35,7 +35,7 @@ for par, dis, hyp in zip(params, dists, hyper):
 dataset = juliet.load(priors=priors, t_lc=time, y_lc=flux, yerr_lc=ferr,
                       GP_regressors_lc=time, out_folder='GPO_' + args.File.split('.')[0])
 
-results = dataset.fit(n_live_points=len(params)*15, use_dynesty=True, dynesty_nthreads=30)
+results = dataset.fit(n_live_points=len(params)*15)#, use_dynesty=True, dynesty_nthreads=30)
 
 
 model_fit = results.lc.evaluate('inst', times=t)
