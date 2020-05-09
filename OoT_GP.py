@@ -26,12 +26,12 @@ time, flux, ferr = {}, {}, {}
 time['inst'], flux['inst'], ferr['inst'] = t[omask], f[omask], e[omask]
 
 frequency, power = LombScargle(time['inst'], flux['inst'], ferr['inst']).autopower()
-plt.plot(frequency, power) 
+plt.plot(frequency, power)
 
 params = ['mdilution_inst', 'mflux_inst', 'sigma_w_inst',
-          'GP_sigma_inst', 'GP_rho_inst']
-dists  = ['fixed', 'normal', 'loguniform', 'loguniform', 'loguniform']
-hyper  = [1, [0, 0.1], [0.1, 1e4], [1e-6, 1e6], [1e-4, 30]]
+          'GP_sigma_inst', 'GP_rho_inst', 'GP_timescale_inst']
+dists  = ['fixed', 'normal', 'loguniform', 'loguniform', 'loguniform', 'loguniform']
+hyper  = [1, [0, 0.1], [0.1, 1e4], [1e-6, 1e6], [1e-3, 1e3], [1e-3, 1e3]]
 
 priors = {}
 for par, dis, hyp in zip(params, dists, hyper):
