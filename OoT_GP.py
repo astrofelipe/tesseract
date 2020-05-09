@@ -2,6 +2,7 @@ import argparse
 import juliet
 import numpy as np
 import matplotlib.pyplot as plt
+from astropy.timeseries import LombScargle
 
 parser = argparse.ArgumentParser(description='Out of transit GP fit')
 parser.add_argument('File', type=str, help='Light curve file with transits (1 instrument)')
@@ -23,6 +24,9 @@ omask = np.abs(phase) > 1.5*dur
 
 time, flux, ferr = {}, {}, {}
 time['inst'], flux['inst'], ferr['inst'] = t[omask], f[omask], e[omask]
+
+frequency, power = LombScargle(time['inst'], flux['inst'], ferr['inst']).autopower()
+plt.plot(frequency, power) 
 
 params = ['mdilution_inst', 'mflux_inst', 'sigma_w_inst',
           'GP_sigma_inst', 'GP_rho_inst']
