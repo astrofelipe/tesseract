@@ -23,6 +23,7 @@ phase = (t - args.t0 + 0.5*args.P) % args.P - 0.5*args.P
 mask  = np.abs(phase) > 3*args.dur
 
 data2 = data[mask]
+data3 = data[~mask]
 
 '''
 fig, ax = plt.subplots(figsize=[10,3])
@@ -53,3 +54,4 @@ plt.show()
 '''
 
 data2.write(args.File.replace('.dat', '_OoT.dat'), format='ascii.no_header')
+data3.write(args.File.replace('.dat', '_IT.dat'), format='ascii.no_header')
