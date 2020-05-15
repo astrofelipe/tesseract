@@ -53,15 +53,18 @@ if __name__ == '__main__':
         results = run_TLS(fn)
 
         import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=[10,3])
-        ax.plot(results.periods, results.power, '-k', lw=0.5)
-        print(results.keys())
-        fig, ax = plt.subplots()
-        phase = (results.model_lightcurve_time - results.T0 + 0.5*results.period) % results.period - 0.5*results.period
-        ax.plot((results.folded_phase-0.5)*results.period, results.folded_y, '.k')
+        #fig, ax = plt.subplots(figsize=[10,3])
+        #ax.plot(results[1], results.power, '-k', lw=0.5)
+        #print(results.keys())
 
-        ax.set_xlim(-results.duration*1.5, results.duration*1.5)
-        ax.set_ylim(results.depth*0.995, 1.005)
+        t,f,e = np.genfromtxt(fn, usecols=(0,1,2), unpack=True)
+
+        fig, ax = plt.subplots()
+        phase = (t - results[2] + 0.5*results[1]) % results[1] - 0.5*results[1]
+        ax.plot(phase, f, '.k')
+
+        #ax.set_xlim(-results[3]*1.5, results[3]*1.5)
+        #ax.set_ylim(results[4]*0.995, 1.005)
 
         print(results)
 

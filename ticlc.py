@@ -30,7 +30,7 @@ parser.add_argument('--noplots', action='store_true', help="Doesn't show plots")
 parser.add_argument('--pld', action='store_true', help='Pixel level decorrelation (Experimental)')
 parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleanor)')
 #parser.add_argument('--prf', action='store_true')
-parser.add_argument('--circ', action='store_true', help='Forces circular apertures')
+parser.add_argument('--circ', type=float, default=-1, help='Forces circular apertures')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
@@ -226,7 +226,7 @@ if args.psf:
 
     #Lightkurves
     lks = TessLightCurve(time=time, flux=psf_flux)
-    lkf = lks.flatten(polyorder=2, window_length=91) if args.flatten else lks
+    lkf = lks.flatten(polyorder=2, window_length=51, niters=5) if args.flatten else lks
 
     if args.norm:
         lkf.flux = lkf.flux / np.nanmedian(lkf.flux)
@@ -241,14 +241,15 @@ else:
         print('Coming soon!')
     elif args.manualap is not None:
         dap   = [theap]
-    elif not args.circ:
+    elif args.circ==-1:
         #K2P2 (clustering, watershed) algorithm
         daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
         dap  = np.array([select_aperture(d, x, y) for d in daps])
     else:
         #Circular aperture (no resampling)
-        XX, YY = np.ogrid[:args.size, :args.size]
-        dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in range(1,5)]
+        YY, XX = np.ogrid[:args.size, :args.size]
+        caps   = [args.circ] if args.circ!=0 else range(1,6)
+        dap    = [np.sqrt((XX-x+.5)**2 + (YY-y+.5)**2) <= i for i in caps]
 
     #Aperture photometry
     lcfl = np.einsum('ijk,ljk->li', flux - bkgs[:,None,None], dap)
@@ -263,7 +264,7 @@ else:
     bidx = np.argmin(cdpp)
     lkf  = lkf[bidx]
 
-    color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ else 'No. ' + str(bidx), 'default',
+    color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ==0 else 'No. ' + str(bidx), 'default',
                 '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
 
 
