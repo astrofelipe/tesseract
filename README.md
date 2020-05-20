@@ -12,7 +12,7 @@ You can customize some parameters using the current available flags:
     --noplots       Doesn't display the preview plot
     --overwrite     Overwrites existing file (by default it doesn't)
 
-    --circ          Uses circular apertures instead of default K2P2 (Lund et al 2015) method
+    --circ <radius> Uses circular apertures instead of default K2P2 (Lund et al 2015) method. (Default: 0, automatic)
     --manualap      Allows to input a file containing pixels to be in the aperture (To do: Interactive mode)
     --psf           Does PSF photometry. Taken from eleanor (Feinstein et al 2019). Experimental.
     --pld           Pixel Level Decorrelation. I'm continuously changing this routine so probably it'll be broken :)
