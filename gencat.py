@@ -10,9 +10,6 @@ import glob
 import numpy as np
 import argparse
 
-#img = '/Volumes/Felipe/TESS/FFIs-5/tess2018345062939-s0005-3-3-0125-s_ffic.fits'
-#img = '/Volumes/Felipe/TESS/FFIs-5/tess2018345092939-s0005-3-4-0125-s_ffic.fits'
-#sec = img.split('-')[-5]
 parser = argparse.ArgumentParser(description='Catalog generator')
 parser.add_argument('Sector', type=int)
 parser.add_argument('--min-mag', type=float, default=-999, help='Minimum magnitude')
@@ -38,21 +35,10 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
     ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
 
-    #print(ra1,ra2,ra3,ra4)
-    #print(dec1,dec2,dec3,dec4)
-
-
-    #Ecliptic limits:
-    #eclat ~-72 a -inf (-90)
-    #eclon ver en cada sector (ancho ~90)
-
     c1 = SkyCoord(ra1, dec1, unit='deg').transform_to('geocentrictrueecliptic')
     c2 = SkyCoord(ra2, dec2, unit='deg').transform_to('geocentrictrueecliptic')
     c3 = SkyCoord(ra3, dec3, unit='deg').transform_to('geocentrictrueecliptic')
     c4 = SkyCoord(ra4, dec4, unit='deg').transform_to('geocentrictrueecliptic')
-    #cx = SkyCoord(24.604344, -55.772082, unit='deg').transform_to('geocentrictrueecliptic')
-
-    #print(cx)
     print(c1, c2, c3, c4)
 
 
@@ -60,8 +46,6 @@ for img in [TOP_LEFT, BOTTOM_RIGHT]:
     right  = np.max([ra3, ra4])
     top    = np.max([dec1, dec4])
     bottom = np.min([dec2, dec3])
-
-    #print(left, right, top, bottom, '\n')
 
 eclim = {'s0001': [[271, 361], [-90, 0]],
          's0002': [[298, 388], [-90, 0]],
