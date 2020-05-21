@@ -60,7 +60,7 @@ eclim = {'s0001': [[271, 361], [-90, 0]],
          's0011': [[181, 271], [-90, 0]],
          's0012': [[209, 299], [-90, 0]],
          's0013': [[235, 330], [-90, 0]],
-         's0014': [[65, 75], [0, 90]]} #190
+         's0014': [[65, 70], [0, 90]]} #190
 
 elo, ela = eclim[sec]
 print(elo,ela)
@@ -117,6 +117,7 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(ran
 #print(supercata1)
 #for s in supercata1:
 #    print(type(supercata1))
+print(supercata1)
 supercata1 = vstack(supercata1)
 
 print(supercata1)
