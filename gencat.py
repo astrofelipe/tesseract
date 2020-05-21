@@ -66,8 +66,8 @@ elo, ela = eclim[sec]
 print(elo,ela)
 
 #Not pole
-eclos = np.linspace(elo[0], elo[1]+1.1, 4) % 360
-eclas = np.linspace(ela[0], ela[1]+1.1, 4)
+eclos = np.linspace(elo[0], elo[1]+1.1, 10) % 360
+eclas = np.linspace(ela[0], ela[1]+1.1, 10)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
