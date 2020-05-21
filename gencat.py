@@ -60,7 +60,7 @@ eclim = {'s0001': [[271, 361], [-90, 0]],
          's0011': [[181, 271], [-90, 0]],
          's0012': [[209, 299], [-90, 0]],
          's0013': [[235, 330], [-90, 0]],
-         's0014': [[65,190], [0, 90]]}
+         's0014': [[65, 75], [0, 90]]} #190
 
 elo, ela = eclim[sec]
 print(elo,ela)
@@ -108,6 +108,7 @@ def gocat(i, j, im):
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
     catalogdata = catalogdata[mask]
 
+    print(catalogdata)
     return catalogdata
 
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
