@@ -131,6 +131,7 @@ supercata2 = stacker(supercata2)
 
 
 supercata = vstack([supercata1, supercata2])
+print(supercata)
 supercata = unique(supercata, keys=['ID'])
 
 catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
