@@ -96,28 +96,22 @@ def gocat(i, j, im):
                                           Tmag=[magbin[im], magbin[im+1]],
                                           objType='STAR')
 
-    tics = np.array(catalogdata['ID'])
-    ras  = np.array(catalogdata['ra'])
-    dec  = np.array(catalogdata['dec'])
-
-    res = ts2p(tics, ras, dec, trySector=args.Sector)
-
-    #sma = res[3] == args.Sector
-    sid = res[0]#[sma]
-
-    _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
-    print(len(catalogdata))
-    catalogdata = catalogdata[mask]
-
-    print(len(catalogdata))
     return catalogdata
 
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
                                                                for j in tqdm(range(len(eclas) - 1))
                                                                for im in tqdm(range(len(magbin) - 1)))
-#print(supercata1)
-#for s in supercata1:
-#    print(type(supercata1))
+
+print(supercata1)
+tics = np.array(supercata1['ID'])
+ras  = np.array(supercata1['ra'])
+dec  = np.array(supercata1['dec'])
+
+res = ts2p(tics, ras, dec, trySector=args.Sector)
+sid = res[0]
+
+_, mask, _ = np.intersect1d(tics, sid, return_indices=True)
+
 print(supercata1)
 supercata1 = vstack(supercata1)
 
