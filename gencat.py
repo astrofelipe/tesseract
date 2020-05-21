@@ -131,12 +131,13 @@ supercata2 = stacker(supercata2)
 
 
 supercata = vstack([supercata1, supercata2])
-print(supercata)
-supercata = unique(supercata, keys=['ID'])
 
-catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
-magord      = np.argsort(catalogfilt['Tmag'])
-catalogfilt = catalogfilt[magord]
-print(catalogfilt)
+if len(supercata) > 0:
+    supercata = unique(supercata, keys=['ID'])
 
-catalogfilt.write('%s_%f-%f.csv' % (sec, args.min_mag, args.max_mag), format='csv', overwrite=True)
+    catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
+    magord      = np.argsort(catalogfilt['Tmag'])
+    catalogfilt = catalogfilt[magord]
+    print(catalogfilt)
+
+    catalogfilt.write('%s_%f-%f.csv' % (sec, args.min_mag, args.max_mag), format='csv', overwrite=True)
