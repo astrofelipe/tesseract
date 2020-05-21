@@ -65,19 +65,6 @@ eclim = {'s0001': [[271, 361], [-90, 0]],
 elo, ela = eclim[sec]
 print(elo,ela)
 
-#Not pole
-eclos = np.linspace(elo[0], elo[1]+1.1, 10) % 360
-eclas = np.linspace(ela[0], ela[1]+1.1, 10)
-
-wrapcheck = np.any(np.diff(eclos) < 0)
-if wrapcheck:
-    idx   = np.where(np.diff(eclos) < 0)[0]
-    eclos = np.insert(eclos, idx+1, [360, 0])
-
-#Magnitudes (safer?)
-magbin = np.linspace(args.min_mag, args.max_mag, 5)
-
-print('Scanning... (1/2)')
 def gocat(i, j, im):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
@@ -98,62 +85,49 @@ def gocat(i, j, im):
 
     return catalogdata
 
-supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
-                                                               for j in tqdm(range(len(eclas) - 1))
-                                                               for im in tqdm(range(len(magbin) - 1)))
+def stacker(catalogs):
+    catalogs = vstack(catalogs)
 
-supercata1 = vstack(supercata1)
-print(supercata1)
-tics = np.array(supercata1['ID'])
-ras  = np.array(supercata1['ra'])
-dec  = np.array(supercata1['dec'])
+    tics = np.array(catalogs['ID'])
+    ras  = np.array(catalogs['ra'])
+    dec  = np.array(catalogs['dec'])
 
-res = ts2p(tics, ras, dec, trySector=args.Sector)
-sid = res[0]
+    res = ts2p(tics, ras, dec, trySector=args.Sector)
+    sid = res[0]
 
-_, mask, _ = np.intersect1d(tics, sid, return_indices=True)
+    _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
 
-print(supercata1)
+    return catalogs[mask]
+
+
+print('Scanning... (1/2)')
+#Not pole
+eclos = np.linspace(elo[0], elo[1]+1.1, 10) % 360
+eclas = np.linspace(ela[0], ela[1]+1.1, 10)
+
+wrapcheck = np.any(np.diff(eclos) < 0)
+if wrapcheck:
+    idx   = np.where(np.diff(eclos) < 0)[0]
+    eclos = np.insert(eclos, idx+1, [360, 0])
+
+#Magnitudes (safer?)
+magbin = np.linspace(args.min_mag, args.max_mag, 5)
+
+supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
+                                                               for i in range(len(eclos) - 1)
+                                                               for j in range(len(eclas) - 1))
+supercata1 = stacker(supercata1)
 
 print('\nScanning... (2/2)')
 #Pole
 eclos = np.arange(0, 361, 5)
 eclas = np.arange(-90, -71, 5)
 
-supercata2 = vstack(Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
-                                                                   for j in tqdm(range(len(eclas) - 1))
-                                                                   for im in tqdm(range(len(magbin) - 1))))
-'''
-for i in tqdm(range(len(eclos) - 1)):
-    eloi1 = int(eclos[i])
-    eloi2 = int(eclos[i+1])
+supercata2 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
+                                                                   for j in tqdm(range(len(eclas) - 1)))
+supercata2 = stacker(supercata2)
 
-    for j in tqdm(range(len(eclas) - 1)):
-        elai1 = int(eclas[j])
-        elai2 = int(eclas[j+1])
 
-        catalogdata = Catalogs.query_criteria(catalog='Tic',
-                                              eclong=[eloi1, eloi2],
-                                              eclat=[elai1, elai2],
-                                              Tmag=[args.min_mag, args.max_mag],
-                                              objType='STAR')
-
-        tics = np.array(catalogdata['ID'])
-        ras  = np.array(catalogdata['ra'])
-        dec  = np.array(catalogdata['dec'])
-
-        res = ts2p(tics, ras, dec, scInfo=res[-1])
-
-        sma = res[3] == 6
-        sid = res[0][sma]
-
-        _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
-
-        catalogdata = catalogdata[mask]
-
-        supercata = vstack([supercata, catalogdata])
-        supercata = unique(supercata, keys=['ID'])
-'''
 
 supercata = vstack([supercata1, supercata2])
 supercata = unique(supercata, keys=['ID'])
@@ -162,4 +136,5 @@ catalogfilt = supercata['ID', 'ra', 'dec', 'Tmag']
 magord      = np.argsort(catalogfilt['Tmag'])
 catalogfilt = catalogfilt[magord]
 print(catalogfilt)
+
 catalogfilt.write('%s_%f-%f.csv' % (sec, args.min_mag, args.max_mag), format='csv', overwrite=True)
