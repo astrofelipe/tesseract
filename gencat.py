@@ -102,8 +102,8 @@ def stacker(catalogs):
 
 print('Scanning... (1/2)')
 #Not pole
-eclos = np.linspace(elo[0], elo[1]+1.1, 10) % 360
-eclas = np.linspace(ela[0], ela[1]+1.1, 10)
+eclos = np.linspace(elo[0], elo[1]+1.1, 8) % 360
+eclas = np.linspace(ela[0], ela[1]+1.1, 8)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
@@ -111,7 +111,7 @@ if wrapcheck:
     eclos = np.insert(eclos, idx+1, [360, 0])
 
 #Magnitudes (safer?)
-magbin = np.linspace(args.min_mag, args.max_mag, 5)
+magbin = np.linspace(args.min_mag, args.max_mag, 4)
 
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
                                                                for i in range(len(eclos) - 1)
@@ -123,8 +123,9 @@ print('\nScanning... (2/2)')
 eclos = np.arange(0, 361, 5)
 eclas = np.arange(-90, -71, 5)
 
-supercata2 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(range(len(eclos) - 1))
-                                                                   for j in tqdm(range(len(eclas) - 1)))
+supercata2 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
+                                                               for i in range(len(eclos) - 1)
+                                                               for j in range(len(eclas) - 1))
 supercata2 = stacker(supercata2)
 
 
