@@ -102,6 +102,7 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for i in tqdm(ran
                                                                for j in tqdm(range(len(eclas) - 1))
                                                                for im in tqdm(range(len(magbin) - 1)))
 
+supercata1 = vstack(supercata1)
 print(supercata1)
 tics = np.array(supercata1['ID'])
 ras  = np.array(supercata1['ra'])
@@ -113,9 +114,7 @@ sid = res[0]
 _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
 
 print(supercata1)
-supercata1 = vstack(supercata1)
 
-print(supercata1)
 print('\nScanning... (2/2)')
 #Pole
 eclos = np.arange(0, 361, 5)
