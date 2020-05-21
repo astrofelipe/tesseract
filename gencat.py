@@ -66,8 +66,8 @@ elo, ela = eclim[sec]
 print(elo,ela)
 
 #Not pole
-eclos = np.linspace(elo[0], elo[1]+1.1, 10) % 360
-eclas = np.linspace(ela[0], ela[1]+1.1, 10)
+eclos = np.linspace(elo[0], elo[1]+1.1, 4) % 360
+eclas = np.linspace(ela[0], ela[1]+1.1, 4)
 
 wrapcheck = np.any(np.diff(eclos) < 0)
 if wrapcheck:
@@ -106,6 +106,7 @@ def gocat(i, j, im):
     sid = res[0]#[sma]
 
     _, mask, _ = np.intersect1d(tics, sid, return_indices=True)
+    print(len(catalogdata))
     catalogdata = catalogdata[mask]
 
     print(len(catalogdata))
