@@ -34,6 +34,8 @@ parser.add_argument('--circ', type=float, default=-1, help='Forces circular aper
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
+parser.add_argument('--window-length', type=float, default=1.5)
+parser.add_argument('--cleaner', action='store_true', help='Removes saturated background times (Warning: chosen by eye)')
 parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
 parser.add_argument('--pngstamp', type=str, default=None, help='Saves the postage stamp as png (input "full" or "minimal")')
 parser.add_argument('--pngzoom', type=float, default=1, help='Zoom for --pngstamp')
@@ -42,6 +44,7 @@ parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia m
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
 parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number')
 parser.add_argument('--cmap', type=str, default='YlGnBu_r', help='Colormap to use')
+parser.add_argument('--animation', type=str, default='none', help='Saves a movie of the cutout + lightcurve ("talk" and "outreach" options are available)')
 parser.add_argument('--overwrite', action='store_false', help='Overwrites existing filename')
 
 args = parser.parse_args()
@@ -225,11 +228,14 @@ if args.psf:
     psf_bkg  = bkgout
 
     #Lightkurves
-    lks = TessLightCurve(time=time, flux=psf_flux)
-    lkf = lks.flatten(polyorder=2, window_length=51, niters=5) if args.flatten else lks
+    lkf = TessLightCurve(time=time, flux=psf_flux)
 
-    if args.norm:
-        lkf.flux = lkf.flux / np.nanmedian(lkf.flux)
+    if args.flatten:
+        from wotan import flatten
+        flat_flux = flatten(lkf.time, lkf.flux, window_length=args.window_length, method='biweight', return_trend=False)
+        print(flat_flux)
+        #lkf = lks.flatten(polyorder=2, window_length=51, niters=5) if args.flatten else lks
+        lkf.flux = flat_flux
 
 else:
     #DBSCAN Aperture
@@ -256,8 +262,15 @@ else:
     lcer = np.sqrt(np.einsum('ijk,ljk->li', np.square(errs), dap))
 
     #Lightkurves
-    lks = [TessLightCurve(time=time, flux=lcfl[i], flux_err=np.sqrt(lcer[i]**2 + berr**2)) for i in range(len(lcfl))]
-    lkf = [lk.flatten(polyorder=2, window_length=85) for lk in lks] if args.norm else lks
+    lkf = [TessLightCurve(time=time, flux=lcfl[i], flux_err=np.sqrt(lcer[i]**2 + berr**2)) for i in range(len(lcfl))]
+
+    #FLAT
+    if args.flatten:
+        from wotan import flatten
+        for lk in lkf:
+            lk.flux, trend = flatten(lk.time, lk.flux, window_length=args.window_length, method='rspline', return_trend=True)
+            lk.flux_err    /= trend
+
 
     #Select best
     cdpp = [lk.estimate_cdpp() for lk in lkf]
@@ -266,7 +279,6 @@ else:
 
     color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ==0 else 'No. ' + str(bidx), 'default',
                 '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
-
 
     #PLD?
     if args.pld:
@@ -282,6 +294,18 @@ else:
 
         pld_flux = PLD(flux_pld, pldthm, lkf.flux)
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
+
+#NORM
+if args.norm:
+    lkf.flux_err /= np.nanmedian(lkf.flux)
+    lkf.flux /= np.nanmedian(lkf.flux)
+
+if args.cleaner:
+    from cleaner import cleaner
+    omask = cleaner(lkf.time, lkf.flux)
+    lkf.time = lkf.time[~omask]
+    lkf.flux = lkf.flux[~omask]
+    lkf.flux_err = lkf.flux_err[~omask]
 
 #Gaia sources and dilution factor
 if args.gaia:
@@ -367,7 +391,7 @@ if not args.noplots:
         ax1.scatter(gx[1:], gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
-    ax.errorbar(time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
+    ax.errorbar(lkf.time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
@@ -443,6 +467,25 @@ if args.pngstamp is not None:
         sax.set_ylim(row + int(y) - pngsize, row + int(y) + pngsize)
 
     sfig.savefig('TIC%s_%02d_%s.pdf' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
+
+if args.animation.lower() == 'outreach':
+    from tsani import Outreach
+    from matplotlib.animation import FuncAnimation
+
+    fig     = plt.figure(figsize=[4,3])
+    ax      = fig.add_axes([0, 0, 1, 1])
+    fig.patch.set_facecolor('black')
+    adata   = flux - bkgs[:,None,None]
+    ud      = Outreach(fig, ax, adata, lkf)
+    anim    = FuncAnimation(fig, ud, frames=len(adata), init_func=ud.init, interval=60000/len(adata), save_count=len(adata))
+
+    #plt.show()
+    anim.save('movie.mp4', dpi=200)
+
+elif args.animation.lower() == 'talk':
+    from tsani import UpdateDist
+    from matplotlib.animation import FuncAnimation
+
 
 inst   = np.repeat('TESS', len(time))
 output = np.transpose([time, lkf.flux, lkf.flux_err, inst])

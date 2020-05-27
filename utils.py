@@ -10,15 +10,7 @@ from astropy.wcs import WCS
 from astropy.coordinates import SkyCoord
 from astropy.nddata.utils import Cutout2D
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
-
-'''
-def mask_time(time, flux, sector):
-    cad = 27./60./24.
-
-    if sector==8:
-        mask =
-'''
-
+    
 def dilution_factor(m_primary, m_comp, sep, pixscale=21):
     fac  = 10**((m_primary - m_comp)/2.5) * np.exp(-1.68*sep/pixscale)
     dfac = 1/(1+np.sum(fac))
