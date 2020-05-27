@@ -487,8 +487,8 @@ elif args.animation.lower() == 'talk':
     from matplotlib.animation import FuncAnimation
 
 
-inst   = np.repeat('TESS', len(time))
-output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
+inst   = np.repeat('TESS', len(lkf.time))
+output = np.transpose([lkf.time, lkf.flux, lkf.flux_err, inst])
 np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
 
 if args.folder is None:
