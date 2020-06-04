@@ -22,37 +22,35 @@ for sector in sector_folders:
 
     for cam in range(1,5):
         for ccd in range(1,5):
-            img = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))[11]
-            hdr = fits.getheader(img, 1)
-            w   = WCS(hdr)
+            imgs = glob.glob(sector + 'tess*-%d-%d-*_ffic.fits' % (cam, ccd))
 
-            T = np.transpose([w.all_pix2world(i,0,0) for i in range(44,2092,10)])
-            R = np.transpose([w.all_pix2world(2091,i,0) for i in range(1,2048,10)])
-            B = np.transpose([w.all_pix2world(i,2047,0) for i in range(2091,43,-10)])
-            L = np.transpose([w.all_pix2world(44,i,0) for i in range(2046,0,-10)])
+            for img in imgs:
+                try:
+                    hdr = fits.getheader(img, 1)
+                    w   = WCS(hdr)
 
-            TOP    = SkyCoord(T[0], T[1], unit='deg').transform_to('barycentrictrueecliptic')
-            RIGHT  = SkyCoord(R[0], R[1], unit='deg').transform_to('barycentrictrueecliptic')
-            BOTTOM = SkyCoord(B[0], B[1], unit='deg').transform_to('barycentrictrueecliptic')
-            LEFT   = SkyCoord(L[0], L[1], unit='deg').transform_to('barycentrictrueecliptic')
+                    T = np.transpose([w.all_pix2world(i,0,0) for i in range(44,2092,10)])
+                    R = np.transpose([w.all_pix2world(2091,i,0) for i in range(1,2048,10)])
+                    B = np.transpose([w.all_pix2world(i,2047,0) for i in range(2091,43,-10)])
+                    L = np.transpose([w.all_pix2world(44,i,0) for i in range(2046,0,-10)])
 
+                    TOP    = SkyCoord(T[0], T[1], unit='deg').transform_to('barycentrictrueecliptic')
+                    RIGHT  = SkyCoord(R[0], R[1], unit='deg').transform_to('barycentrictrueecliptic')
+                    BOTTOM = SkyCoord(B[0], B[1], unit='deg').transform_to('barycentrictrueecliptic')
+                    LEFT   = SkyCoord(L[0], L[1], unit='deg').transform_to('barycentrictrueecliptic')
 
-            #ra1, dec1 = w.all_pix2world(44, 0, 0)       #TOP LEFT
-            #ra2, dec2 = w.all_pix2world(44, 2047, 0)    #BOTTOM LEFT
-            #ra3, dec3 = w.all_pix2world(2091, 2047, 0)  #BOTTOM RIGHT
-            #ra4, dec4 = w.all_pix2world(2091, 0, 0)     #TOP RIGHT
+                    color_print('CAM %d, CCD %d' % (cam, ccd), 'lightgreen')
+                    print('\t', TOP[0].lon.degree, TOP[0].lat.degree)
+                    print('\t', RIGHT[0].lon.degree, RIGHT[0].lat.degree)
+                    print('\t', BOTTOM[0].lon.degree, BOTTOM[0].lat.degree)
+                    print('\t', LEFT[0].lon.degree, LEFT[0].lat.degree)
 
-            #Ecliptic limits:
-            #eclat ~-72 a -inf (-90)
+                    label    = 'S%02d_%d_%d' % (sn, cam, ccd)
+                    t[label+'_lon'] = np.concatenate([TOP.lon.degree, RIGHT.lon.degree, BOTTOM.lon.degree, LEFT.lon.degree])
+                    t[label+'_lat'] = np.concatenate([TOP.lat.degree, RIGHT.lat.degree, BOTTOM.lat.degree, LEFT.lat.degree])
 
-            color_print('CAM %d, CCD %d' % (cam, ccd), 'lightgreen')
-            print('\t', TOP[0].lon.degree, TOP[0].lat.degree)
-            print('\t', RIGHT[0].lon.degree, RIGHT[0].lat.degree)
-            print('\t', BOTTOM[0].lon.degree, BOTTOM[0].lat.degree)
-            print('\t', LEFT[0].lon.degree, LEFT[0].lat.degree)
-
-            label    = 'S%02d_%d_%d' % (sn, cam, ccd)
-            t[label+'_lon'] = np.concatenate([TOP.lon.degree, RIGHT.lon.degree, BOTTOM.lon.degree, LEFT.lon.degree])
-            t[label+'_lat'] = np.concatenate([TOP.lat.degree, RIGHT.lat.degree, BOTTOM.lat.degree, LEFT.lat.degree])
+                    break
+                except:
+                    continue
 
 ascii.write(t, 'corners.dat', format='commented_header')
