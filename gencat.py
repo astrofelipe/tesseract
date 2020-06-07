@@ -116,9 +116,6 @@ magbin = np.linspace(args.min_mag, args.max_mag, 4)
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
                                                                for i in range(len(eclos) - 1)
                                                                for j in range(len(eclas) - 1))
-print(supercata1)
-supercata1 = stacker(supercata1)
-print(supercata1)
 
 print('\nScanning... (2/2)')
 #Pole
@@ -133,6 +130,7 @@ supercata2 = stacker(supercata2)
 
 
 supercata = vstack([supercata1, supercata2])
+print(supercata)
 
 if len(supercata) > 0:
     supercata = unique(supercata, keys=['ID'])
