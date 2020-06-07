@@ -118,6 +118,7 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(ra
                                                                for j in range(len(eclas) - 1))
 print(supercata1)
 supercata1 = stacker(supercata1)
+print(supercata1)
 
 print('\nScanning... (2/2)')
 #Pole
