@@ -21,6 +21,8 @@ args = parser.parse_args()
 sec = 's%04d' % args.Sector
 print(sec)
 
+tots = 1 if args.Sector < 14 else 2
+
 TOP_LEFT     = glob.glob('/horus/TESS/FFI/%s/*%d-3-3*' % (sec, args.Sector))[0]
 BOTTOM_RIGHT = glob.glob('/horus/TESS/FFI/%s/*%d-3-4*' % (sec, args.Sector))[0]
 
@@ -100,7 +102,7 @@ def stacker(catalogs):
     return catalogs[mask]
 
 
-print('Scanning... (1/2)')
+print('Scanning... (1/%d)' % tots)
 #Not pole
 eclos = np.linspace(elo[0], elo[1]+1.1, 8) % 360
 eclas = np.linspace(ela[0], ela[1]+1.1, 8)
@@ -117,20 +119,24 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(ra
                                                                for i in range(len(eclos) - 1)
                                                                for j in range(len(eclas) - 1))
 
-print('\nScanning... (2/2)')
-#Pole
-eclos = np.arange(0, 361, 5)
-eclas = np.arange(-90, -71, 5)
+if args.Sector > 13:
+    print('\nScanning... (2/%d)' % tots)
+    #Pole
+    eclos = np.arange(0, 361, 5)
+    eclas = np.arange(-90, -71, 5)
 
-supercata2 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
-                                                               for i in range(len(eclos) - 1)
-                                                               for j in range(len(eclas) - 1))
-supercata2 = stacker(supercata2)
+    supercata2 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
+                                                                   for i in range(len(eclos) - 1)
+                                                                   for j in range(len(eclas) - 1))
+    supercata2 = stacker(supercata2)
 
 
 
-supercata = vstack([supercata1, supercata2])
-print(supercata)
+    supercata = vstack([supercata1, supercata2])
+
+else:
+    supercata = supercata1
+
 
 if len(supercata) > 0:
     supercata = unique(supercata, keys=['ID'])
