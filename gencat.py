@@ -119,6 +119,7 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(ra
                                                                for i in range(len(eclos) - 1)
                                                                for j in range(len(eclas) - 1))
 
+#Search pole only if southern hemisphere
 if args.Sector > 13:
     print('\nScanning... (2/%d)' % tots)
     #Pole
