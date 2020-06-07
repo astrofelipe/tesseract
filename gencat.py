@@ -133,7 +133,7 @@ if args.Sector > 13:
 
 
 
-    supercata = vstack([supercata1, supercata2])
+    supercata = vstack([supercata1, supercata2], silent=True)
 
 else:
     supercata = supercata1
