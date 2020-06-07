@@ -83,7 +83,6 @@ def gocat(i, j, im):
                                           Tmag=[magbin[im], magbin[im+1]],
                                           objType='STAR')
 
-    print(len(catalogdata))
     return catalogdata
 
 def stacker(catalogs):
@@ -117,6 +116,7 @@ magbin = np.linspace(args.min_mag, args.max_mag, 4)
 supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(range(len(magbin) - 1))
                                                                for i in range(len(eclos) - 1)
                                                                for j in range(len(eclas) - 1))
+print(supercata1)
 supercata1 = stacker(supercata1)
 
 print('\nScanning... (2/2)')
