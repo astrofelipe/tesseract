@@ -83,6 +83,7 @@ def gocat(i, j, im):
                                           Tmag=[magbin[im], magbin[im+1]],
                                           objType='STAR')
 
+    print(len(catalogdata))
     return catalogdata
 
 def stacker(catalogs):
