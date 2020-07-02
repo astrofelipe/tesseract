@@ -479,7 +479,6 @@ if args.animation.lower() == 'outreach':
     ud      = Outreach(fig, ax, adata, lkf)
     anim    = FuncAnimation(fig, ud, frames=len(adata), init_func=ud.init, interval=60000/len(adata), save_count=len(adata))
 
-    #plt.show()
     anim.save('movie.mp4', dpi=200)
 
 elif args.animation.lower() == 'talk':
