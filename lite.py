@@ -117,7 +117,7 @@ def make_lc(tic, ra, dec):
     y = y - int(y) + args.size//2
 
     if not args.circ:
-        daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,3,5,7,9,11,13,15]]
+        daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,2,3]]
         dap  = np.array([select_aperture(d, x, y) for d in daps])
     else:
         XX, YY = np.ogrid[:args.size, :args.size]
