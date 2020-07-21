@@ -111,7 +111,8 @@ else:
     color_print('Querying MAST...', 'lightcyan')
     hdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
     if args.pld:
-        hdu_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
+        tpf_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
+        hdus    = tpf_pld.hdu
     cam     = hdus[2].header['CAMERA']
     ccd     = hdus[2].header['CCD']
     row     = hdus[1].header['2CRV5P']
@@ -138,9 +139,6 @@ flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
-
-if args.pld:
-    flux_pld = hdu_pld[1].data['FLUX'][ma]
 
 if args.manualap is not None:
     apix2, apix1        = np.genfromtxt(args.manualap, unpack=True).astype(int)
@@ -282,6 +280,7 @@ else:
 
     #PLD?
     if args.pld:
+        '''
         if iP is None:
             mask = np.ones(time.size).astype(bool)
         else:
@@ -294,6 +293,13 @@ else:
 
         pld_flux = PLD(flux_pld, pldthm, lkf.flux)
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
+        '''
+        from lightkurve.correctors import PLDCorrector
+        tpf_pld.hdu[1].data['FLUX'][ma] -= bkgs[:,None,None]
+        tpf_pld.hdu[1].data['FLUX_ERR'][ma] -= np.sqrt(tpf_pld.hdu[1].data['FLUX_ERR'][ma]**2 + berr[:,None,None]**2)
+        corr = PLDCorrector(tpf_pld)
+        lkf   = corr.correct(aperture_mask = dap[bidx], pld_aperture_mask='threshold', pld_order=3, use_gp=True)
+
 
 #NORM
 if args.norm:

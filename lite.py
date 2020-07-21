@@ -117,11 +117,11 @@ def make_lc(tic, ra, dec):
     y = y - int(y) + args.size//2
 
     if not args.circ:
-        daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,2,3]]
+        daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,2,3,4,5]]
         dap  = np.array([select_aperture(d, x, y) for d in daps])
     else:
         XX, YY = np.ogrid[:args.size, :args.size]
-        dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in range(1,5)]
+        dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in np.arange(1,3.1,0.5)]
 
     #Aperture photometry
     lcfl = np.einsum('ijk,ljk->li', flux - bkgs[:,None,None], dap)
