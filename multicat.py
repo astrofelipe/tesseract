@@ -24,4 +24,4 @@ catalogs = [pd.read_csv(f, names=['ID', 'ra', 'dec', 'Tmag'], skiprows=1) for f 
 concat   = pd.concat(catalogs)
 counter  = concat.pivot_table(columns=['ID'], aggfunc='size')
 
-print(df[df.loc['ID'] > 1])
+print(counter[counter.loc['ID'] > 1])
