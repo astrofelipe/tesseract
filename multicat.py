@@ -16,7 +16,7 @@ maxmag = args.MaxMag
 if args.Hemisphere is 'North':
     pass
 else:
-    minsec = 10
+    minsec = 9
     maxsec = 13
 
 catfiles = [args.Folder + 's%04d/s%04d_%d.000000-%d.000000.csv' % (s,s,minmag,maxmag) for s in range(minsec,maxsec+1)]
