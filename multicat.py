@@ -22,5 +22,6 @@ else:
 catfiles = [args.Folder + 's%04d/s%04d_%d.000000-%d.000000.csv' % (s,s,minmag,maxmag) for s in range(minsec,maxsec+1)]
 catalogs = [pd.read_csv(f, names=['ID', 'ra', 'dec', 'Tmag'], skiprows=1) for f in catfiles]
 concat   = pd.concat(catalogs)
+df       = concat.groupby(['ID']).size().reset_index(name='counts')
 
-print(concat.ID.values_counts())
+print(df['counts'])
