@@ -25,4 +25,4 @@ concat   = pd.concat(catalogs)
 counter  = concat.pivot_table(index='ID', aggfunc='size')
 multitic = counter[counter > 1]
 
-print(multitic)
+print(multitic.sort_values())
