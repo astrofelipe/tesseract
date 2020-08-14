@@ -16,13 +16,12 @@ minmag, maxmag = args.File.split('_')[-1].split('.')[0].split('-')
 
 if args.target:
     fns = glob.glob(args.Folder + '*/%s-%s/TIC%d.dat' % (minmag, maxmag, args.target))
+    print(len(fns))
 
     t,f,e = [],[],[]
 
     for fn in fns:
         tt,ff,ee = np.genfromtxt(fn, unpack=True, usecols=(0,1,2))
-        if np.median(tt) > 3000000:
-            tt -= 2454833
 
         lc = TessLightCurve(time=tt, flux=ff, flux_err=ee).flatten(window_length=51, polyorder=2, niters=5)
         t.append(lc.time)
