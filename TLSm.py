@@ -15,7 +15,7 @@ args = parser.parse_args()
 minmag, maxmag = args.File.split('_')[-1].split('.')[0].split('-')
 
 if args.target:
-    fns = glob.glob(args.Folder + '%s-%s/TIC%d.dat' % (minmag, maxmag, args.target))
+    fns = glob.glob(args.Folder + '*/%s-%s/TIC%d.dat' % (minmag, maxmag, args.target))
 
     t,f,e = [],[],[]
 
