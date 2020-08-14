@@ -24,5 +24,6 @@ catalogs = [pd.read_csv(f, names=['ID', 'ra', 'dec', 'Tmag'], skiprows=1) for f 
 concat   = pd.concat(catalogs)
 counter  = concat.pivot_table(index='ID', aggfunc='size')
 multitic = counter[counter > 1]
+multitic = multitic.sort_values(ascending=False)
 
-print(multitic.sort_values(ascending=False))
+multitic.to_csv('multitics_%s_%d-%d.cat' % (args.Hemisphere, minmag, maxmag), sep=' ')
