@@ -37,8 +37,8 @@ for f in args.LCFiles:
         print('Transit times\n')
         print(ttimes)
 
-        for tt in ttimes:
+        for j,tt in enumerate(ttimes):
             ax.axvline(tt)
-            ax.text(tt, 1-i*0.002, ha='right', va='center')
+            ax.text(tt, 1-i*0.002, j, ha='right', va='center')
 
 plt.show()
