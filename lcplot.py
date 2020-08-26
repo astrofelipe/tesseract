@@ -24,22 +24,22 @@ for f in args.LCFiles:
 
         ax.plot(t,f,'.', ms=2, alpha=.6, label=it)
 
-    if args.transit is not None:
-        P, t0 = args.transit
+        if args.transit is not None:
+            P, t0 = args.transit
 
-        tmin = np.nanmin(t)
-        tmax = np.nanmax(t)
+            tmin = np.nanmin(t)
+            tmax = np.nanmax(t)
 
-        ttimes = t0 + np.arange(-100,100)*P
-        tmask  = (ttimes > tmin) & (ttimes < tmax)
-        ttimes = ttimes[tmask]
+            ttimes = t0 + np.arange(-100,100)*P
+            tmask  = (ttimes > tmin) & (ttimes < tmax)
+            ttimes = ttimes[tmask]
 
-        print('Transit times\n')
-        print(ttimes)
+            print('Transit times\n')
+            print(ttimes)
 
-        for j,tt in enumerate(ttimes):
-            ax.axvline(tt)
-            ax.text(tt, 1-i*0.002, j, ha='right', va='center')
+            for j,tt in enumerate(ttimes):
+                ax.axvline(tt)
+                ax.text(tt, 1-i*0.002, j, ha='right', va='center')
 
     ax.legend()
 
