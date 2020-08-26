@@ -22,7 +22,7 @@ for f in args.LCFiles:
         t  = data['time'][ma]
         f  = data['flux'][ma]
 
-        ax.plot(t,f,'.', ms=1, alpha=.5, label=it)
+        ax.plot(t,f,'.', ms=2, alpha=.6, label=it)
 
     if args.transit is not None:
         P, t0 = args.transit
