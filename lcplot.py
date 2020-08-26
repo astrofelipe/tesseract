@@ -14,7 +14,7 @@ fig, ax = plt.subplots(figsize=[15,3])
 
 for f in args.LCFiles:
     #t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
-    data = pd.read_csv(f, sep=' ')
+    data = pd.read_csv(f, sep=' ', names=['time', 'flux', 'error', 'instrument'])
     print(data)
     #ax.plot(t,f,'.k')
 
