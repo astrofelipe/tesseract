@@ -35,7 +35,7 @@ for f in args.LCFiles:
             ttimes = ttimes[tmask]
 
             print(it)
-            print(pd.DataFrame(ttimes, names=['time']))
+            print(pd.DataFrame(ttimes, columns=['time']))
             print()
 
             for j,tt in enumerate(ttimes):
