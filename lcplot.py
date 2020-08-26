@@ -35,7 +35,8 @@ for f in args.LCFiles:
             ttimes = ttimes[tmask]
 
             print(it)
-            print(pd.DataFrame(ttimes))
+            print(pd.DataFrame(ttimes, names=['time']))
+            print()
 
             for j,tt in enumerate(ttimes):
                 ax.axvline(tt)
