@@ -16,8 +16,13 @@ for f in args.LCFiles:
     #t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
     data = pd.read_csv(f, sep=' ', names=['time', 'flux', 'error', 'instrument'])
     inst = np.unique(data['instrument'])
-    print(inst)
-    #ax.plot(t,f,'.k')
+
+    for i,it in enumerate(inst):
+        ma = data['instrument'] == it
+        t  = data['time'][ma]
+        f  = data['flux'][ma]
+
+        ax.plot(t,f,'.', alpha=.9)
 
     if args.transit is not None:
         P, t0 = args.transit
@@ -34,5 +39,6 @@ for f in args.LCFiles:
 
         for tt in ttimes:
             ax.axvline(tt)
+            ax.text(tt, 1-i*0.002, ha='right', va='center')
 
 plt.show()
