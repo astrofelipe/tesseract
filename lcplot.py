@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='LC and transit plot (useful for TTV priors!)')
@@ -10,12 +11,12 @@ args = parser.parse_args()
 
 fig, ax = plt.subplots(figsize=[15,3])
 
-#12.8461355723
-#2458313.6382690743
 
 for f in args.LCFiles:
-    t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
-    ax.plot(t,f,'.k')
+    #t,f,e = np.genfromtxt(f, usecols=(0,1,2), unpack=True)
+    data = pd.read_csv(f, sep=' ')
+    print(data)
+    #ax.plot(t,f,'.k')
 
     if args.transit is not None:
         P, t0 = args.transit
