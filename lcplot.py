@@ -34,8 +34,8 @@ for f in args.LCFiles:
             tmask  = (ttimes > tmin) & (ttimes < tmax)
             ttimes = ttimes[tmask]
 
-            print('Transit times\n')
-            print(ttimes)
+            print(it)
+            print(pd.DataFrame(ttimes))
 
             for j,tt in enumerate(ttimes):
                 ax.axvline(tt)
