@@ -29,6 +29,7 @@ parser.add_argument('--mask-transit', type=float, nargs=3, default=(None, None, 
 parser.add_argument('--noplots', action='store_true', help="Doesn't show plots")
 parser.add_argument('--pld', action='store_true', help='Pixel level decorrelation (Experimental)')
 parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleanor)')
+parser.add_argument('--pca', action='store_true', help='Removes background and some sistematics using PCA')
 #parser.add_argument('--prf', action='store_true')
 parser.add_argument('--circ', type=float, default=-1, help='Forces circular apertures')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
@@ -278,8 +279,23 @@ else:
     color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ==0 else 'No. ' + str(bidx), 'default',
                 '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
 
+
+    #PCA
+    if args.pca:
+        import lightkurve
+        regressors = flux[:, ~dap[bidx]]
+        dm         = lightkurve.DesignMatrix(regressors, name='regressors')
+
+        dm = dm.pca(5)
+        dm = dm.append_constant()
+
+        corrector = lightkurve.RegressionCorrector(lkf)
+        corr_flux = corrector.correct(dm)
+        lkf = lkf - corrector.model_lc + np.percentile(corrector.model_lc.flux, 5)
+        #lkf.flux  = lkf.flux - corrector.model_lc + np.percentile(corrector.model_lc.flux, 5)
+
     #PLD?
-    if args.pld:
+    elif args.pld:
         '''
         if iP is None:
             mask = np.ones(time.size).astype(bool)
