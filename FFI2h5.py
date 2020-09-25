@@ -3,6 +3,7 @@ import h5py
 import glob
 import argparse
 import numpy as np
+from mpi4py import MPI
 from joblib import Parallel, delayed
 from astropy.io import fits
 from tqdm import tqdm
@@ -22,31 +23,8 @@ allfiles  = np.sort(glob.glob(args.Folder + '*-%d-%d-*.fits' % (args.Camera, arg
 files     = allfiles[args.nstart:args.nstop]
 nfiles    = len(allfiles)
 
-'''
-for i,f in enumerate(tqdm(files)):
-    hdu = fits.open(f, memmap=False)
-
-    flu = hdu[1].data
-    err = hdu[2].data
-    hdr = hdu[1].header
-
-    if i==0:
-        nx, ny = flu.shape
-        output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w')
-        dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='gzip')
-        derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
-        table  = output.create_dataset('data', (3, nfiles), dtype='float64', compression='gzip')
-
-    dset[i] = flu
-    derr[i] = err
-
-    output['data'][0,i] = 0.5*(hdr['TSTART'] + hdr['TSTOP']) + hdr['BJDREFI']
-    output['data'][1,i] = hdr['BARYCORR']
-    output['data'][2,i] = hdr['DQUALITY']
-
-    del flu, err, hdr, hdu
-
-'''
+nprocs = MPI.COMM_WORLD.size
+rank   = MPI.COMM_WORLD.rank
 
 def make_table(f):
     hdr = fits.getheader(f, 1)
@@ -72,7 +50,9 @@ def get_data(f, ext=1):
 
 nx, ny = fits.getdata(files[0]).shape
 
-output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
+#output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
+output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
+
 dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='lzf')
 derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='lzf')
 table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='lzf')
@@ -83,18 +63,20 @@ table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression
 #derr[args.nstart:args.nstop] = [get_data(f, 2) for f in tqdm(files)]
 
 for i,f in enumerate(tqdm(files)):
-    hdu  = fits.open(f, memmap=True)
-    dat1 = hdu[1].data
-    dat2 = hdu[2].data
+    if i % num_processes == rank:
+        hdu  = fits.open(f, memmap=True)
+        dat1 = hdu[1].data
+        dat2 = hdu[2].data
 
-    dset[i] = dat1
-    derr[i] = dat2
+        dset[i] = dat1
+        derr[i] = dat2
+        table[i] = make_table(f)
 
-    hdu.close()
-    del hdu, dat1, dat2
+        hdu.close()
+        del hdu, dat1, dat2
 
 
-table[args.nstart:args.nstop] = np.transpose(Parallel(n_jobs=args.ncpu)(delayed(make_table)(f) for f in tqdm(files)))
+#table[args.nstart:args.nstop] = np.transpose(Parallel(n_jobs=args.ncpu)(delayed(make_table)(f) for f in tqdm(files)))
 
 
 print(dset)
