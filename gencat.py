@@ -88,13 +88,10 @@ def gocat(i, j, im):
     eloi1 = int(eclos[i])
     eloi2 = int(eclos[i+1])
 
-    #if eloi1==360 and eloi2==0:
-    #    return
-
     elai1 = int(eclas[j])
     elai2 = int(eclas[j+1])
 
-    dec_max = 30 if args.Sector > 13 else 90
+    dec_max = 30 if args.Sector > 13 else 90 #This is redundant...
     catalogdata = Catalogs.query_criteria(catalog='Tic',
                                           eclong=[eloi1, eloi2],
                                           eclat=[elai1, elai2],
