@@ -63,7 +63,7 @@ table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression
 #derr[args.nstart:args.nstop] = [get_data(f, 2) for f in tqdm(files)]
 
 for i,f in enumerate(tqdm(files)):
-    if i % num_processes == rank:
+    if i % nprocs == rank:
         hdu  = fits.open(f, memmap=True)
         dat1 = hdu[1].data
         dat2 = hdu[2].data
