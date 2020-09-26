@@ -168,6 +168,7 @@ if args.psf:
     from vaneska.models import Gaussian
     from tqdm import tqdm
 
+    tf.disable_v2_behavior()
     nstars   = 1
     flux_psf = tf.Variable(np.ones(nstars)*np.nanmax(flux[0]), dtype=tf.float64)
     ferr_psf = tf.Variable(np.ones(nstars)*np.nanmax(errs[0]), dtype=tf.float64)
