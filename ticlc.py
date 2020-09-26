@@ -402,7 +402,7 @@ if not args.noplots:
 
     ax1 = plt.subplot(gs[:,0])
     ax1.imshow(np.log10(np.nanmedian(flux[::10], axis=0)), cmap=args.cmap, aspect='equal',
-                            extent=[0,args.size,0,args.size], origin='bottom')
+                            extent=[0,args.size,0,args.size], origin='lower')
 
     if not args.psf:
         xm, ym = pixel_border(dap[bidx])
