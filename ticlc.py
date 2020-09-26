@@ -164,7 +164,7 @@ for i,f in enumerate(flux):
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
 if args.psf:
-    import tensorflow as tf
+    import tensorflow.compat.v1 as tf
     from vaneska.models import Gaussian
     from tqdm import tqdm
 
