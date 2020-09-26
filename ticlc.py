@@ -391,7 +391,7 @@ if not args.noplots:
         pax.grid(which='minor', zorder=99)
         pfig.tight_layout()
 
-    fig1 = plt.figure(figsize=[12,3], dpi=120)
+    fig1 = plt.figure(figsize=[12,3], dpi=144)
     gs   = gridspec.GridSpec(2, 2, width_ratios=[1,5])#, height_ratios=[1,1])
 
     ax0 = plt.subplot(gs[1,1])
@@ -416,7 +416,7 @@ if not args.noplots:
         ax1.scatter(gx[1:], gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
-    ax.errorbar(lkf.time, lkf.flux, yerr=lkf.flux_err, fmt='-ok', ms=2, lw=1.5)
+    ax.errorbar(lkf.time, lkf.flux, yerr=lkf.flux_err, fmt='ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
