@@ -164,11 +164,10 @@ for i,f in enumerate(flux):
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
 if args.psf:
-    import tensorflow.compat.v1 as tf
+    import tensorflow as tf #tensorflow 1
     from vaneska.models import Gaussian
     from tqdm import tqdm
 
-    tf.disable_v2_behavior()
     nstars   = 1
     flux_psf = tf.Variable(np.ones(nstars)*np.nanmax(flux[0]), dtype=tf.float64)
     ferr_psf = tf.Variable(np.ones(nstars)*np.nanmax(errs[0]), dtype=tf.float64)
