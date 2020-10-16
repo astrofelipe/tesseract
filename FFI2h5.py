@@ -65,12 +65,18 @@ table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression
 for i,f in enumerate(tqdm(files)):
     if i % nprocs == rank:
         hdu  = fits.open(f, memmap=True)
+        print('open')
         dat1 = hdu[1].data
+        print('data1')
         dat2 = hdu[2].data
+        print('data2')
 
         dset[i:i+1] = np.expand_dims(dat1, axis=0)
+        print('write1')
         derr[i:i+1] = np.expand_dims(dat2, axis=0)
+        print('write2')
         table[:,i] = make_table(f)
+        print('writet')
 
         hdu.close()
         del hdu, dat1, dat2
