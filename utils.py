@@ -10,7 +10,7 @@ from astropy.wcs import WCS
 from astropy.coordinates import SkyCoord
 from astropy.nddata.utils import Cutout2D
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
-    
+
 def dilution_factor(m_primary, m_comp, sep, pixscale=21):
     fac  = 10**((m_primary - m_comp)/2.5) * np.exp(-1.68*sep/pixscale)
     dfac = 1/(1+np.sum(fac))
@@ -76,8 +76,8 @@ def FFICut(ffis, x, y, size):
         x      = int(x)
         y      = int(y)
 
-        aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
-        aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+        aflux  = np.squeeze(ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1])
+        aerrs  = np.squeeze(ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1])
 
         boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
