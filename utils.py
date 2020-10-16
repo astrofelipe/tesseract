@@ -70,7 +70,7 @@ def detrender(t, y, yerr):
 '''
 
 def FFICut(ffis, x, y, size):
-    with h5py.File(ffis, 'r') as ffis:
+    with h5py.File(ffis, 'r', libver='latest') as ffis:
 
         ncads  = len(ffis['FFIs'])
         x      = int(x)
