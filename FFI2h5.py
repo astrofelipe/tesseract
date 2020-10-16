@@ -22,6 +22,7 @@ args = parser.parse_args()
 allfiles  = np.sort(glob.glob(args.Folder + '*-%d-%d-*.fits' % (args.Camera, args.Chip)))[args.nstart:args.nstop]
 files     = allfiles[args.nstart:args.nstop]
 nfiles    = len(allfiles)
+print(nfiles)
 
 nprocs = MPI.COMM_WORLD.size
 rank   = MPI.COMM_WORLD.rank
