@@ -50,12 +50,12 @@ def get_data(f, ext=1):
 
 nx, ny = fits.getdata(files[0]).shape
 
-#output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
-output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
+output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
+#output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=True)#, compression='gzip')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=True)#, compression='gzip')
-table  = output.create_dataset('data', (4, nfiles), dtype='float64', chunks=True)#, compression='gzip')
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='gzip')
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip')
+table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='gzip')
 
 #dset[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f) for f in tqdm(files))
 #derr[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f, 2) for f in tqdm(files))
@@ -68,9 +68,9 @@ for i,f in enumerate(tqdm(files)):
         dat1 = hdu[1].data
         dat2 = hdu[2].data
 
-        dset[i] = dat1
-        derr[i] = dat2
-        table[:,i] = make_table(f)
+        dset[i:i+1] = np.expand_dims(dat1, axis=0)
+        derr[i:i+1] = np.expand_dims(dat2, axis=0)
+        table[:,i:i+1] = np.expand_dims(make_table(f), axis=0)
 
         hdu.close()
         del hdu, dat1, dat2
