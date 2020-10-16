@@ -53,9 +53,9 @@ nx, ny = fits.getdata(files[0]).shape
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64')#, compression='lzf')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64')#, compression='lzf')
-table  = output.create_dataset('data', (4, nfiles), dtype='float64')#, compression='lzf')
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='szip')
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='szip')
+table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='szip')
 
 #dset[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f) for f in tqdm(files))
 #derr[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f, 2) for f in tqdm(files))
