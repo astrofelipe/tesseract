@@ -22,7 +22,6 @@ args = parser.parse_args()
 allfiles  = np.sort(glob.glob(args.Folder + '*-%d-%d-*.fits' % (args.Camera, args.Chip)))[args.nstart:args.nstop]
 files     = allfiles[args.nstart:args.nstop]
 nfiles    = len(allfiles)
-print(nfiles)
 
 nprocs = MPI.COMM_WORLD.size
 rank   = MPI.COMM_WORLD.rank
@@ -54,8 +53,8 @@ nx, ny = fits.getdata(files[0]).shape
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64')#, compression='lzf')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64')#, compression='lzf')
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(nfiles, 32, 32))#, compression='lzf')
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(nfiles, 32, 32))#, compression='lzf')
 table  = output.create_dataset('data', (4, nfiles), dtype='float64')#, compression='lzf')
 
 #dset[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f) for f in tqdm(files))
