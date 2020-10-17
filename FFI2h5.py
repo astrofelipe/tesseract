@@ -70,7 +70,7 @@ for i,f in enumerate(tqdm(files)):
 
         dset[i:i+1] = np.expand_dims(dat1, axis=0)
         derr[i:i+1] = np.expand_dims(dat2, axis=0)
-        table[:,i:i+1] = make_table(f)
+        table[:,i] = make_table(f)
 
         hdu.close()
         del hdu, dat1, dat2
