@@ -40,31 +40,19 @@ def make_table(f):
 
     return ti,tf,b,q
 
-def get_data(f, ext=1):
-    hdu = fits.open(f, memmap=args.nomemmap)
-    dat = hdu[ext].data
-    hdu.close()
-    del hdu
-    return np.array(dat)
-
 
 nx, ny = fits.getdata(files[0]).shape
 
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(1, 32, 32))#, compression='lzf')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(1, 32, 32))#, compression='lzf')
-table  = output.create_dataset('data', (4, nfiles), dtype='float64')#, compression='lzf')
-
-#dset[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f) for f in tqdm(files))
-#derr[args.nstart:args.nstop] = Parallel(n_jobs=args.ncpu)(delayed(get_data)(f, 2) for f in tqdm(files))
-#dset[args.nstart:args.nstop] = [get_data(f) for f in tqdm(files)]
-#derr[args.nstart:args.nstop] = [get_data(f, 2) for f in tqdm(files)]
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(1, 32, 32), compression='lzf')
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(1, 32, 32), compression='lzf')
+table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='lzf')
 
 for i,f in enumerate(tqdm(files)):
     if i % nprocs == rank:
-        hdu  = fits.open(f, memmap=True)
+        hdu  = fits.open(f, memmap=args.nomemmap)
         dat1 = hdu[1].data
         dat2 = hdu[2].data
 
