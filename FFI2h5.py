@@ -43,12 +43,12 @@ def make_table(f):
 
 nx, ny = fits.getdata(files[0]).shape
 
-output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
-#output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest', driver='mpio', comm=MPI.COMM_WORLD)
+#output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
+output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nx, ny, nfiles), dtype='float64', chunks=(16, 16, nfiles), compression='lzf')
-derr   = output.create_dataset('errs', (nx, ny, nfiles), dtype='float64', chunks=(16, 16, nfiles), compression='lzf')
-table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='lzf')
+dset   = output.create_dataset('FFIs', (nx, ny, nfiles), dtype='float64', chunks=(16, 16, nfiles))#, compression='lzf')
+derr   = output.create_dataset('errs', (nx, ny, nfiles), dtype='float64', chunks=(16, 16, nfiles))#, compression='lzf')
+table  = output.create_dataset('data', (4, nfiles), dtype='float64')#, compression='lzf')
 
 for i,f in enumerate(tqdm(files)):
     if i % nprocs == rank:
