@@ -54,9 +54,6 @@ else:
     tics    = np.array(catalog['ID'])
     ra      = np.array(catalog['ra'])
     dec     = np.array(catalog['dec'])
-    #print(ra, dec)
-    #_, _, _, _, cam, ccd, _, _, _ = ts2p(tics, ra, dec)#, trySector=np.ones(len(ra))*args.Sector)
-    #print(cam, ccd)
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
@@ -155,11 +152,6 @@ def make_lc(tic, ra, dec):
         ax.plot(xi, yi, color='lime', lw=1.25)
 
     ax.plot(x, y, '.r')
-    #ax.set_axis_off()
-    #extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-    #fig.tight_layout()
-    #fig.axes.get_xaxis().set_visible(False)
-    #fig.axes.get_yaxis().set_visible(False)
     plt.axis('off')
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
     fig.savefig('img/TIC%s.png' % tic, dpi=72)
@@ -180,6 +172,7 @@ for i in range(len(tics)):
         make_lc(tics[i], ra[i], dec[i])
         print(tics[i])
     except:
+        print('FAIL!')
         continue
 
 for h in h5s:
