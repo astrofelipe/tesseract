@@ -49,7 +49,9 @@ def FFICut(ffis, x, y, size):
     x      = int(x)
     y      = int(y)
 
+    print('Load 1')
     aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    print('Load 2')
     aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
@@ -71,10 +73,12 @@ def FFICut(ffis, x, y, size):
     return TPF
 
 def make_lc(tic, ra, dec):
+    print('Calculando Camara y CCD')
     _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 
     idx = (cam[0]-1)*4 + (ccd[0]-1)
 
+    print('Leyendo Header')
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
     ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
@@ -83,6 +87,7 @@ def make_lc(tic, ra, dec):
     w   = WCS(hdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
+    print('Leyendo hdf5')
     allhdus = FFICut(h5, y, x, args.size)
     hdus    = allhdus.hdu
 
@@ -92,6 +97,7 @@ def make_lc(tic, ra, dec):
     errs = hdus[1].data['FLUX_ERR'][q]
     bkgs = np.zeros(len(flux))
 
+    print('Calculando Background')
     for i,f in enumerate(flux):
         sigma_clip = SigmaClip(sigma=3)
         bkg        = MMMBackground(sigma_clip=sigma_clip)
@@ -125,6 +131,7 @@ def make_lc(tic, ra, dec):
     output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 
     np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
+    print('LC READY!')
 
     #Save JPG preview
     stamp = flux - bkgs[:,None,None]
