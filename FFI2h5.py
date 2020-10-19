@@ -46,8 +46,8 @@ nx, ny = fits.getdata(files[0]).shape
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(64, 16, 16), compression='lzf')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(64, 16, 16), compression='lzf')
+dset   = output.create_dataset('FFIs', (nx, ny, nfiles), dtype='float64', chunks=(64, 64, nfiles), compression='lzf')
+derr   = output.create_dataset('errs', (nx, ny, nfiles), dtype='float64', chunks=(64, 64, nfiles), compression='lzf')
 table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='lzf')
 
 for i,f in enumerate(tqdm(files)):
@@ -56,8 +56,8 @@ for i,f in enumerate(tqdm(files)):
         dat1 = hdu[1].data
         dat2 = hdu[2].data
 
-        dset[i:i+1] = np.expand_dims(dat1, axis=0)
-        derr[i:i+1] = np.expand_dims(dat2, axis=0)
+        dset[:,:,i:i+1] = np.expand_dims(dat1, axis=0)
+        derr[:,:,i:i+1] = np.expand_dims(dat2, axis=0)
         table[:,i] = make_table(f)
 
         hdu.close()
