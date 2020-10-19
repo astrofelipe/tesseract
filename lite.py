@@ -50,9 +50,9 @@ def FFICut(ffis, x, y, size):
     y      = int(y)
 
     print('Load 1')
-    aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    aflux  = ffis['FFIs'][0:ncads, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
     print('Load 2')
-    aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    aerrs  = ffis['errs'][0:ncads, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
