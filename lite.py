@@ -34,7 +34,7 @@ rank = MPI.COMM_WORLD.rank
 size = MPI.COMM_WORLD.size
 
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
-h5s = [h5py.File(f, 'r') for f in fs]
+h5s = [h5py.File(f, 'r', libver='latest') for f in fs]
 
 if args.Targets[-3:] == 'pkl':
     import pickle
