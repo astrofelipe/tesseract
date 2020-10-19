@@ -36,24 +36,10 @@ size = MPI.COMM_WORLD.size
 fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
 h5s = [h5py.File(f, 'r', libver='latest') for f in fs]
 
-if args.Targets[-3:] == 'pkl':
-    import pickle
-    f = open(args.Targets, 'rb')
-    d = pickle.load(f)
-    tics = np.array([int(item) for item in d.keys()])
-
-    svals = np.array([list(item.values()) for item in d.values()]).astype(bool)
-    smask = svals[:,args.Sector-1]
-
-    if args.output:
-        np.savetxt('targets_s%04d.txt' % args.Sector, tics[smask], fmt='%s')
-
-
-else:
-    catalog = pd.read_csv(args.Targets, names=['ID', 'ra', 'dec', 'Tmag'], skiprows=1)
-    tics    = np.array(catalog['ID'])
-    ra      = np.array(catalog['ra'])
-    dec     = np.array(catalog['dec'])
+catalog = pd.read_csv(args.Targets, names=['ID', 'ra', 'dec', 'Tmag'], skiprows=1)
+tics    = np.array(catalog['ID'])
+ra      = np.array(catalog['ra'])
+dec     = np.array(catalog['dec'])
 
 color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'lightcyan')
 
@@ -62,7 +48,9 @@ def FFICut(ffis, x, y, size):
     x      = int(x)
     y      = int(y)
 
+    print('Load1')
     aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    print('Load2')
     aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
