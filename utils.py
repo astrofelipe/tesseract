@@ -76,8 +76,8 @@ def FFICut(ffis, x, y, size):
         x      = int(x)
         y      = int(y)
 
-        aflux  = np.transpose(ffis['FFIs'], axes=[2,0,1])[:, x-size//2:x+size//2+1, y-size//2:y+size//2+1])
-        aerrs  = np.transpose(ffis['errs'], axes=[2,0,1])[:, x-size//2:x+size//2+1, y-size//2:y+size//2+1])
+        aflux  = np.transpose(ffis['FFIs'], axes=[2,0,1])[:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+        aerrs  = np.transpose(ffis['errs'], axes=[2,0,1])[:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
         boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
