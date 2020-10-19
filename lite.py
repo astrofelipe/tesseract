@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 from utils import pixel_border
 from mpi4py import MPI
 from astropy.utils.console import color_print
@@ -48,14 +49,13 @@ def FFICut(ffis, x, y, size):
     x      = int(x)
     y      = int(y)
 
-    print('Load1')
     aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
-    print('Load2')
     aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
-    for i,f in enumerate(aflux):
+    #for i,f in enumerate(aflux):
+    for i,f in enumerate(tqdm(aflux)):
         ti = ffis['data'][0,i]
         tf = ffis['data'][1,i]
         b  = ffis['data'][2,i]
