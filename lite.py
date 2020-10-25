@@ -185,6 +185,8 @@ else:
             continue
 
         _, _, _, _, ccam, cccd, _, _, _ = ts2p(tic, ra[i], dec[i], trySector=args.Sector)
+        ccam = ccam[0]
+        cccd = cccd[0]
 
         if (ccam!=cam) or (cccd!=ccd):
             continue
