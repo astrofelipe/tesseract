@@ -177,6 +177,7 @@ if not args.sixteen:
 else:
     cam = 1 + (rank // 4)
     ccd = 1 + (rank % 4)
+    print('Iniciando camara %d y CCD %d' % (cam,ccd))
     h5f = '/horus/TESS/FFI/s%04d/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Sector, cam, ccd)
     h5  = h5py.File(h5f, 'r', libver='latest')
 
