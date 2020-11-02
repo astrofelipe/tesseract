@@ -87,7 +87,7 @@ def make_lc(tic, ra=None, dec=None, process=None):
     x,y = w.all_world2pix(ra, dec, 0)
 
     print('Leyendo hdf5')
-    allhdus = FFICut(h5, y, x, args.size)
+    allhdus = FFICut(h5, x, y, args.size)
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
