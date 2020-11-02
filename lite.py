@@ -64,7 +64,7 @@ def FFICut(ffis, x, y, size):
     print(x1,x2,y1,y2)
     print(aflux.shape, aerrs.shape, size)
 
-    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=aflux.shape[0], n_cols=aflux.shape[1])
+    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=aflux.shape[1], n_cols=aflux.shape[2])
 
     #for i,f in enumerate(aflux):
     for i,f in enumerate(tqdm(aflux)):
