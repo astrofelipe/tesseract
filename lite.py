@@ -52,6 +52,7 @@ def FFICut(ffis, x, y, size):
     print('Load 2')
     aerrs  = ffis['errs'][0:ncads, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
+    print(x-size//2, x+size//2+1, y-size//2,y+size//2+1)
     print(aflux.shape, aerrs.shape, size)
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
@@ -87,7 +88,7 @@ def make_lc(tic, ra=None, dec=None, process=None):
     x,y = w.all_world2pix(ra, dec, 0)
 
     print('Leyendo hdf5')
-    allhdus = FFICut(h5, x, y, args.size)
+    allhdus = FFICut(h5, y, x, args.size)
     hdus    = allhdus.hdu
 
     qual = hdus[1].data['QUALITY'] == 0
