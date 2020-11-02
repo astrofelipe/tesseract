@@ -44,15 +44,24 @@ color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'light
 
 def FFICut(ffis, x, y, size):
     ncads  = len(ffis['FFIs'])
+
     x      = int(x)
     y      = int(y)
 
-    print('Load 1')
-    aflux  = ffis['FFIs'][0:ncads, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
-    print('Load 2')
-    aerrs  = ffis['errs'][0:ncads, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
+    xshape = ffis['FFIs'].shape[1]
+    yshape = ffis['FFIs'].shape[2]
 
-    print(x-size//2, x+size//2+1, y-size//2,y+size//2+1)
+    x1 = np.max([0, x-size//2])
+    x2 = np.min([xshape, x+size//2+1])
+    y1 = np.max([0, y-size//2])
+    y2 = np.min([yshape, y+size//2+1])
+
+    print('Load 1')
+    aflux  = ffis['FFIs'][0:ncads, x1:x2, y1:y2]
+    print('Load 2')
+    aerrs  = ffis['errs'][0:ncads, x1:x2, y1:y2]
+
+    print(x1,x2,y1,y2)
     print(aflux.shape, aerrs.shape, size)
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
