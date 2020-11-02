@@ -44,6 +44,7 @@ color_print('Trying %d targets for Sector %d' % (len(tics), args.Sector), 'light
 
 def FFICut(ffis, x, y, size):
     ncads  = len(ffis['FFIs'])
+    print(ncads)
     x      = int(x)
     y      = int(y)
 
