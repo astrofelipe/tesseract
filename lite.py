@@ -222,15 +222,14 @@ else:
             bkgs[i]    = bkg.calc_background(f)
 
         #DBSCAN Aperture
-        x = x - int(x) + args.size//2
-        y = y - int(y) + args.size//2
-        print(x,y)
+        x = x - int(x) + flux.shape[1]//2
+        y = y - int(y) + flux.shape[2]//2
 
         if not args.circ:
             daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,2,3,4,5]]
             dap  = np.array([select_aperture(d, x, y) for d in daps])
         else:
-            XX, YY = np.ogrid[:args.size, :args.size]
+            XX, YY = np.ogrid[:flux.shape[1], :flux.shape[2]]
             dap    = [np.sqrt((XX-y)**2 + (YY-x)**2) < i for i in np.arange(1,3.1,0.5)]
 
         #Aperture photometry
@@ -250,7 +249,6 @@ else:
         output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 
         np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
-        print('eaea')
 
         #Save JPG preview
         stamp = flux - bkgs[:,None,None]
