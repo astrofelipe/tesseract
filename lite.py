@@ -187,7 +187,8 @@ else:
     h5f = '/horus/TESS/FFI/s%04d/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Sector, cam, ccd)
     h5  = h5py.File(h5f, 'r', libver='latest')
 
-    for i,tic in enumerate(tqdm(tics)):
+    #for i,tic in enumerate(tqdm(tics)):
+    for i,tic in enumerate(tics):
         if os.path.isfile('TIC%d.dat' % tic):
             continue
 
@@ -269,4 +270,8 @@ else:
 
         plt.close(fig)
         del(fig,ax)
+
+        if i%20==0:
+            print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
+
     h5.close()
