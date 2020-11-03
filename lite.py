@@ -61,8 +61,7 @@ def FFICut(ffis, x, y, size):
 
     boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=aflux.shape[1], n_cols=aflux.shape[2])
 
-    #for i,f in enumerate(aflux):
-    for i,f in enumerate(tqdm(aflux)):
+    for i,f in enumerate(aflux):
         ti = ffis['data'][0,i]
         tf = ffis['data'][1,i]
         b  = ffis['data'][2,i]
@@ -188,7 +187,7 @@ else:
     h5f = '/horus/TESS/FFI/s%04d/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Sector, cam, ccd)
     h5  = h5py.File(h5f, 'r', libver='latest')
 
-    for i,tic in enumerate(tics):
+    for i,tic in enumerate(tqdm(tics)):
         if os.path.isfile('TIC%d.dat' % tic):
             continue
 
