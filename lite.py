@@ -191,7 +191,7 @@ else:
     #for i,tic in enumerate(tqdm(tics)):
     for i,tic in enumerate(tics):
         if i%20==0:
-            print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
+            print('%d curvas procesadas en Camara %d / CCD %d (Total: %d / App: %d)' % (i, cam, ccd, len(tics), len(tics)//16))
             sys.stdout.flush()
 
         if os.path.isfile('TIC%d.dat' % tic):
@@ -220,7 +220,7 @@ else:
         errs = hdus[1].data['FLUX_ERR'][q]
         bkgs = np.zeros(len(flux))
 
-        print('Calculando Background')
+        #print('Calculando Background')
         for i,f in enumerate(flux):
             sigma_clip = SigmaClip(sigma=3)
             bkg        = MMMBackground(sigma_clip=sigma_clip)
