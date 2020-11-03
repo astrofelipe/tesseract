@@ -198,6 +198,9 @@ else:
         cccd = cccd[0]
 
         if (ccam!=cam) or (cccd!=ccd):
+            if i%20==0:
+                print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
+                sys.stdout.flush()
             continue
 
         q   = h5['data'][3] == 0
