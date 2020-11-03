@@ -191,10 +191,10 @@ else:
     h5  = h5py.File(h5f, 'r', libver='latest')
 
     #for i,tic in enumerate(tqdm(tics)):
-    for i,tic in enumerate(tics):
-        if i%20==0:
-            print('%d curvas procesadas en Camara %d / CCD %d (Total: %d / App: %d)' % (i, cam, ccd, len(tics), len(tics)//16))
-            sys.stdout.flush()
+    for i,tic in enumerate(tqdm(tics)):
+        #if i%20==0:
+        #    print('%d curvas procesadas en Camara %d / CCD %d (Total: %d / App: %d)' % (i, cam, ccd, len(tics), len(tics)//16))
+        #    sys.stdout.flush()
 
         if os.path.isfile('TIC%d.dat' % tic):
             continue
