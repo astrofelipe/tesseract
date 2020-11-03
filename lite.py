@@ -229,6 +229,7 @@ else:
         #DBSCAN Aperture
         x = x - int(x) + args.size//2
         y = y - int(y) + args.size//2
+        print(x,y)
 
         if not args.circ:
             daps = [generate_aperture(flux - bkgs[:,None,None], n=i) for i in [1,2,3,4,5]]
