@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
-mpl.use('GTKAgg')
+mpl.use('GTK3Agg')
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils import pixel_border
