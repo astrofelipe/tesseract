@@ -6,8 +6,10 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-import matplotlib as mpl
-mpl.use('GTK3Agg')
+#import matplotlib as mpl
+#mpl.use('GTK3Agg')
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils import pixel_border
@@ -271,7 +273,9 @@ else:
         ax.plot(x, y, '.r')
         plt.axis('off')
         fig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
-        fig.savefig('img/TIC%s.png' % tic, dpi=72)
+        canvas = FigureCanvas(fig)
+        canvas.print_figure('img/TIC%s.png' % tic, dpi=72)
+        #fig.savefig('img/TIC%s.png' % tic, dpi=72)
 
         plt.close(fig)
         del(fig,ax)
