@@ -250,6 +250,7 @@ else:
         output = np.transpose([time, lkf.flux, lkf.flux_err, inst])
 
         np.savetxt('TIC%s.dat' % tic, output, fmt='%s')
+        print('eaea')
 
         #Save JPG preview
         stamp = flux - bkgs[:,None,None]
