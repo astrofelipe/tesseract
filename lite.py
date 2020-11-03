@@ -268,7 +268,7 @@ else:
 
         xm, ym = pixel_border(dap[bidx])
         for xi,yi in zip(xm, ym):
-            ax.plot(xi, yi, color='lime', lw=1.25)
+            ax.plot(xi-.5, yi-.5, color='lime', lw=1.25)
 
         ax.plot(x, y, '.r')
         plt.axis('off')
