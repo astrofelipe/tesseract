@@ -190,6 +190,10 @@ else:
 
     #for i,tic in enumerate(tqdm(tics)):
     for i,tic in enumerate(tics):
+        if i%20==0:
+            print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
+            sys.stdout.flush()
+
         if os.path.isfile('TIC%d.dat' % tic):
             continue
 
@@ -198,9 +202,6 @@ else:
         cccd = cccd[0]
 
         if (ccam!=cam) or (cccd!=ccd):
-            if i%20==0:
-                print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
-                sys.stdout.flush()
             continue
 
         q   = h5['data'][3] == 0
@@ -274,9 +275,5 @@ else:
 
         plt.close(fig)
         del(fig,ax)
-
-        if i%20==0:
-            print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
-            sys.stdout.flush()
 
     h5.close()
