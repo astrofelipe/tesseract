@@ -6,8 +6,8 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-#import matplotlib as mpl
-#mpl.use('GTK3Agg')
+import matplotlib as mpl
+mpl.use('GTK3Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
