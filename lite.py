@@ -255,7 +255,7 @@ else:
         stamp = flux - bkgs[:,None,None]
         fig, ax = plt.subplots(figsize=[4,4])
         fig.patch.set_visible(False)
-        stamp = np.log10(np.nanmedian(stamp[::10], axis=0))
+        stamp = np.log10(np.nanmedian(stamp[::25], axis=0))
         stamp[np.isnan(stamp)] = np.nanmedian(stamp)
 
         ax.matshow(stamp, cmap='gist_gray', aspect='equal')
