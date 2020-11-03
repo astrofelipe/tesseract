@@ -3,6 +3,7 @@ import h5py
 import argparse
 import glob
 import os
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
@@ -273,5 +274,6 @@ else:
 
         if i%20==0:
             print('%d curvas procesadas en Camara %d / CCD %d' % (i, cam, ccd))
+            sys.stdout.flush()
 
     h5.close()
