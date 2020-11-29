@@ -11,7 +11,7 @@ from eveport import PLD, PLD2
 from lightkurve.lightcurve import TessLightCurve
 from utils import mask_planet, FFICut, pixel_border, dilution_factor
 from autoap import generate_aperture, select_aperture
-from photutils import MMMBackground
+from photutils import SExtractorBackground
 from astropy.utils.console import color_print
 from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip, mad_std
@@ -151,8 +151,8 @@ if args.manualap is not None:
 
 #Background
 for i,f in enumerate(flux):
-    sigma_clip = SigmaClip(sigma=3)
-    bkg        = MMMBackground(sigma_clip=sigma_clip)
+    sigma_clip = SigmaClip(sigma=1)
+    bkg        = SExtractorBackground(sigma_clip=sigma_clip)
     bkgs[i]    = bkg.calc_background(f) if args.manualap is None else bkg.calc_background(f[~theap])
     mad_bkg    = mad_std(f)
     berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)

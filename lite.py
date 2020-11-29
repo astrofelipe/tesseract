@@ -19,7 +19,7 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
 from astropy.stats import SigmaClip
-from photutils import MMMBackground
+from photutils import SExtractorBackground
 from autoap import generate_aperture, select_aperture
 from lightkurve.lightcurve import TessLightCurve
 from tess_stars2px import tess_stars2px_function_entry as ts2p
@@ -106,8 +106,8 @@ def make_lc(tic, ra=None, dec=None, process=None):
 
     print('Calculando Background')
     for i,f in enumerate(flux):
-        sigma_clip = SigmaClip(sigma=3)
-        bkg        = MMMBackground(sigma_clip=sigma_clip)
+        sigma_clip = SigmaClip(sigma=1)
+        bkg        = SExtractorBackground(sigma_clip=sigma_clip)
         bkgs[i]    = bkg.calc_background(f)
 
     #DBSCAN Aperture
@@ -224,8 +224,8 @@ else:
 
         #print('Calculando Background')
         for i,f in enumerate(flux):
-            sigma_clip = SigmaClip(sigma=3)
-            bkg        = MMMBackground(sigma_clip=sigma_clip)
+            sigma_clip = SigmaClip(sigma=1)
+            bkg        = SExtractorBackground(sigma_clip=sigma_clip)
             bkgs[i]    = bkg.calc_background(f)
 
         #DBSCAN Aperture
