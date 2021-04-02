@@ -84,7 +84,8 @@ eclim = {'s0001': [[271, 361], [-90, 0]],
          's0029': [[290, 400], [-90, 0]],
          's0030': [[325, 425], [-90, 0]],
          's0031': [[355, 450], [-90, 0]],
-         's0032': [[22, 120], [-90, 0]]}
+         's0032': [[22, 120], [-90, 0]],
+         's0033': [[50, 150], [-90, 0]]}
 
 elo, ela = eclim[sec]
 print(elo,ela)
@@ -139,7 +140,7 @@ supercata1 = Parallel(n_jobs=args.ncpu)(delayed(gocat)(i,j,im) for im in tqdm(ra
                                                                for j in range(len(eclas) - 1))
 
 #Search pole only if southern hemisphere
-if args.Sector < 14:
+if (args.Sector < 14) or (args.Sector > 26):
     print('\nScanning... (2/%d)' % tots)
     #Pole
     eclos = np.arange(0, 361, 5)
