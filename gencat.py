@@ -154,7 +154,7 @@ if (args.Sector < 14) or (args.Sector > 26):
 
 
     print(supercata1, supercata2)
-    help(supercata)
+    help(supercata1)
     print(supercata1.keys, supercata2.keys())
     supercata = vstack([supercata1, supercata2])#, silent=True)
 
