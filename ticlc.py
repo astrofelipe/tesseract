@@ -40,6 +40,7 @@ parser.add_argument('--cleaner', action='store_true', help='Removes saturated ba
 parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
 parser.add_argument('--pngstamp', type=str, default=None, help='Saves the postage stamp as png (input "full" or "minimal")')
 parser.add_argument('--pngzoom', type=float, default=1, help='Zoom for --pngstamp')
+parser.add_argument('--pngtitle', type=str, default=None, help='Overrides TIC number for the title (useful for TOIs)')
 parser.add_argument('--gaia', action='store_true', help='Shows Gaia sources on stamps')
 parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia magnitude to consider')
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
@@ -54,6 +55,8 @@ iP, it0, idur = args.mask_transit
 plt.rcParams['font.family']     = 'serif'
 plt.rcParams['xtick.labelsize'] = 8
 plt.rcParams['ytick.labelsize'] = 8
+
+targettitle = 'TIC %s' % args.TIC if args.pngtitle is not None else args.pngtitle
 
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
@@ -472,7 +475,7 @@ if args.pngstamp is not None:
         cbar.set_label('log(Flux)', fontsize=8)
 
         if args.gaia:
-            sax.text(0.25, 1.15, 'TIC %s' % args.TIC, transform=sax.transAxes, fontsize=8, ha='center', va='bottom')
+            sax.text(0.25, 1.15, '%s' % targettitle, transform=sax.transAxes, fontsize=8, ha='center', va='bottom')
             sax.text(0.25,1.025,'Sector: %02d\nCam:     %d\nCCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
 
             import matplotlib.patheffects as path_effects
@@ -488,7 +491,7 @@ if args.pngstamp is not None:
         else:
             #sax.text(0.5, 0.9, 'TIC %s' % args.TIC, transform=sfig.transFigure, fontsize=8, ha='center', va='bottom')
             #sax.text(0.25,1.025,'Sector: %02d / Cam:     %d / CCD:     %d' % (args.Sector, cam, ccd), fontsize=6, transform=sax.transAxes, ha='center', va='bottom', ma='left')
-            sax.set_title('TIC %s\nSector: %02d / Cam: %d / CCD: %d' % (args.TIC, args.Sector, cam, ccd), fontsize=8, pad=0)
+            sax.set_title('%s\nSector: %02d / Cam: %d / CCD: %d' % (targettitle, args.Sector, cam, ccd), fontsize=8, pad=0)
 
 
 
@@ -502,7 +505,7 @@ if args.pngstamp is not None:
         sax.set_xlim(column + int(x) - pngsize, column + int(x) + pngsize)
         sax.set_ylim(row + int(y) - pngsize, row + int(y) + pngsize)
 
-    sfig.savefig('TIC%s_%02d_%s.pdf' % (args.TIC, args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
+    sfig.savefig('%s_%02d_%s.pdf' % (targettitle.replace(" ", ""), args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
 
 if args.animation.lower() == 'outreach':
     from tsani import Outreach
@@ -524,7 +527,7 @@ elif args.animation.lower() == 'talk':
 
 inst   = np.repeat('TESS', len(lkf.time))
 output = np.transpose([lkf.time, lkf.flux, lkf.flux_err, inst])
-np.savetxt('TIC%s_%02d.dat' % (args.TIC, args.Sector), output, fmt='%s')
+np.savetxt('%s_%02d.dat' % (targettitle.replace(" ", ""), args.Sector), output, fmt='%s')
 
 if args.folder is None:
     os.system('rm tesscut/*%.6f*' % ra)

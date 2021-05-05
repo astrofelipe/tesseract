@@ -1,6 +1,6 @@
 #import celerite
 import numpy as np
-import h5py
+import h5py #Maybe separate this, as a lot of utils can work without ever using h5py or local files
 from tqdm import tqdm
 #from celerite import terms
 from scipy.optimize import minimize
@@ -9,7 +9,7 @@ from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.coordinates import SkyCoord
 from astropy.nddata.utils import Cutout2D
-from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
+from lightkurve.targetpixelfile import TargetPixelFileFactory
 
 def dilution_factor(m_primary, m_comp, sep, pixscale=21):
     fac  = 10**((m_primary - m_comp)/2.5) * np.exp(-1.68*sep/pixscale)
@@ -81,7 +81,7 @@ def FFICut(ffis, x, y, size):
         aflux  = ffis['FFIs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
         aerrs  = ffis['errs'][:, x-size//2:x+size//2+1, y-size//2:y+size//2+1]
 
-        boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
+        boxing = TargetPixelFileFactory(n_cadences=ncads, n_rows=size, n_cols=size)
 
         for i,f in enumerate(tqdm(aflux)):
             ti = ffis['data'][0,i]
