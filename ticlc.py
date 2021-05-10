@@ -106,10 +106,10 @@ if args.folder is not None:
 
     #I wonder why 1 pix offset?
     #At least this gives you back the same pixels as using TESSCut
-    hdus = FFICut(ffis, ey, ex-1, args.size).hdu
+    hdus = FFICut(ffis, ey, ex, args.size).hdu
 
     if args.pld:
-        hdu_pld = FFICut(ffis, ey, ex-1, 2*args.size).hdu
+        hdu_pld = FFICut(ffis, ey, ex, 2*args.size).hdu
 
     #Row and column numbers start at (1,1) this is only for plot purposes
     row    = int(ey - args.size//2) + 1
