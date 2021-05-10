@@ -352,13 +352,17 @@ if args.gaia:
     gaiar     = gaiar[gma]
 
 
-    gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
-    print(gx,gy)
-
     goffsetx = ex if args.folder is not None else 0
     goffsety = ey if args.folder is not None else 0
 
-    gma2   = (gx >= 0 + goffsetx) & (gx <= args.size + goffsetx) & (gy >= 0 + goffsety) & (gy <= args.size + goffsety)
+
+    gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
+    gx -= goffsetx
+    gy -= goffsety
+    print(gx,gy)
+
+
+    gma2   = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
     gx, gy = gx[gma2], gy[gma2]
     gsep   = gsep[gma2]
     grpmag = grpmag[gma2]
