@@ -110,7 +110,7 @@ if args.folder is not None:
     ey  = int(y-args.size/2)
     row = y
     column = x
-    x,y = x-ex, y-ey
+    x,y = x-ex+.5, y-ey+.5
 
 #Online mode
 else:
