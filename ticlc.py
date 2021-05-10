@@ -106,8 +106,8 @@ if args.folder is not None:
     if args.pld:
         hdu_pld = FFICut(ffis, y, x, 2*args.size).hdu
 
-    ex  = int(x-10.5)
-    ey  = int(y-10.5)
+    ex  = int(x-args.size/2)
+    ey  = int(y-args.size/2)
     row = y
     column = x
     x,y = x-ex, y-ey
@@ -355,13 +355,16 @@ if args.gaia:
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
     print(gx,gy)
 
-    gma2   = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
+    goffsetx = ex if args.local else 0
+    goffsety = ey if args.local else 0
+
+    gma2   = (gx >= 0 + goffsetx) & (gx <= args.size + goffsetx) & (gy >= 0 + goffsety) & (gy <= args.size + goffsety)
     gx, gy = gx[gma2], gy[gma2]
     gsep   = gsep[gma2]
     grpmag = grpmag[gma2]
 
     color_print('Nearby sources:\n', 'cyan')
-    gaiaresume = gaiar#[gma2]
+    gaiaresume = gaiar[gma2]
     gaiaresume['label'] = np.arange(len(grpmag))
     gresume = gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
     print(gresume)
