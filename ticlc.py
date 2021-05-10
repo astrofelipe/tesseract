@@ -364,10 +364,12 @@ if args.gaia:
     gsep      = gaiar['dist'][gma]*3600
     gaiar     = gaiar[gma]
 
-    #goffsetx = ex if args.folder is not None else 0
-    #goffsety = ey if args.folder is not None else 0
+    goffsetx = column if args.folder is not None else 0
+    goffsety = row if args.folder is not None else 0
 
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
+    gx -= goffsetx
+    gy -= goffsety
 
     print(gx,gy)
 
