@@ -112,8 +112,8 @@ if args.folder is not None:
         hdu_pld = FFICut(ffis, ey, ex-1, 2*args.size).hdu
 
     #Row and column numbers start at (1,1) this is only for plot purposes
-    row    = int(ey - args.size/2) + 1
-    column = int(ex - args.size/2) + 1
+    row    = int(ey - args.size//2) + 1
+    column = int(ex - args.size//2) + 1
 
     x,y    = ex - column + .5, ey - row + .5 #The .5 is explained in Online mode
 
