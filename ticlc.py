@@ -341,8 +341,9 @@ if args.gaia:
     from astroquery.gaia import Gaia
     Gaia.ROW_LIMIT = -1
 
-    gaiawh = u.Quantity(21*args.size, u.arcsec)
+    gaiawh = u.Quantity(21*args.size*np.sqrt(2)/2, u.arcsec)
     gaiar  = Gaia.cone_search_async(coord, gaiawh).get_results()
+    #gaiar  = Gaia.query_object_async(coord, width=gaiawh, height=gaiawh)
 
     gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag*u.mag
     gra, gdec = gaiar['ra'][gma], gaiar['dec'][gma]
@@ -350,14 +351,17 @@ if args.gaia:
     gsep      = gaiar['dist'][gma]*3600
     gaiar     = gaiar[gma]
 
+
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
-    gma2 = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
+    print(gx,gy)
+
+    gma2   = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
     gx, gy = gx[gma2], gy[gma2]
     gsep   = gsep[gma2]
     grpmag = grpmag[gma2]
 
     color_print('Nearby sources:\n', 'cyan')
-    gaiaresume = gaiar[gma2]
+    gaiaresume = gaiar#[gma2]
     gaiaresume['label'] = np.arange(len(grpmag))
     gresume = gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
     print(gresume)
