@@ -1,5 +1,5 @@
 from sklearn.cluster import DBSCAN
-from skimage.morphology import watershed
+from skimage.segmentation import watershed
 from astropy.stats import mad_std
 import scipy.ndimage as ndi
 import numpy as np

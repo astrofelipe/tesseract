@@ -17,6 +17,7 @@ from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip, mad_std
 from astropy.wcs import WCS
 from astropy.io import fits
+from astropy.visualization import time_support
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
@@ -56,17 +57,18 @@ plt.rcParams['font.family']     = 'serif'
 plt.rcParams['xtick.labelsize'] = 8
 plt.rcParams['ytick.labelsize'] = 8
 
-targettitle = 'TIC %s' % args.TIC if args.pngtitle is not None else args.pngtitle
-
 if len(args.TIC) < 2:
     from astroquery.mast import Catalogs
+
     args.TIC = int(args.TIC[0])
+    targettitle = 'TIC %d' % args.TIC if args.pngtitle is None else args.pngtitle
+
     if args.overwrite and os.path.isfile('TIC%d_%02d.dat' % (args.TIC, args.Sector)):
         import sys
         color_print('Skipping TIC %d' % args.TIC, 'lightred')
         sys.exit()
 
-    color_print('TIC: ', 'lightcyan', args.TIC, 'default')
+    color_print('TIC: ', 'lightcyan', str(args.TIC), 'default')
     target = Catalogs.query_object('TIC %d' % args.TIC, radius=0.05, catalog='TIC')
 
 
@@ -76,7 +78,7 @@ if len(args.TIC) < 2:
 else:
     ra, dec = args.TIC
 
-color_print('RA: ', 'lightcyan', ra, 'default', '\tDec: ', 'lightcyan', dec, 'default')
+color_print('RA: ', 'lightcyan', str(ra), 'default', '\tDec: ', 'lightcyan', str(dec), 'default')
 
 _, _, _, _, cam, ccd, _, _, _ = ts2p(0, ra, dec, trySector=args.Sector)
 cam = cam[0]
@@ -93,7 +95,7 @@ coord = SkyCoord(ra, dec, unit='deg')
 if args.folder is not None:
     color_print('Extracting data from FFIs...', 'lightcyan')
     fnames  = np.sort(glob.glob(args.folder + 'tess*s%04d-%d-%d*ffic.fits' % (args.Sector, cam, ccd)))
-    fhdr    = fits.getheader(fnames[5], 1)
+    fhdr    = fits.getheader(fnames[0], 1)
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     row     = np.nan
@@ -131,12 +133,12 @@ else:
     x  += 0.5
     y  += 0.5
 
-color_print('Sector: ', 'lightcyan', args.Sector, 'default',
-            '\tCamera: ', 'lightcyan', cam, 'default',
-            '\tCCD: ', 'lightcyan', ccd, 'default')
+color_print('Sector: ', 'lightcyan', str(args.Sector), 'default',
+            '\tCamera: ', 'lightcyan', str(cam), 'default',
+            '\tCCD: ', 'lightcyan', str(ccd), 'default')
 
-color_print('Pos X: ', 'lightcyan', x, 'default', '\tPos Y: ', 'lightcyan', y, 'default')
-color_print('CCD Row: ', 'lightcyan', row+x, 'default', '\tCCD Column: ', 'lightcyan', column+y, 'default')
+color_print('Pos X: ', 'lightcyan', str(x), 'default', '\tPos Y: ', 'lightcyan', str(y), 'default')
+color_print('CCD Row: ', 'lightcyan', str(row+x), 'default', '\tCCD Column: ', 'lightcyan', str(column+y), 'default')
 
 #Data type
 ma = hdus[1].data['QUALITY'] == 0
@@ -283,7 +285,7 @@ else:
     lkf  = lkf[bidx]
 
     color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ==0 else 'No. ' + str(bidx), 'default',
-                '\tNumber of pixels inside: ', 'lightcyan', dap[bidx].sum(), 'default')
+                '\tNumber of pixels inside: ', 'lightcyan', str(dap[bidx].sum()), 'default')
 
 
     #PCA
@@ -338,11 +340,12 @@ if args.cleaner:
 #Gaia sources and dilution factor
 if args.gaia:
     from astroquery.gaia import Gaia
+    Gaia.ROW_LIMIT = -1
 
-    gaiawh = u.Quantity(21*args.size*2, u.arcsec)
+    gaiawh = u.Quantity(21*args.size, u.arcsec)
     gaiar  = Gaia.cone_search_async(coord, gaiawh).get_results()
 
-    gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag
+    gma = gaiar['phot_rp_mean_mag'] < args.maxgaiamag*u.mag
     gra, gdec = gaiar['ra'][gma], gaiar['dec'][gma]
     grpmag    = gaiar['phot_rp_mean_mag'][gma]
     gsep      = gaiar['dist'][gma]*3600
@@ -372,8 +375,8 @@ if args.gaia:
     minapsep  = gsep[iidx][1:][minapdi]
 
     dfac = dilution_factor(grpmag[0], grpmag[iidx][1:], gsep[iidx][1:])
-    color_print('\nAdditional sources inside aperture: ', 'cyan', iidx.sum()-1, 'default')
-    color_print('Dilution factor: ', 'cyan', dfac, 'default')
+    color_print('\nAdditional sources inside aperture: ', 'cyan', str(iidx.sum()-1), 'default')
+    color_print('Dilution factor: ', 'cyan', str(dfac), 'default')
     color_print('Min mag difference inside aperture: ', 'cyan', '%f mag (%f arsec)' % (minapdif, minapsep), 'default')
     color_print('Min mag difference in TPF: ', 'cyan', '%f mag (%f arsec)' % (minalldif, minallsep), 'default')
 
@@ -430,7 +433,7 @@ if not args.noplots:
         ax1.scatter(gx[1:], gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     ax = plt.subplot(gs[0,1], sharex=ax0)
-    ax.errorbar(lkf.time, lkf.flux, yerr=lkf.flux_err, fmt='ok', ms=2, lw=1.5)
+    ax.errorbar(lkf.time.value, lkf.flux, yerr=lkf.flux_err, fmt='ok', ms=2, lw=1.5)
     ax.set_ylabel(r'Flux  (e-/s)', fontweight='bold')
     ax.ticklabel_format(useOffset=False)
     ax.set_title('Light curve')
@@ -449,7 +452,7 @@ if args.pngstamp is not None:
 
     sfig, sax = plt.subplots(figsize=[4,3])
     stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
-                           cmap=args.cmap, origin='bottom', aspect='equal',
+                           cmap=args.cmap, origin='lower', aspect='equal',
                            extent=[column, column+args.size, row, row+args.size])
 
     xm, ym = pixel_border(dap[bidx])
