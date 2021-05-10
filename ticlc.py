@@ -101,7 +101,8 @@ if args.folder is not None:
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
-    hdus = FFICut(ffis, y, x, args.size).hdu
+    #Why 1 pix offset? FFI stack generation problem?
+    hdus = FFICut(ffis, y, x-1, args.size).hdu
 
     if args.pld:
         hdu_pld = FFICut(ffis, y, x, 2*args.size).hdu
