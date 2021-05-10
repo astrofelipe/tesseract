@@ -99,19 +99,21 @@ if args.folder is not None:
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
     w   = WCS(fhdr)
-    x,y = w.all_world2pix(ra, dec, 0)
 
-    #Why 1 pix offset? FFI stack generation problem?
-    hdus = FFICut(ffis, y, x-1, args.size).hdu
+    #These are absolute coordinates
+    #As FFI stacks have all columns, they're simply row or column + x or y
+    ex, ey = w.all_world2pix(ra, dec, 0)
+
+    #I wonder why 1 pix offset?
+    #At least this gives you back the same pixels as using TESSCut
+    hdus = FFICut(ffis, ex, ey-1, args.size).hdu
 
     if args.pld:
-        hdu_pld = FFICut(ffis, y, x, 2*args.size).hdu
+        hdu_pld = FFICut(ffis, ex, ey-1, 2*args.size).hdu
 
-    ex  = int(x-args.size/2)
-    ey  = int(y-args.size/2)
-    row = y
-    column = x
-    x,y = x-ex+.5, y-ey+.5
+    column = int(ex - args.size/2)
+    row    = int(ey - args.size/2)
+    x,y    = ex - column + .5, ey - row + .5 #The .5 is explained in Online mode
 
 #Online mode
 else:
@@ -122,6 +124,8 @@ else:
     if args.pld:
         tpf_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
         hdus    = tpf_pld.hdu
+
+    #These values come from MAST and should be trusted :)
     cam     = hdus[2].header['CAMERA']
     ccd     = hdus[2].header['CCD']
     row     = hdus[1].header['2CRV5P']
@@ -129,7 +133,15 @@ else:
     w       = WCS(hdus[2].header)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
+    #Note this is relative to the cutout!
+    #TESS row/columns origin is (1,1) but this should matter to ROW and COLUMN numbers
+    #As Python works with (0,0) everything here should use that to be consistent
+    #In other words, ROW and COLUMN number fixes the zero point (which are used only in plots)
     x,y = w.all_world2pix(ra, dec, 0)
+
+    #Plot = Pixel starts at bottom left, but
+    #coordinates are defined at center of pixels in the plot
+    #This offset makes everybody happy
     x  += 0.5
     y  += 0.5
 
@@ -352,10 +364,8 @@ if args.gaia:
     gsep      = gaiar['dist'][gma]*3600
     gaiar     = gaiar[gma]
 
-
     goffsetx = ex if args.folder is not None else 0
     goffsety = ey if args.folder is not None else 0
-
 
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
     gx -= goffsetx
