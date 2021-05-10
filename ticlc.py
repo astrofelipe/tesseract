@@ -98,9 +98,6 @@ if args.folder is not None:
     fhdr    = fits.getheader(fnames[0], 1)
     ffis    = args.folder + 'TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, cam, ccd)
 
-    row     = np.nan
-    column  = np.nan
-
     w   = WCS(fhdr)
     x,y = w.all_world2pix(ra, dec, 0)
 
@@ -111,6 +108,8 @@ if args.folder is not None:
 
     ex  = int(x-10.5)
     ey  = int(y-10.5)
+    row = y
+    column = x
     x,y = x-ex, y-ey
 
 #Online mode
