@@ -111,9 +111,9 @@ if args.folder is not None:
     if args.pld:
         hdu_pld = FFICut(ffis, ey, ex-1, 2*args.size).hdu
 
-    row    = int(ex - args.size/2)
-    column = int(ey - args.size/2)
-    x,y    = ex - row + .5, ey - column + .5 #The .5 is explained in Online mode
+    row    = int(ey - args.size/2)
+    column = int(ex - args.size/2)
+    x,y    = ex - column + .5, ey - row + .5 #The .5 is explained in Online mode
 
 #Online mode
 else:
