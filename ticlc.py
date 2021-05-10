@@ -355,8 +355,8 @@ if args.gaia:
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
     print(gx,gy)
 
-    goffsetx = ex if args.local is not None else 0
-    goffsety = ey if args.local is not None else 0
+    goffsetx = ex if args.folder is not None else 0
+    goffsety = ey if args.folder is not None else 0
 
     gma2   = (gx >= 0 + goffsetx) & (gx <= args.size + goffsetx) & (gy >= 0 + goffsety) & (gy <= args.size + goffsety)
     gx, gy = gx[gma2], gy[gma2]
