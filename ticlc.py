@@ -478,8 +478,8 @@ if args.pngstamp is not None:
 
     sfig, sax = plt.subplots(figsize=[4,3])
     stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
-                           cmap=args.cmap, origin='lower', aspect='equal',
-                           extent=[column, column+args.size, row, row+args.size])
+                           cmap=args.cmap, origin='lower', aspect='equal')#,
+                           #extent=[column, column+args.size, row, row+args.size])
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
