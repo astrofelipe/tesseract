@@ -370,13 +370,11 @@ if args.gaia:
     goffsetx = column if args.folder is not None else 0
     goffsety = row if args.folder is not None else 0
 
-    gx, gy = w.all_world2pix(gra, gdec, 1) + (np.ones(2)*.5)[:,None]
+    go = 0 if args.folder is not None else 1
+    gx, gy = w.all_world2pix(gra, gdec, go) + (np.ones(2)*.5)[:,None]
 
     gx -= goffsetx
     gy -= goffsety
-
-    print(gx,gy)
-
 
     gma2   = (gx >= 0) & (gx <= args.size) & (gy >= 0) & (gy <= args.size)
     gx, gy = gx[gma2], gy[gma2]
