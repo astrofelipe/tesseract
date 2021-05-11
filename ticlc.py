@@ -102,11 +102,11 @@ if args.folder is not None:
 
     #These are absolute coordinates
     #As FFI stacks have all columns, they're simply row or column + x or y
-    ex, ey = w.all_world2pix(ra, dec, 1)
+    ex, ey = w.all_world2pix(ra, dec, 0)
 
     #I wonder why 1 pix offset?
     #At least this gives you back the same pixels as using TESSCut
-    hdus = FFICut(ffis, ey-1, ex, args.size).hdu
+    hdus = FFICut(ffis, ey, ex, args.size).hdu
 
     if args.pld:
         hdu_pld = FFICut(ffis, ey, ex, 2*args.size).hdu
