@@ -102,14 +102,14 @@ if args.folder is not None:
 
     #These are absolute coordinates
     #As FFI stacks have all columns, they're simply row or column + x or y
-    ex, ey = w.all_world2pix(ra, dec, 0)
+    ex, ey = w.all_world2pix(ra, dec, 1)
 
     #I wonder why 1 pix offset?
     #At least this gives you back the same pixels as using TESSCut
-    hdus = FFICut(ffis, ey, ex, args.size).hdu
+    hdus = FFICut(ffis, ey-1, ex-1, args.size).hdu
 
     if args.pld:
-        hdu_pld = FFICut(ffis, ey, ex, 2*args.size).hdu
+        hdu_pld = FFICut(ffis, ey-1, ex-1, 2*args.size).hdu
 
     #Row and column numbers start at (1,1) this is only for plot purposes
     row    = int(ey - args.size//2)
@@ -478,8 +478,8 @@ if args.pngstamp is not None:
 
     sfig, sax = plt.subplots(figsize=[4,3])
     stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
-                           cmap=args.cmap, origin='lower', aspect='equal')#,
-                           #extent=[column, column+args.size, row, row+args.size])
+                           cmap=args.cmap, origin='lower', aspect='equal'),
+                           extent=[column, column+args.size, row, row+args.size])
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
