@@ -370,7 +370,7 @@ if args.gaia:
     goffsetx = column if args.folder is not None else 0
     goffsety = row if args.folder is not None else 0
 
-    go = 0 if args.folder is not None else 1
+    go = 0 if args.folder is None else 1
     gx, gy = w.all_world2pix(gra, gdec, go) + (np.ones(2)*.5)[:,None]
 
     gx -= goffsetx
