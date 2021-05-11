@@ -112,8 +112,8 @@ if args.folder is not None:
         hdu_pld = FFICut(ffis, ey, ex, 2*args.size).hdu
 
     #Row and column numbers start at (1,1) this is only for plot purposes
-    row    = int(ey - args.size//2) + 1
-    column = int(ex - args.size//2) + 1
+    row    = int(ey - args.size//2)
+    column = int(ex - args.size//2)
 
     x,y    = ex - column + .5, ey - row + .5 #The .5 is explained in Online mode
 
@@ -367,8 +367,8 @@ if args.gaia:
     gaiar     = gaiar[gma]
 
     #Come back to origin (0,0) for a while
-    goffsetx = column - 1 if args.folder is not None else 0
-    goffsety = row - 1 if args.folder is not None else 0
+    goffsetx = column if args.folder is not None else 0
+    goffsety = row if args.folder is not None else 0
 
     gx, gy = w.all_world2pix(gra, gdec, 0) + (np.ones(2)*.5)[:,None]
 
