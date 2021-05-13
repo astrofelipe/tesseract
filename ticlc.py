@@ -2,6 +2,7 @@ import __future__
 import argparse
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.cm as cm
 import numpy as np
 import glob
 import os
@@ -9,7 +10,7 @@ import astropy.units as u
 from matplotlib import rcParams
 from eveport import PLD, PLD2
 from lightkurve.lightcurve import TessLightCurve
-from utils import mask_planet, FFICut, pixel_border, dilution_factor
+from utils import mask_planet, FFICut, pixel_border, dilution_factor, cmap_map
 from autoap import generate_aperture, select_aperture
 from photutils import SExtractorBackground
 from astropy.utils.console import color_print
@@ -38,12 +39,13 @@ parser.add_argument('--norm', action='store_true', help='Divides the flux by the
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
 parser.add_argument('--window-length', type=float, default=1.5)
 parser.add_argument('--cleaner', action='store_true', help='Removes saturated background times (Warning: chosen by eye)')
+parser.add_argument('--gaia', action='store_true', help='Shows Gaia sources on stamps')
+parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia magnitude to consider')
 parser.add_argument('--pixlcs', action='store_true', help='Shows light curves per pixel')
 parser.add_argument('--pngstamp', type=str, default=None, help='Saves the postage stamp as png (input "full" or "minimal")')
 parser.add_argument('--pngzoom', type=float, default=1, help='Zoom for --pngstamp')
 parser.add_argument('--pngtitle', type=str, default=None, help='Overrides TIC number for the title (useful for TOIs)')
-parser.add_argument('--gaia', action='store_true', help='Shows Gaia sources on stamps')
-parser.add_argument('--maxgaiamag', type=float, default=16, help='Maximum Gaia magnitude to consider')
+parser.add_argument('--pngdss', action='store_true', help='Adds a DSS red image below the TESS image')
 parser.add_argument('--cam', type=int, default=None, help='Overrides camera number')
 parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number')
 parser.add_argument('--cmap', type=str, default='YlGnBu_r', help='Colormap to use')
@@ -132,7 +134,8 @@ else:
     ccd     = hdus[2].header['CCD']
     row     = hdus[1].header['2CRV5P']
     column  = hdus[1].header['1CRV5P']
-    w       = WCS(hdus[2].header)
+    fhdr    = hdus[2].header
+    w       = WCS(fhdr)
     hdus[1].data['TIME'] += hdus[1].header['BJDREFI']
 
     #Note this is relative to the cutout!
@@ -410,6 +413,7 @@ else:
     sizes = 10*np.ones(1)
 
 if not args.noplots:
+
     if args.pixlcs:
         pfig, pax = plt.subplots(figsize=[8,8])
         tmin = np.nanmin(time)
@@ -474,30 +478,61 @@ if args.pngstamp is not None:
     plt.rcParams['xtick.labelsize'] = 6
     plt.rcParams['ytick.labelsize'] = 6
 
-    sfig, sax = plt.subplots(figsize=[4,3])
-    stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
-                           cmap=args.cmap, origin='lower', aspect='equal',
-                           extent=[column, column+args.size, row, row+args.size])
+    sfig = plt.figure(figsize=[4,3])
 
+    if args.pngdss:
+        from astroquery.skyview import SkyView
+
+        dssimgs = SkyView.get_images('%f %f' % (ra, dec), 'DSS2 Red', pixels=21*args.size)
+        dssdata = dssimgs[0][0].data
+        dsshead = dssimgs[0][0].header
+        dssw    = WCS(dsshead)
+
+        sax = plt.subplot(projection=w)
+        #sax.coords[0].set_auto_axislabel(False)
+
+        vmin    = np.nanmedian(dssdata)
+        dmad    = mad_std(dssdata)
+        print(vmin, dmad)
+        imdss   = sax.imshow(dssdata, transform=sax.get_transform(dssw), cmap='bone', vmin=vmin+dmad)
+        textent = None
+        talpha  = .66
+    else:
+        sax     = plt.subplot()
+        textent = [column, column+args.size, row, row+args.size]
+        talpha  = 1
+
+
+    lcmap     = cmap_map(lambda x: 0.6*x, cm.get_cmap(args.cmap))
+    stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
+                           cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
+                           extent=textent)
+
+    '''
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
-        sax.plot(column+xi, row+yi, color='#FF0043', lw=1.5)
+        if args.pngdss:
+            sax.plot(xi, yi, color='#FF0043', lw=1.5, transform=sax.get_transform('pixel'))
+        else:
+            sax.plot(column+xi, row+yi, color='#FF0043', lw=1.5)
+    '''
 
-    sax.grid(which='minor', zorder=99)
+    #sax.grid(which='minor', zorder=99)
+    #sax.grid(color='white')
 
     if args.gaia:
         sax.scatter(column+gx[1:],row+gy[1:], c='chocolate', s=sizes[1:], ec=None, zorder=9)
 
     if args.pngstamp == 'minimal':
-        sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='large')
+        #sax.text(0.95, 0.95, 'Sector %02d\nCCD: %d\nCam: %d' % (args.Sector, ccd, cam), ha='right', va='top', transform=sax.transAxes, color='#FF0043', size='large')
 
         plt.axis('off')
 
-        sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
-        sfig.tight_layout()
+        #sfig.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
+        #sfig.tight_layout()
 
     else:
-        sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
+        #sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
         cbar = sfig.colorbar(stamp, pad=0.025)
         cbar.set_label('log(Flux)', fontsize=8)
 
