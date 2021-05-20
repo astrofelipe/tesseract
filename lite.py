@@ -17,7 +17,7 @@ from mpi4py import MPI
 from astropy.utils.console import color_print
 from astropy.io import fits
 from astropy.wcs import WCS
-from lightkurve.targetpixelfile import KeplerTargetPixelFileFactory
+from lightkurve.targetpixelfile import TargetPixelFileFactory
 from astropy.stats import SigmaClip
 from photutils import SExtractorBackground
 from autoap import generate_aperture, select_aperture
@@ -62,7 +62,7 @@ def FFICut(ffis, x, y, size):
     aflux  = ffis['FFIs'][0:ncads, x1:x2, y1:y2]
     aerrs  = ffis['errs'][0:ncads, x1:x2, y1:y2]
 
-    boxing = KeplerTargetPixelFileFactory(n_cadences=ncads, n_rows=aflux.shape[1], n_cols=aflux.shape[2])
+    boxing = TargetPixelFileFactory(n_cadences=ncads, n_rows=aflux.shape[1], n_cols=aflux.shape[2])
 
     for i,f in enumerate(aflux):
         ti = ffis['data'][0,i]
