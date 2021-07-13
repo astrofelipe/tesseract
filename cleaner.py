@@ -2,7 +2,7 @@ import numpy as np
 import argparse
 
 def cleaner(time, flux):
-    time = time.data
+    time = time.val
 
     stdm = (flux < 0.98) & (time > 2458380) & (time < 2458415)
 
