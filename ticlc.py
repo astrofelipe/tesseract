@@ -350,10 +350,11 @@ if args.norm:
 if args.cleaner:
     from cleaner import cleaner
     omask = cleaner(lkf.time, lkf.flux)
-    ntime = lkf.time.value[~omask]
-    lkf.time = ntime
-    lkf.flux = lkf.flux.value[~omask]
-    lkf.flux_err = lkf.flux_err.value[~omask]
+    lkf.mask = omask
+    
+    #lkf.time = lkf.time.value[~omask]
+    #lkf.flux = lkf.flux.value[~omask]
+    #lkf.flux_err = lkf.flux_err.value[~omask]
 
 #Gaia sources and dilution factor
 if args.gaia:
