@@ -350,12 +350,13 @@ if args.norm:
 if args.cleaner:
     from cleaner import cleaner
     omask = cleaner(lkf.time, lkf.flux)
-    lkf.mask = omask
-    
-    #lkf.time = lkf.time.value[~omask]
-    #lkf.flux = lkf.flux.value[~omask]
-    #lkf.flux_err = lkf.flux_err.value[~omask]
+    ntime = lkf.time.value[~omask]
+    nflux = lkf.flux.value[~omask]
+    nflux_err = lkf.flux_err.value[~omask]
 
+    lkf = TessLightCurve(time=ntime, flux=nflux, flux_err=nflux_err)
+   
+    
 #Gaia sources and dilution factor
 if args.gaia:
     from astroquery.gaia import Gaia
