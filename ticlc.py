@@ -350,7 +350,8 @@ if args.norm:
 if args.cleaner:
     from cleaner import cleaner
     omask = cleaner(lkf.time, lkf.flux)
-    lkf.time = lkf.time.value[~omask]
+    ntime = lkf.time.value[~omask]
+    lkf.time = ntime
     lkf.flux = lkf.flux.value[~omask]
     lkf.flux_err = lkf.flux_err.value[~omask]
 
