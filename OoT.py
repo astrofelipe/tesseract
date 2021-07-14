@@ -5,16 +5,16 @@ parser = argparse.ArgumentParser(description='Separates in transit and out of tr
 parser.add_argument('File', help='File containing the light curve')
 parser.add_argument('t0', type=float, help='Ephemeris')
 parser.add_argument('P', type=float, help='Period')
-parser.add_argument('--dur', type=float, help='In transit region (same units of time)', default=0.25)
+parser.add_argument('--dur', type=float, help='In transit region (same units of time)', default=1)
 
 args = parser.parse_args()
 
-t,f,e = np.genfromtxt(File, usecols=(0,1,2), unpack=True)
+t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 p = (t - args.t0 + 0.5*args.P) % args.P - 0.5*args.P
-m = np.abs(p < args.dur)
+m = np.abs(p) < args.dur
 
 data_in = np.transpose([t,f,e])[m]
 data_out = np.transpose([t,f,e])[~m]
 
-np.savetxt(File.replace('.','_in.'), data_in)
-np.savetxt(File.replace('.','_out.'), data_out)
+np.savetxt(args.File.replace('.','_in.'), data_in)
+np.savetxt(args.File.replace('.','_out.'), data_out)
