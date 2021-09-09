@@ -17,6 +17,9 @@ for f in args.LCFiles:
     data = pd.read_csv(f, sep=' ', names=['time', 'flux', 'error', 'instrument'])
     inst = np.unique(data['instrument'])
 
+    if np.sum(np.isnan(inst))!=0:
+        inst = ['inst']
+
     for i,it in enumerate(inst):
         ma = data['instrument'] == it
         t  = data['time'][ma]

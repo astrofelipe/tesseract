@@ -35,6 +35,7 @@ parser.add_argument('--pca', action='store_true', help='Removes background and s
 #parser.add_argument('--prf', action='store_true')
 parser.add_argument('--circ', type=float, default=-1, help='Forces circular apertures')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
+parser.add_argument('--backdrop', action='store_true', help='Use tess-backdrop to estimate and remove background')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
 parser.add_argument('--flatten', action='store_true', help='Detrends and normalizes the light curve')
 parser.add_argument('--window-length', type=float, default=1.5)
@@ -124,10 +125,15 @@ else:
     from lightkurve.search import search_tesscut
 
     color_print('Querying MAST...', 'lightcyan')
-    hdus = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.').hdu
-    if args.pld:
-        tpf_pld = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
-        hdus    = tpf_pld.hdu
+    tpf = search_tesscut(coord, sector=args.Sector).download(cutout_size=args.size, download_dir='.')
+
+    #Tess-Backdrop!
+    if args.backdrop:
+        import tess_backdrop as tbd
+        tpf = tbd.BackDrop().correct_tpf(tpf)
+
+    hdus = tpf.hdu
+        
 
     #These values come from MAST and should be trusted :)
     cam     = hdus[2].header['CAMERA']
@@ -157,27 +163,32 @@ color_print('Sector: ', 'lightcyan', str(args.Sector), 'default',
 color_print('Pos X: ', 'lightcyan', str(x), 'default', '\tPos Y: ', 'lightcyan', str(y), 'default')
 color_print('CCD Row: ', 'lightcyan', str(row+x), 'default', '\tCCD Column: ', 'lightcyan', str(column+y), 'default')
 
-#Data type
-ma = hdus[1].data['QUALITY'] == 0
 
+#Background and data
+ma   = hdus[1].data['QUALITY'] == 0
 time = hdus[1].data['TIME'][ma]
 flux = hdus[1].data['FLUX'][ma]
 errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
 
+#Constant background, bks != 0
+if not args.backdrop:
+    for i,f in enumerate(flux):
+        sigma_clip = SigmaClip(sigma=1)
+        bkg        = SExtractorBackground(sigma_clip=sigma_clip)
+        bkgs[i]    = bkg.calc_background(f) if args.manualap is None else bkg.calc_background(f[~theap])
+        mad_bkg    = mad_std(f)
+        berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
+
+#Manual aperture
 if args.manualap is not None:
     apix2, apix1        = np.genfromtxt(args.manualap, unpack=True).astype(int)
     theap               = np.zeros(flux[0].shape).astype(bool)
     theap[apix1, apix2] = True
 
-#Background
-for i,f in enumerate(flux):
-    sigma_clip = SigmaClip(sigma=1)
-    bkg        = SExtractorBackground(sigma_clip=sigma_clip)
-    bkgs[i]    = bkg.calc_background(f) if args.manualap is None else bkg.calc_background(f[~theap])
-    mad_bkg    = mad_std(f)
-    berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
+
+
 
 #PRF from lightkurve
 #if args.prf:
@@ -336,9 +347,9 @@ else:
         lkf = TessLightCurve(time=time, flux=lkf.flux - pld_flux + np.nanmedian(lkf.flux), flux_err=lkf.flux_err)
         '''
         from lightkurve.correctors import PLDCorrector
-        tpf_pld.hdu[1].data['FLUX'][ma] -= bkgs[:,None,None]
-        tpf_pld.hdu[1].data['FLUX_ERR'][ma] -= np.sqrt(tpf_pld.hdu[1].data['FLUX_ERR'][ma]**2 + berr[:,None,None]**2)
-        corr = PLDCorrector(tpf_pld)
+        tpf.hdu[1].data['FLUX'][ma] -= bkgs[:,None,None]
+        tpf.hdu[1].data['FLUX_ERR'][ma] -= np.sqrt(tpf.hdu[1].data['FLUX_ERR'][ma]**2 + berr[:,None,None]**2)
+        corr = PLDCorrector(tpf)
         lkf   = corr.correct(aperture_mask = dap[bidx], pld_aperture_mask='threshold', pld_order=3, use_gp=True)
 
 
