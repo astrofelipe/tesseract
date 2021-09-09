@@ -21,7 +21,11 @@ for f in args.LCFiles:
         inst = ['inst']
 
     for i,it in enumerate(inst):
-        ma = data['instrument'] == it
+        if it!='inst':
+            ma = data['instrument'] == it
+        else:
+            ma = True
+
         t  = data['time'][ma]
         f  = data['flux'][ma]
 
