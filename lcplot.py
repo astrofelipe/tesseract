@@ -23,11 +23,11 @@ for f in args.LCFiles:
     for i,it in enumerate(inst):
         if it!='inst':
             ma = data['instrument'] == it
+            t  = data['time'][ma]
+            f  = data['flux'][ma]
         else:
-            ma = True
-
-        t  = data['time'][ma]
-        f  = data['flux'][ma]
+            t = data['time']
+            f = data['flux']
 
         ax.plot(t,f,'.', ms=2, alpha=.6, label=it)
 
