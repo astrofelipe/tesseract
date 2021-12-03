@@ -24,11 +24,11 @@ print(sec)
 tots = 1 if args.Sector < 14 else 2
 
 if (args.Sector < 14) or (args.Sector > 26):
-    TOP_LEFT     = glob.glob('/horus/TESS/FFI/%s/*%d-3-3*' % (sec, args.Sector))[0]
-    BOTTOM_RIGHT = glob.glob('/horus/TESS/FFI/%s/*%d-3-4*' % (sec, args.Sector))[0]
+    TOP_LEFT     = glob.glob('/raid/TESS/FFI/%s/*%d-3-3*' % (sec, args.Sector))[0]
+    BOTTOM_RIGHT = glob.glob('/raid/TESS/FFI/%s/*%d-3-4*' % (sec, args.Sector))[0]
 else:
-    TOP_LEFT     = glob.glob('/horus/TESS/FFI/%s/*%d-1-1*' % (sec, args.Sector))[0]
-    BOTTOM_RIGHT = glob.glob('/horus/TESS/FFI/%s/*%d-1-2*' % (sec, args.Sector))[0]
+    TOP_LEFT     = glob.glob('/raid/TESS/FFI/%s/*%d-1-1*' % (sec, args.Sector))[0]
+    BOTTOM_RIGHT = glob.glob('/raid/TESS/FFI/%s/*%d-1-2*' % (sec, args.Sector))[0]
 
 for img in [TOP_LEFT, BOTTOM_RIGHT]:
     print(img)
