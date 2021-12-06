@@ -88,7 +88,7 @@ def make_lc(tic, ra=None, dec=None, process=None):
     print('Leyendo Header')
     h5  = h5s[idx]
     q   = h5['data'][3] == 0
-    ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
+    ffi = np.array(glob.glob('/raid/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
     hdr = fits.getheader(ffi, 1)
 
     w   = WCS(hdr)
@@ -166,7 +166,7 @@ def make_lc(tic, ra=None, dec=None, process=None):
 
 
 if not args.sixteen:
-    fs  = np.sort(glob.glob('/horus/TESS/FFI/s%04d/*.hdf5' % args.Sector))
+    fs  = np.sort(glob.glob('/raid/TESS/FFI/s%04d/*.hdf5' % args.Sector))
     h5s = [h5py.File(f, 'r', libver='latest') for f in fs]
 
     for i in range(len(tics)):
@@ -187,7 +187,7 @@ else:
     cam = 1 + (rank // 4)
     ccd = 1 + (rank % 4)
     print('Iniciando camara %d y CCD %d' % (cam,ccd))
-    h5f = '/horus/TESS/FFI/s%04d/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Sector, cam, ccd)
+    h5f = '/raid/TESS/FFI/s%04d/TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Sector, cam, ccd)
     h5  = h5py.File(h5f, 'r', libver='latest')
 
     #for i,tic in enumerate(tqdm(tics)):
@@ -207,7 +207,7 @@ else:
             continue
 
         q   = h5['data'][3] == 0
-        ffi = np.array(glob.glob('/horus/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
+        ffi = np.array(glob.glob('/raid/TESS/FFI/s%04d/tess*-s%04d-%d-%d-*ffic.fits' % (args.Sector, args.Sector, cam, ccd)))[q][0]
         hdr = fits.getheader(ffi, 1)
 
         w   = WCS(hdr)
