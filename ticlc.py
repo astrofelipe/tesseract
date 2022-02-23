@@ -548,7 +548,7 @@ if args.pngstamp is not None:
         #sfig.tight_layout()
 
     else:
-        #sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
+        sax.scatter(column+x, row+y, color='#FF0043', s=sizes[0], ec=None)
         cbar = sfig.colorbar(stamp, pad=0.025)
         cbar.set_label('log(Flux)', fontsize=8)
 
