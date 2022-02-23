@@ -525,14 +525,13 @@ if args.pngstamp is not None:
                            cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
                            extent=textent)
 
-    '''
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
         if args.pngdss:
             sax.plot(xi, yi, color='#FF0043', lw=1.5, transform=sax.get_transform('pixel'))
         else:
             sax.plot(column+xi, row+yi, color='#FF0043', lw=1.5)
-    '''
+    
 
     #sax.grid(which='minor', zorder=99)
     #sax.grid(color='white')
