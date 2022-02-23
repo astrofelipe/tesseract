@@ -408,6 +408,7 @@ if args.gaia:
     iidx = (dap[bidx])[didx[1], didx[0]]
 
     minaldi = np.argmin(np.abs(grpmag[1:] - grpmag[0]))
+    print(grpmag[iidx])
     minapdi = np.argmin(np.abs(grpmag[iidx][1:] - grpmag[0]))
 
     minalldif = grpmag[0] - grpmag[1:][minaldi]
