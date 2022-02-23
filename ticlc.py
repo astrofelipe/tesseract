@@ -408,18 +408,20 @@ if args.gaia:
     iidx = (dap[bidx])[didx[1], didx[0]]
 
     minaldi = np.argmin(np.abs(grpmag[1:] - grpmag[0]))
-    print(grpmag[iidx])
-    minapdi = np.argmin(np.abs(grpmag[iidx][1:] - grpmag[0]))
+    if iidx.sum() > 1:
+        minapdi = np.argmin(np.abs(grpmag[iidx][1:] - grpmag[0]))
+        minapdif  = grpmag[0] - grpmag[iidx][1:][minapdi]
+        minapsep  = gsep[iidx][1:][minapdi]
 
     minalldif = grpmag[0] - grpmag[1:][minaldi]
-    minapdif  = grpmag[0] - grpmag[iidx][1:][minapdi]
     minallsep = gsep[1:][minaldi]
-    minapsep  = gsep[iidx][1:][minapdi]
+    
 
     dfac = dilution_factor(grpmag[0], grpmag[iidx][1:], gsep[iidx][1:])
     color_print('\nAdditional sources inside aperture: ', 'cyan', str(iidx.sum()-1), 'default')
     color_print('Dilution factor: ', 'cyan', str(dfac), 'default')
-    color_print('Min mag difference inside aperture: ', 'cyan', '%f mag (%f arsec)' % (minapdif, minapsep), 'default')
+    if iidx.sum() > 1:
+        color_print('Min mag difference inside aperture: ', 'cyan', '%f mag (%f arsec)' % (minapdif, minapsep), 'default')
     color_print('Min mag difference in TPF: ', 'cyan', '%f mag (%f arsec)' % (minalldif, minallsep), 'default')
 
     sizes = 15/1.5**(grpmag-10)
