@@ -57,9 +57,13 @@ for i,f in enumerate(tqdm(files)):
         dat1 = hdu[1].data
         dat2 = hdu[2].data
 
-        with dset.collective: dset[i:i+1] = np.expand_dims(dat1, axis=0)
-        with derr.collective: derr[i:i+1] = np.expand_dims(dat2, axis=0)
-        with table.collective: table[:,i] = make_table(f)
+        #with dset.collective: dset[i:i+1] = np.expand_dims(dat1, axis=0)
+        #with derr.collective: derr[i:i+1] = np.expand_dims(dat2, axis=0)
+        #with table.collective: table[:,i] = make_table(f)
+
+        dset[i:i+1] = np.expand_dims(dat1, axis=0)
+        derr[i:i+1] = np.expand_dims(dat2, axis=0)
+        table[:,i] = make_table(f)
 
         hdu.close()
         del hdu, dat1, dat2
