@@ -46,8 +46,8 @@ nx, ny = fits.getdata(files[0]).shape
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(64, 24, 24), compression='gzip')
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(64, 24, 24), compression='gzip')
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', chunks=(16, 24, 24), compression='gzip')
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', chunks=(16, 24, 24), compression='gzip')
 table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='gzip')
 print(dset.chunks, derr.chunks)
 
