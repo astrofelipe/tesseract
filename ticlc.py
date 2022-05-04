@@ -197,7 +197,9 @@ if args.manualap is not None:
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
 if args.psf:
-    import tensorflow as tf #tensorflow 1
+    #import tensorflow as tf #tensorflow 1
+    import tensorflow.compat.v1 as tf
+    tf.disable_v2_behavior()
     from vaneska.models import Gaussian
     from tqdm import tqdm
 
