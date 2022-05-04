@@ -74,8 +74,8 @@ for i in range(args.nplanets):
     ax2.plot(periods, power, '-', lw=1)
 
     tma = phase < dur
-    print(lc.time, tma, len(lc.time), len(tma))
-    lc.time.value     = lc.time.value[~tma]
+    aux = lc.time[~tma]
+    lc.time     = aux
     lc.flux     = lc.flux[~tma]
     lc.flux_err = lc.flux_err[~tma]
 
