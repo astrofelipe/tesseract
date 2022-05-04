@@ -2,7 +2,8 @@ import numpy as np
 import argparse
 
 def cleaner(time, flux):
-    time = time.value
+    if type(time) != np.ndarray:
+        time = time.value
 
     stdm = (flux < 0.98) & (time > 2458380) & (time < 2458415)
 
