@@ -75,7 +75,7 @@ for i in range(args.nplanets):
 
     tma = phase < dur
     print(lc.time, tma, len(lc.time), len(tma))
-    lc.time     = lc.time[~tma]
+    lc.time.value     = lc.time.value[~tma]
     lc.flux     = lc.flux[~tma]
     lc.flux_err = lc.flux_err[~tma]
 
