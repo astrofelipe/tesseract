@@ -245,7 +245,7 @@ if args.psf:
                      c: (0, np.infty)
                     }
 
-    optimizer = tf.contrib.opt.ScipyOptimizerInterface(nll, var_list, method='TNC', tol=1e-4, var_to_bounds=var_to_bounds)
+    optimizer = tf.compat.v1.estimator.opt.ScipyOptimizerInterface(nll, var_list, method='TNC', tol=1e-4, var_to_bounds=var_to_bounds)
 
     fout   = np.zeros((len(flux), nstars))
     ferr   = np.zeros((len(errs), nstars))
