@@ -74,9 +74,12 @@ for i in range(args.nplanets):
     ax2.plot(periods, power, '-', lw=1)
 
     tma = phase < dur
+    lc  = TessLightCurve(time=lc.time[~tma], flux=lc.flux[~tma], flux_err=lc.flux_err[~tma])
+    '''
     aux = lc.time[~tma]
     lc.time.value     = aux
     lc.flux     = lc.flux[~tma]
     lc.flux_err = lc.flux_err[~tma]
+    '''
 
 plt.show()
