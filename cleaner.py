@@ -23,7 +23,7 @@ def cleaner(time, flux):
     mask32 = ((time > 2459127.5) & (time < 24559129.5)) + ((time > 2459142) & (time < 2459143))
 
     mask   = (mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask9 + mask10 + mask11 + mask12 + mask13
-            + mask32
+            + mask31 + mask32
             + stdm)
 
     return mask
