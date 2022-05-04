@@ -21,8 +21,8 @@ def cleaner(time, flux):
     mask13 = ((time > 2458657.5) & (time < 2458659)) + ((time > 2458667) & (time < 2458669)) + ((time > 2458681) & (time < 2458683)) #checked
     mask32 = ((time > 2459185.5) & (time < 2459186)) + ((time > 2459199.6) & (time < 2459200.5))
 
-    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask9 + mask10 + mask11 + mask12 + mask13
-           + mask32
+    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask9 + mask10 + mask11 + mask12 + mask13 \\
+           + mask32 \\
            + stdm
 
     return mask
