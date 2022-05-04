@@ -75,7 +75,7 @@ for i in range(args.nplanets):
 
     tma = phase < dur
     aux = lc.time[~tma]
-    lc.time     = aux
+    lc.time.value     = aux
     lc.flux     = lc.flux[~tma]
     lc.flux_err = lc.flux_err[~tma]
 
