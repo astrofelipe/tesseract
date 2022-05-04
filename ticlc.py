@@ -197,9 +197,9 @@ if args.manualap is not None:
 #PSF routine, taken from Eleanor
 #Works (?) but doesn't return errors and only fits one gaussian
 if args.psf:
-    #import tensorflow as tf #tensorflow 1
-    import tensorflow.compat.v1 as tf
-    tf.disable_v2_behavior()
+    import tensorflow as tf #tensorflow 1 required! Python <= 3.7 (for now)
+    #import tensorflow.compat.v1 as tf
+    #tf.disable_v2_behavior()
     from vaneska.models import Gaussian
     from tqdm import tqdm
 
@@ -245,7 +245,7 @@ if args.psf:
                      c: (0, np.infty)
                     }
 
-    optimizer = tf.compat.v1.estimator.opt.ScipyOptimizerInterface(nll, var_list, method='TNC', tol=1e-4, var_to_bounds=var_to_bounds)
+    optimizer = tf.contrib.opt.ScipyOptimizerInterface(nll, var_list, method='TNC', tol=1e-4, var_to_bounds=var_to_bounds)
 
     fout   = np.zeros((len(flux), nstars))
     ferr   = np.zeros((len(errs), nstars))
