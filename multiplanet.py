@@ -12,6 +12,7 @@ parser.add_argument('File', help='Light curve file')
 parser.add_argument('--nplanets', type=int, default=5, help='Number of planets to search')
 parser.add_argument('--ncpu', type=int, default=4, help='Number of CPUs to use')
 parser.add_argument('--min-period', type=float, default=0.2)
+parser.add_argument('--max-period', type=float, default=20)
 parser.add_argument('--method', type=str, default='TLS')
 
 args = parser.parse_args()
@@ -36,7 +37,7 @@ color = plt.cm.rainbow(np.linspace(0,1,args.nplanets))
 for i in range(args.nplanets):
     if args.method == 'TLS':
         model  = TLS(lc.time.value, lc.flux, lc.flux_err)
-        result = model.power(n_transits_min=1, period_min=args.min_period, use_threads=args.ncpu, show_progress_bar=True)
+        result = model.power(n_transits_min=1, period_min=args.min_period, period_max=args.max_period, use_threads=args.ncpu, show_progress_bar=True)
 
         period = result.period
         t0     = result.T0
