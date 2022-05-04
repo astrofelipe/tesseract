@@ -75,7 +75,7 @@ for i in range(args.start, len(BLSdata)):
         else:
             rval = np.nan
 
-        lcs[j].plot(lc.time, lc.flux, '.', ms=2)
+        lcs[j].plot(lc.time.value, lc.flux, '.', ms=2)
         if t0 > 50:
             transits = np.arange(t0, t[-1], period)
             for t0s in transits:
