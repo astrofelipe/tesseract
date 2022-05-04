@@ -22,7 +22,7 @@ t,f,e = np.genfromtxt(args.File, usecols=(0,1,2), unpack=True)
 ma    = cleaner(t, f)
 
 t,f,e = t[~ma], f[~ma], e[~ma]
-wl    = 2*(len(t)//38)+1
+wl    = 2*(len(t)//21)+1
 lc    = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=wl, polyorder=3, niters=5)
 
 fig = plt.figure(constrained_layout=True, figsize=[15, 6])
