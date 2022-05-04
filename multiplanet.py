@@ -35,7 +35,7 @@ color = plt.cm.rainbow(np.linspace(0,1,args.nplanets))
 #Iterate TLS
 for i in range(args.nplanets):
     if args.method == 'TLS':
-        model  = TLS(lc.time, lc.flux, lc.flux_err)
+        model  = TLS(lc.time.value, lc.flux, lc.flux_err)
         result = model.power(n_transits_min=1, period_min=args.min_period, use_threads=args.ncpu, show_progress_bar=True)
 
         period = result.period
@@ -46,7 +46,7 @@ for i in range(args.nplanets):
         periods, power = result.periods, result.power
 
     elif args.method == 'BLS':
-        model  = BoxLeastSquares(lc.time, lc.flux, dy=lc.flux_err)
+        model  = BoxLeastSquares(lc.time.value, lc.flux, dy=lc.flux_err)
         result = model.autopower(0.15)
 
         periods, power = result.period, result.power
@@ -60,8 +60,8 @@ for i in range(args.nplanets):
     #if i==1:
     #    period *= 2 2458339.018159
 
-    phase = (lc.time - t0 + 0.5*period) % period - 0.5*period
-    fph   = (lc.time - t0 + 0.5*period) % period - 0.5*period
+    phase = (lc.time.value - t0 + 0.5*period) % period - 0.5*period
+    fph   = (lc.time.value - t0 + 0.5*period) % period - 0.5*period
 
     ax = fig.add_subplot(gs[1,i])
     ax.plot(fph, lc.flux, '.', color=color[i])
