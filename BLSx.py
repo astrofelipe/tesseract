@@ -2,6 +2,7 @@ import glob
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+from cleaner import cleaner
 from scipy.ndimage import median_filter
 from tqdm import tqdm
 from lightkurve.lightcurve import TessLightCurve
@@ -51,24 +52,11 @@ def run_BLS(fl):
     lc.flux = lc.flux[addorder]
     '''
 
-    fmed = np.nanmedian(lc.flux)
-    fstd = np.nanstd(lc.flux)
+    #fmed = np.nanmedian(lc.flux)
+    #fstd = np.nanstd(lc.flux)
     stdm = lc.flux < 0.97#np.abs(lc.flux-fmed) > 3*fstd
 
-    mask1  = ((lc.time > 2458325) & (lc.time < 2458326)) + ((lc.time > 2458347) & (lc.time < 2458350)) + ((lc.time > 2458352.5) & (lc.time < 2458353.2))
-    mask3  = ((lc.time > 2458382) & (lc.time < 2458384)) + ((lc.time > 2458407) & (lc.time < 2458410)) + ((lc.time > 2458393.5) & (lc.time < 2458397))
-    mask4  = ((lc.time > 2458419) & (lc.time < 2458422)) + ((lc.time > 2458422) & (lc.time < 2458424)) + ((lc.time > 2458436) & (lc.time < 2458437))
-    mask5  = ((lc.time > 2458437.8) & (lc.time < 2458438.7)) + ((lc.time > 2458450) & (lc.time < 2458452)) + ((lc.time > 2458463.4) & (lc.time < 2458464.2))
-    mask6  = ((lc.time > 2458476.7) & (lc.time < 2458478.7))
-    mask7  = ((lc.time > 2458491.6) & (lc.time < 2458492)) + ((lc.time > 2458504.6) & (lc.time < 2458505.2))
-    mask8  = ((lc.time > 2458517.4) & (lc.time < 2458518)) + ((lc.time > 2458530) & (lc.time < 2458532))
-    #s10: 4913400--4913404 4913414.2--4913429
-    mask10 = ((lc.time > 4913400) & (lc.time < 4913403.5)) + ((lc.time > 4913414.2) & (lc.time < 4913417)) #s10
-    mask11 = ((lc.time > 2458610.6) & (lc.time < 2458611.6)) + ((lc.time > 2458610.6) & (lc.time < 2458611.6))
-    mask12 = ((lc.time > 2458624.5) & (lc.time < 2458626))
-    mask13 = ((lc.time > 2458653.5) & (lc.time < 2458655.75)) + ((lc.time > 2458668.5) & (lc.time < 2458670))
-
-    mask   = mask1 + mask3 + mask4 + mask5 + mask6 + mask7 + mask8 + mask10 + mask11 + mask12 + mask13 + stdm
+    mask = cleaner(lc.time, lc.flux)
 
     lc.time = lc.time[~mask]
     lc.flux = lc.flux[~mask]
