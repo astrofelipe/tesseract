@@ -22,7 +22,6 @@ def the_TLS(fn, t, f, e, min_period=0.2, target=None, use_threads=1, show_progre
     #try:
     model   = TLS(t, f, e) #Algunos targets pueden tener flujo negativo (borde FFI) y se cae
     results = model.power(n_transits_min=1, period_min=min_period, use_threads=use_threads, show_progress_bar=show_progress_bar)
-    print(results)
     #except:
     #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
