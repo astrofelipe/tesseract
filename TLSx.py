@@ -16,7 +16,7 @@ def run_TLS(fn, min_period=0.2, target=None):
 
     lc = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
-    return the_TLS(fn, lc.time, lc.flux, lc.flux_err, min_period, target)
+    return the_TLS(fn, lc.time.value, lc.flux, lc.flux_err, min_period, target)
 
 def the_TLS(fn, t, f, e, min_period=0.2, target=None, use_threads=1, show_progress_bar=False):
     #try:
