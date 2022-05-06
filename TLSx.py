@@ -19,11 +19,11 @@ def run_TLS(fn, min_period=0.2, target=None):
     return the_TLS(fn, lc.time, lc.flux, lc.flux_err, min_period, target)
 
 def the_TLS(fn, t, f, e, min_period=0.2, target=None, use_threads=1, show_progress_bar=False):
-    try:
-        model   = TLS(t, f, e) #Algunos targets pueden tener flujo negativo (borde FFI) y se cae
-        results = model.power(n_transits_min=1, period_min=min_period, use_threads=use_threads, show_progress_bar=show_progress_bar)
-    except:
-        return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
+    #try:
+    model   = TLS(t, f, e) #Algunos targets pueden tener flujo negativo (borde FFI) y se cae
+    results = model.power(n_transits_min=1, period_min=min_period, use_threads=use_threads, show_progress_bar=show_progress_bar)
+    #except:
+    #    return fn, -99, -99, -99, -99, -99, -99, -99, -99, -99, -99
 
 
     if target is not None:
