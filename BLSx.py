@@ -66,7 +66,7 @@ def run_BLS(fl):
 
     periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 5000))
     durations = np.linspace(0.05, 0.15, 20)# * u.day
-    model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux, lc.flux_err)
+    model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time.value, lc.flux, lc.flux_err)
 
     result    = model.power(periods, durations, oversample=20)#, objective='snr')
     #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
