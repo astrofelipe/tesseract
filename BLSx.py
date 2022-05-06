@@ -28,16 +28,24 @@ if folder[-1] != '/':
     folder += '/'
 
 def run_BLS(fl):
-    t, f = np.genfromtxt(fl, usecols=(0,1), unpack=True)
-    lc   = TessLightCurve(time=t, flux=f).flatten(window_length=51, polyorder=2, niters=5)
+    t, f, e = np.genfromtxt(fl, usecols=(0,1,2), unpack=True)
+    mask    = cleaner(t,f)
+    
+    t = t[~mask]
+    f = f[~mask]
+    e = e[~mask]
+
+    lc   = TessLightCurve(time=t, flux=f, flux_err=e).flatten(window_length=51, polyorder=2, niters=5)
 
     #Test Fill
+    '''
     diffs = np.diff(lc.time)
     stdd  = np.nanstd(diffs)
     medd  = np.nanmedian(diffs)
 
     maskgaps = diffs > 0.2#np.abs(diffs-medd) > stdd
     maskgaps = np.concatenate((maskgaps,[False]))
+    '''
 
     '''
     for mg in np.where(maskgaps)[0]:
@@ -54,19 +62,11 @@ def run_BLS(fl):
 
     #fmed = np.nanmedian(lc.flux)
     #fstd = np.nanstd(lc.flux)
-    stdm = lc.flux < 0.97#np.abs(lc.flux-fmed) > 3*fstd
-
-    mask = cleaner(lc.time, lc.flux)
-
-    lc.time = lc.time[~mask]
-    lc.flux = lc.flux[~mask]
-    #mask = (t > 2458492.) & ((t < 2458504.5) | (t > 2458505.))
-    #lc   = TessLightCurve(time=t, flux=f).flatten(window_length=31, polyorder=3, niters=3)
-
+    #stdm = lc.flux < 0.97#np.abs(lc.flux-fmed) > 3*fstd
 
     periods   = np.exp(np.linspace(np.log(args.min_period), np.log(args.max_period), 5000))
     durations = np.linspace(0.05, 0.15, 20)# * u.day
-    model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux)
+    model     = BLS(lc.time,lc.flux) if not args.TLS else transitleastsquares(lc.time, lc.flux, lc.flux_err)
 
     result    = model.power(periods, durations, oversample=20)#, objective='snr')
     #result    = model.power(period_min=1, oversampling_factor=2, n_transits_min=1, use_threads=4, show_progress_bar=False)
