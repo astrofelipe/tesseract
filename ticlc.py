@@ -528,7 +528,7 @@ if args.pngstamp is not None:
     #                       extent=textent)
 
     mstamp    = np.nanmedian(flux[::10], axis=0)
-    norm      = ImageNormalize(mstamp, interval=AssymetricPercentileInterval(0,99), stretch=LogStretch(a=250))
+    norm      = ImageNormalize(mstamp, interval=AsymmetricPercentileInterval(0,99), stretch=LogStretch(a=250))
     stamp     = sax.imshow(mstamp,
                            cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
                            extent=textent, norm=norm)
