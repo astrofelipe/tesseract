@@ -18,7 +18,7 @@ from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip, mad_std
 from astropy.wcs import WCS
 from astropy.io import fits
-from astropy.visualization import time_support
+from astropy.visualization import MinMaxInterval, LogStretch, ImageNormalize
 from tess_stars2px import tess_stars2px_function_entry as ts2p
 
 parser = argparse.ArgumentParser(description='Extract Lightcurves from FFIs')
@@ -523,9 +523,15 @@ if args.pngstamp is not None:
 
 
     lcmap     = cmap_map(lambda x: 0.6*x, cm.get_cmap(args.cmap))
-    stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
+    #stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
+    #                       cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
+    #                       extent=textent)
+
+    mstamp    = np.nanmedian(flux[::10], axis=0)
+    norm      = ImageNormalize(mstamp, interval=MinMaxInterval(), stretch=LogStretch())
+    stamp     = sax.imshow(mstamp,
                            cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
-                           extent=textent)
+                           extent=textent, norm=norm)
 
     xm, ym = pixel_border(dap[bidx])
     for xi,yi in zip(xm, ym):
