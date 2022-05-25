@@ -269,7 +269,7 @@ if args.psf:
 
     if args.flatten:
         from wotan import flatten
-        flat_flux = flatten(lkf.time, lkf.flux, window_length=args.window_length, method='biweight', return_trend=False)
+        flat_flux = flatten(lkf.time.value, lkf.flux, window_length=args.window_length, method='biweight', return_trend=False)
         print(flat_flux)
         #lkf = lks.flatten(polyorder=2, window_length=51, niters=5) if args.flatten else lks
         lkf.flux = flat_flux
