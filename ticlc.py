@@ -305,7 +305,7 @@ else:
     if args.flatten:
         from wotan import flatten
         for lk in lkf:
-            lk.flux, trend = flatten(lk.time, lk.flux, window_length=args.window_length, method='rspline', return_trend=True)
+            lk.flux, trend = flatten(lk.time.value, lk.flux, window_length=args.window_length, method='rspline', return_trend=True)
             lk.flux_err    /= trend
 
 
