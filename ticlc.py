@@ -79,6 +79,7 @@ if len(args.TIC) < 2:
     dec = float(target[0]['dec'])
 
 else:
+    targettitle = 'RA %.6f DEC %.6f' % args.TIC if args.pngtitle is None else args.pngtitle
     ra, dec = args.TIC
 
 color_print('RA: ', 'lightcyan', str(ra), 'default', '\tDec: ', 'lightcyan', str(dec), 'default')

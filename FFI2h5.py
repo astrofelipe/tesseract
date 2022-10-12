@@ -1,4 +1,5 @@
 import __future__
+import tables
 import h5py
 import glob
 import argparse
@@ -46,9 +47,9 @@ nx, ny = fits.getdata(files[0]).shape
 output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', libver='latest')
 #output = h5py.File('TESS-FFIs_s%04d-%d-%d.hdf5' % (args.Sector, args.Camera, args.Chip), 'w', driver='mpio', comm=MPI.COMM_WORLD)
 
-dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression='gzip', chunks=(5, 128, 128))
-derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression='gzip', chunks=(5, 128, 128))
-table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression='gzip')
+dset   = output.create_dataset('FFIs', (nfiles, nx, ny), dtype='float64', compression=32001, chunks=True)#(5, 128, 128))
+derr   = output.create_dataset('errs', (nfiles, nx, ny), dtype='float64', compression=32001, chunks=True)#(5, 128, 128))
+table  = output.create_dataset('data', (4, nfiles), dtype='float64', compression=32001)
 print(dset.chunks, derr.chunks)
 
 for i,f in enumerate(tqdm(files)):
