@@ -1,18 +1,19 @@
 import __future__
 import argparse
+#import matplotlib
+#matplotlib.use('MacOSX')
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import matplotlib.cm as cm
 import numpy as np
 import glob
 import os
 import astropy.units as u
-from matplotlib import rcParams
+from matplotlib import rcParams, colormaps
 from eveport import PLD, PLD2
 from lightkurve.lightcurve import TessLightCurve
 from utils import mask_planet, FFICut, pixel_border, dilution_factor, cmap_map
 from autoap import generate_aperture, select_aperture
-from photutils import SExtractorBackground
+from photutils.background import SExtractorBackground
 from astropy.utils.console import color_print
 from astropy.coordinates import SkyCoord
 from astropy.stats import SigmaClip, mad_std
@@ -34,6 +35,7 @@ parser.add_argument('--psf', action='store_true', help='Experimental PSF (Eleano
 parser.add_argument('--pca', action='store_true', help='Removes background and some sistematics using PCA')
 #parser.add_argument('--prf', action='store_true')
 parser.add_argument('--circ', type=float, default=-1, help='Forces circular apertures')
+parser.add_argument('--saveap', action='store_true', help='Save the used aperture (in a format ready for --manualap)')
 parser.add_argument('--manualap', type=str, const=-1, nargs='?', help='Manual aperture input (add filename or interactive picking if not)')
 parser.add_argument('--backdrop', action='store_true', help='Use tess-backdrop to estimate and remove background')
 parser.add_argument('--norm', action='store_true', help='Divides the flux by the median')
@@ -52,6 +54,7 @@ parser.add_argument('--ccd', type=int, default=None, help='Overrides CCD number'
 parser.add_argument('--cmap', type=str, default='YlGnBu_r', help='Colormap to use')
 parser.add_argument('--animation', type=str, default='none', help='Saves a movie of the cutout + lightcurve ("talk" and "outreach" options are available)')
 parser.add_argument('--overwrite', action='store_false', help='Overwrites existing filename')
+
 
 args = parser.parse_args()
 iP, it0, idur = args.mask_transit
@@ -136,7 +139,7 @@ else:
     hdus = tpf.hdu
         
 
-    #These values come from MAST and should be trusted :)
+    #These values come from MAST
     cam     = hdus[2].header['CAMERA']
     ccd     = hdus[2].header['CCD']
     row     = hdus[1].header['2CRV5P']
@@ -151,8 +154,8 @@ else:
     #In other words, ROW and COLUMN number fixes the zero point (which are used only in plots)
     x,y = w.all_world2pix(ra, dec, 0)
 
-    #Plot = Pixel starts at bottom left, but
-    #coordinates are defined at center of pixels in the plot
+    #Plot = Pixel starts at bottom left, but in the plot
+    #coordinates are defined at center of pixels
     #This offset makes everybody happy
     x  += 0.5
     y  += 0.5
@@ -173,6 +176,15 @@ errs = hdus[1].data['FLUX_ERR'][ma]
 bkgs = np.zeros(len(flux))
 berr = np.zeros(len(flux))
 
+#Manual aperture
+if args.manualap is not None:
+    apix1, apix2        = np.genfromtxt(args.manualap, unpack=True).astype(int)
+    apix2 +=1
+    print(np.transpose([apix1, apix2]))
+    print(w.all_pix2world(apix2, apix1, 0))
+    theap               = np.zeros(flux[0].shape).astype(bool)
+    theap[apix1, apix2] = True
+
 #Constant background, bks != 0
 if not args.backdrop:
     for i,f in enumerate(flux):
@@ -182,11 +194,6 @@ if not args.backdrop:
         mad_bkg    = mad_std(f)
         berr[i]    = (3*1.253 - 2)*mad_bkg/np.sqrt(f.size)
 
-#Manual aperture
-if args.manualap is not None:
-    apix2, apix1        = np.genfromtxt(args.manualap, unpack=True).astype(int)
-    theap               = np.zeros(flux[0].shape).astype(bool)
-    theap[apix1, apix2] = True
 
 
 
@@ -317,6 +324,10 @@ else:
 
     color_print('\nAperture chosen: ', 'lightcyan', str(bidx+1) + 'px radius' if args.circ==0 else 'No. ' + str(bidx), 'default',
                 '\tNumber of pixels inside: ', 'lightcyan', str(dap[bidx].sum()), 'default')
+    
+    if args.saveap:
+        saveap = np.transpose(np.where(dap[bidx]))
+        np.savetxt('%s_%02d.ap' % (targettitle.replace(" ", ""), args.Sector), saveap, fmt='%i')
 
 
     #PCA
@@ -404,7 +415,8 @@ if args.gaia:
     color_print('Nearby sources:\n', 'cyan')
     gaiaresume = gaiar[gma2]
     gaiaresume['label'] = np.arange(len(grpmag))
-    gresume = gaiaresume['label', 'designation', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
+    #gresume = gaiaresume['label', 'DESIGNATION', 'ra', 'dec', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
+    gresume = gaiaresume['label', 'DESIGNATION', 'phot_rp_mean_mag', 'phot_g_mean_mag', 'phot_bp_mean_mag', 'dist']
     print(gresume)
 
     didx = np.array((gx,gy)).astype(int)
@@ -491,7 +503,7 @@ if not args.noplots:
     ax1.set_ylim(0, args.size)
 
     fig1.tight_layout()
-    plt.show()
+    #plt.show()
 
 if args.pngstamp is not None:
     from matplotlib.colors import ListedColormap
@@ -523,7 +535,7 @@ if args.pngstamp is not None:
         talpha  = 1
 
 
-    lcmap     = cmap_map(lambda x: 0.6*x, cm.get_cmap(args.cmap))
+    lcmap     = cmap_map(lambda x: 0.6*x, colormaps.get_cmap(args.cmap))
     #stamp     = sax.imshow(np.log10(np.nanmedian(flux[::10], axis=0)),
     #                       cmap=lcmap, origin='lower', aspect='equal', alpha=talpha,
     #                       extent=textent)
@@ -535,6 +547,7 @@ if args.pngstamp is not None:
                            extent=textent, norm=norm)
 
     xm, ym = pixel_border(dap[bidx])
+    print(xm, ym)
     for xi,yi in zip(xm, ym):
         if args.pngdss:
             sax.plot(xi, yi, color='#FF0043', lw=1.5, transform=sax.get_transform('pixel'))
@@ -592,7 +605,7 @@ if args.pngstamp is not None:
         sax.set_xlim(column + int(x) - pngsize, column + int(x) + pngsize)
         sax.set_ylim(row + int(y) - pngsize, row + int(y) + pngsize)
 
-    sfig.savefig('%s_%02d_%s.pdf' % (targettitle.replace(" ", ""), args.Sector, args.pngstamp), dpi=600, bbox_inches='tight')
+    sfig.savefig('%s_%02d_%s.png' % (targettitle.replace(" ", ""), args.Sector, args.pngstamp), dpi=200, bbox_inches='tight')
 
 if args.animation.lower() == 'outreach':
     from tsani import Outreach
@@ -619,4 +632,5 @@ np.savetxt('%s_%02d.dat' % (targettitle.replace(" ", ""), args.Sector), output, 
 if args.folder is None:
     os.system('rm tesscut/*%.6f*' % ra)
 
+plt.show()
 color_print('\nDone!\n', 'lightgreen')
